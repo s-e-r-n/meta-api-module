@@ -1,0 +1,328 @@
+# Meta Events Catalog - Standard Events, Custom Events, Custom Data (Web / Conversions API + Meta Pixel)
+
+Scope: web only (Meta Pixel + Conversions API for `action_source: website`). Fetched with `curl -sL -A "MetaCapiHarness/0.1 (claude-sonnet-5) curl/8" <url>`.
+
+## Sources
+
+| URL | Format obtained | What it covers |
+| --- | --- | --- |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md | markdown | Full "Standard Parameters" table (Website / App / Offline columns) - every custom_data key Meta documents, including vertical-specific ones (auto, real estate, travel, hotel) |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/server-event.md | markdown | Server event object parameters: `event_name`, `event_time`, `user_data`, `custom_data`, `event_source_url`, `opt_out`, `event_id`, `action_source` (allowed values), `data_processing_options*`, `app_data`/`extinfo`, `referrer_url`, `original_event_data`, `customer_segmentation` (enum) |
+| https://developers.facebook.com/docs/meta-pixel/reference (redirects to https://developers.facebook.com/documentation/meta-pixel/reference.md) | markdown (old-site URL 301-redirects to new-site path, which itself serves markdown with the given UA) | Meta Pixel Standard Events reference table: 17 standard events, event name, description, object properties (required/optional), "Promoted Object custom_event_type value"; plus the Object Properties (custom_data keys) table |
+| https://developers.facebook.com/documentation/meta-pixel/reference.md | markdown | Identical content to the redirect target above (byte-for-byte diff confirmed) |
+| https://developers.facebook.com/docs/meta-pixel/implementation/conversion-tracking (redirects to https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md) | markdown | Standard events, custom events (naming rule, `fbq('trackCustom')`), custom conversions (definition, rule-based custom conversions, 100/ad-account limit, `is_unavailable` flag, flagged-conversion policy dated Sept 2, 2025), Parameters / Object Properties table (with `delivery_category` enum), Custom Properties |
+| https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md | markdown | Identical content (byte-for-byte diff confirmed against the two redirect fetches) |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/value-optimization.md | markdown | Value optimization: `value` + `currency` requirement, ISO 4217 wording, Pixel vs CAPI code samples |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value.md | HTTP 500 (both `.md` and non-`.md`, both curl and WebFetch, 3 retries) | Could not be retrieved - see Contradictions and gaps |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api.md | markdown | CAPI overview, links to Parameters/Payload Helper/Troubleshooting, pointer to Pixel Standard/Custom Events docs |
+| https://developers.facebook.com/documentation/ads-commerce/llms.txt | markdown (llms.txt index) | Full ads-commerce documentation index, used to discover parameter/guide pages below |
+| https://developers.facebook.com/llms.txt | markdown (llms.txt index) | Root index, confirms ads-commerce and other section indexes |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/main-body.md | markdown | Main body params: `data` (array of server events, required), `test_event_code` (optional) |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters.md | markdown | Index/overview of all parameter groups; states web events require `client_user_agent`, `action_source`, `event_source_url`; non-web events require only `action_source` |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/deduplicate-pixel-and-server-events.md | markdown | Event dedup: `event_id`/`eventID` + `event_name`/`event` matching, 48-hour window, 5-minute browser-preference rule, `fbp`/`external_id` fallback method |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/get-started.md | markdown | Access tier terminology (Limited/Full Access); no event-catalog content |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/using-the-api.md | markdown | `POST /events` request structure and examples (`event_name`, `custom_data` with `currency`/`value`/`contents`), batch size (1,000 events/request, all-or-nothing), `event_time` up to 7 days in the past (62 days for `physical_store` action_source), Test Events tool, LDU examples |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/payload-helper.md | markdown | Interactive tool page only, no static parameter content |
+| https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution/reference.md | markdown | `AppendAttribution` event (Beta, limited access): a CAPI-only, standardized post-attribution event name; its own parameter set including `attribution_data` and `original_event_data` |
+| https://developers.facebook.com/documentation/meta-pixel/get-started.md | markdown | Pixel base code; confirms `PageView` is auto-fired by the base code via `fbq('track','PageView')` and can also be called explicitly |
+| https://developers.facebook.com/docs/meta-pixel/get-started/advantage-catalog-ads (redirects to https://developers.facebook.com/documentation/meta-pixel/get-started/advantage-catalog-ads.md) | markdown | Advantage+ catalog ads (dynamic ads) requirements: which standard events need `content_ids`/`contents`, and how `content_ids` vs `contents` work |
+
+## Findings
+
+### 1. Standard events (Meta Pixel reference table)
+
+Source: https://developers.facebook.com/documentation/meta-pixel/reference.md (also reached via https://developers.facebook.com/docs/meta-pixel/reference, identical content) and https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md.
+
+The Pixel reference page states: *"You can use the Meta Pixel's `fbq('track')` function to track the following standard events."* The conversion-tracking page states custom conversions can track actions *"beyond the 17 standard events"* - the table below has exactly 17 rows.
+
+| `event_name` | Description (docs' own wording) | Object properties listed | Required | Advantage+ catalog ads requirement | Promoted Object `custom_event_type` |
+| --- | --- | --- | --- | --- | --- |
+| `AddPaymentInfo` | "When payment information is added in the checkout flow. *A person clicks on a save billing information button.*" | `content_ids`, `contents`, `currency`, `value` | Optional | (none listed) | `ADD_PAYMENT_INFO` |
+| `AddToCart` | "When a product is added to the shopping cart. *A person clicks on an add to cart button.*" | `content_ids`, `content_type`, `contents`, `currency`, `value` | Optional | `contents` (per this table) | `ADD_TO_CART` |
+| `AddToWishlist` | "When a product is added to a wishlist. *A person clicks on an add to wishlist button.*" | `content_ids`, `contents`, `currency`, `value` | Optional | (none listed) | `ADD_TO_WISHLIST` |
+| `CompleteRegistration` | "When a registration form is completed. *A person submits a completed subscription or signup form.*" | `currency`, `value` | Optional | (none listed) | `COMPLETE_REGISTRATION` |
+| `Contact` | "When a person initiates contact with your business via telephone, SMS, email, chat, etc. *A person submits a question about a product.*" | (none listed) | Optional | (none listed) | `CONTACT` |
+| `CustomizeProduct` | "When a person customizes a product. *A person selects the color of a t-shirt.*" | (none listed) | Optional | (none listed) | `CUSTOMIZE_PRODUCT` |
+| `Donate` | "When a person donates funds to your organization or cause. *A person adds a donation to the Humane Society to their cart.*" | (none listed) | Optional | (none listed) | *(empty - no value given in the table)* |
+| `FindLocation` | "When a person searches for a location of your store via a website or app, with an intention to visit the physical location. *A person wants to find a specific product in a local store.*" | (none listed) | Optional | (none listed) | `FIND_LOCATION` |
+| `InitiateCheckout` | "When a person enters the checkout flow prior to completing the checkout flow. *A person clicks on a checkout button.*" | `content_ids`, `contents`, `currency`, `num_items`, `value` | Optional | (none listed) | `INITIATE_CHECKOUT` |
+| `Lead` | "When a sign up is completed. *A person clicks on pricing.*" | `currency`, `value` | Optional | (none listed) | `LEAD` |
+| `Purchase` | "When a purchase is made or checkout flow is completed. *A person has finished the purchase or checkout flow and lands on thank you or confirmation page.*" | `content_ids`, `content_type`, `contents`, `currency`, `num_items`, `value` | **Required: `currency` and `value`** (docs' exact wording: *"Required: `currency` and `value`"*) | `contents` or `content_ids` | `PURCHASE` |
+| `Schedule` | "When a person books an appointment to visit one of your locations. *A person selects a date and time for a tennis lesson.*" | (none listed) | Optional | (none listed) | `SCHEDULE` |
+| `Search` | "When a search is made. *A person searches for a product on your website.*" | `content_ids`, `content_type`, `contents`, `currency`, `search_string`, `value` | Optional | `contents` or `content_ids` | `SEARCH` |
+| `StartTrial` | "When a person starts a free trial of a product or service you offer. *A person selects a free week of your game.*" | `currency`, `predicted_ltv`, `value` | Optional | (none listed) | `START_TRIAL` |
+| `SubmitApplication` | "When a person applies for a product, service, or program you offer. *A person applies for a credit card, educational program, or job.*" | (none listed) | Optional | (none listed) | `SUBMIT_APPLICATION` |
+| `Subscribe` | "When a person applies to a start a paid subscription for a product or service you offer. *A person subscribes to your streaming service.*" | `currency`, `predicted_ltv`, `value` | Optional | (none listed) | `SUBSCRIBE` |
+| `ViewContent` | "A visit to a web page you care about (for example, a product page or landing page). `ViewContent` tells you if someone visits a web page's URL, but not what they see or do on that page. *A person lands on a product details page.*" | `content_ids`, `content_type`, `contents`, `currency`, `value` | Optional | `contents` or `content_ids` | `VIEW_CONTENT` |
+
+Source: https://developers.facebook.com/documentation/meta-pixel/reference.md
+
+**`PageView`** is not a row in the 17-event reference table above. Per https://developers.facebook.com/documentation/meta-pixel/get-started.md, the Pixel base code automatically calls `fbq('track', 'PageView')` on every page load: *"It also automatically tracks a single `PageView` conversion by calling the `fbq()` function each time it loads. We recommend that you leave this function call intact."* It can also be called explicitly. Per https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md, `PageView` events' recorded referrer URLs are the basis for **Custom Conversions**: *"Each time the Pixel loads, it automatically calls `fbq('track', 'PageView')` to track a PageView standard event. PageView standard events record the referrer URL of the page that triggered the function call."* None of the fetched Conversions API pages (`server-event.md`, `custom-data.md`, `using-the-api.md`, `deduplicate-pixel-and-server-events.md`) mention `PageView` as an event name or example.
+
+**Tracking call syntax** (Pixel), source https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md:
+- Standard events: `fbq('track', 'Purchase', {currency: "USD", value: 30.00});`
+- Custom events: `fbq('trackCustom', 'ShareDiscount', {promotion: 'share_discount_10%'});`
+- Deduplication `eventID` as 4th argument: `fbq('track', 'Purchase', {value: 12, currency: 'USD'}, {eventID: 'EVENT_ID'});` (source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/deduplicate-pixel-and-server-events.md)
+
+**No explicit "pixel-only" / "CAPI-only" labels** appear on any of the 17 standard events or on `PageView` in the fetched docs - all 17 are presented as usable identically for the `event_name` sent via the Conversions API (`server-event.md` says `event_name` is "A standard event or custom event name," pointing back to the same Pixel reference for the list). The one CAPI-only event actually labeled as such is `AppendAttribution` (see section 4 below).
+
+### 2. Object Properties / Standard Parameters usable with any (standard or custom) event
+
+Source: https://developers.facebook.com/documentation/meta-pixel/reference.md ("Object Properties" table, applies to "any custom events, and any standard events that support them") and https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md ("Object Properties" table, wording: *"You can include the following predefined object properties with any custom events and any standard events that support them"*).
+
+| Key | Type (per Pixel reference table) | Description | Per-event note |
+| --- | --- | --- | --- |
+| `content_category` | String | "Category of the page/product." | Optional |
+| `content_ids` | Array of integers or strings | "Product IDs associated with the event, such as SKUs (e.g. `['ABC123', 'XYZ789']`)." | - |
+| `content_name` | String | "Name of the page/product." | Optional |
+| `content_type` | String | "Either `product` or `product_group` based on the `content_ids` or `contents` being passed. If the IDs being passed in `content_ids` or `contents` parameter are IDs of products, then the value should be `product`. If product group IDs are being passed, then the value should be `product_group`. If no `content_type` is provided, Meta will match the event to every item that has the same ID, independent of its type." | - |
+| `contents` | Array of objects | "An array of JSON objects that contains the quantity and the International Article Number (EAN) when applicable, or other product or content identifier(s). `id` and `quantity` are the required fields. e.g. `[{'id': 'ABC123', 'quantity': 2}, {'id': 'XYZ789', 'quantity': 2}]`." | - |
+| `currency` | String | "The currency for the `value` specified." | - |
+| `num_items` | Integer | "Used with `InitiateCheckout` event. The number of items when checkout was initiated." | Used only with `InitiateCheckout` |
+| `predicted_ltv` | Integer, float | "Predicted lifetime value of a subscriber as defined by the advertiser and expressed as an exact value." | - |
+| `search_string` | String | "Used with the `Search` event. The string entered by the user for the search." | Used only with `Search` |
+| `status` | Boolean | "Used with the `CompleteRegistration` event, to show the status of the registration." | Optional; used only with `CompleteRegistration` |
+| `value` | Integer or float | "The value of a user performing this event to the business." | - |
+
+`conversion-tracking.md`'s equivalent table additionally documents `delivery_category` (not present in the Pixel reference table above):
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `delivery_category` | string | "Category of the delivery. Supported values: `in_store` — Purchase requires customer to enter to the store. `curbside` — Purchase requires curbside pickup. `home_delivery` — Purchase is delivered to the customer." |
+
+Source: https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md
+
+Also from the same page, on `value`: *"Required for purchase events or any events that utilize value optimization. A numeric value associated with the event. This must represent a monetary amount."* - this required-for wording is broader than the reference table's Purchase-only "Required" flag.
+
+**Custom Properties**: *"If our predefined object properties don't suit your needs, you can include your own, custom properties. Custom properties can be used with both standard and custom events, and can help you further define custom audiences."* Example given: `compared_product: 'recommended-banner-shoes'` combined with `delivery_category: 'in_store'`. Constraint noted: *"if you want to use data included in event parameters when defining custom audiences, key values must not contain any spaces."* Source: https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md
+
+### 3. Custom events
+
+Source: https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md
+
+- Definition: *"custom events, which are visitor actions that you have defined and that you report by calling a Pixel function."*
+- Tracking call: `fbq('trackCustom', 'ShareDiscount', {promotion: 'share_discount_10%'});`
+- Naming constraint (only one found in the docs): *"Custom event names must be strings, and cannot exceed 50 characters in length."* No allowed-character set, case-sensitivity rule, or reserved-name list is documented anywhere in the fetched pages (see Contradictions and gaps).
+- Custom events "also support parameters, which you can include to provide additional information about each custom event" - the same Object Properties / custom_data keys and Custom Properties described in section 2 apply.
+- Custom events can be used to define Custom Audiences (link given, not fetched - out of this catalog's scope).
+- The 50-character limit statement is only found on the Pixel `conversion-tracking` page; it is not restated on any Conversions API page fetched (`server-event.md`, `custom-data.md`, `using-the-api.md`).
+
+### 4. `AppendAttribution` - a CAPI-only, standardized event name
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution/reference.md
+
+- *"This API is in Beta with limited access. If you do not have access, contact your Meta representative."*
+- *"This page documents the event parameters for the `AppendAttribution` Conversions API event."*
+- `event_name` row: *"Expected value: `AppendAttribution`. **Note**: This name is standardized. Do not change it."*
+- *"AppendAttribution events must be received less than 48 hours from the original event, such as `Purchase`."*
+- Requires (web events): `event_name` (fixed to `AppendAttribution`), `event_time`, `action_source`, `event_source_url`, and an `attribution_data` object with sub-fields `ad_id` (required), `touchpoint_ts` (required), `attribution_share` (required, 0-1, "0 if no credit... 1 if full credit"), `attribution_value` (required, "calculated as: `attribution_share`*value").
+- `custom_data.currency` is listed as required for this event (ISO 4217, example `USD`).
+- `original_event_data` sub-fields documented here: `event_name`, `event_time`, `order_id` (optional).
+- `event_id` is "Optional, but Highly Recommended" and must uniquely identify the post-attribution event, not the original event.
+- This is the only event in the fetched documentation set explicitly and unambiguously scoped to Conversions API only (no Pixel equivalent described).
+
+### 5. Custom conversions
+
+Source: https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md
+
+- Definition: *"custom conversions, which are visitor actions that are tracked automatically by parsing your website's referrer URLs."*
+- Mechanism: relies on the automatic `PageView` event's recorded referrer URL; a custom conversion is defined as e.g. any page containing `/thank-you` in its URL.
+- *"Since custom conversions rely on complete or partial URLs, you should make sure that you can define visitor actions exclusively based on unique strings in your website URLs."*
+- Creation: *"Custom conversions are created entirely within the Events Manager."* Rule-based creation via API: `POST /{AD_ACCOUNT_ID}/customconversions` with `pixel_rule` (URL/partial URL) and, at the ad set level, `promoted_object` referencing `pixel_id`, `pixel_rule`, `custom_event_type`.
+- **Limit**: *"The maximum number of custom conversions per ad account is 100."*
+- Ads Insights API limitations for custom conversions: *"Getting product ID breakdowns are not supported. Getting unique action counts are not supported."*
+- **Flagged custom conversions** (policy effective **September 2, 2025**): *"Beginning September 2, 2025, we will start to roll out more proactive restrictions on custom conversions that may suggest information not permitted under our terms. For example, any custom conversion suggesting specific health conditions (e.g., 'arthritis', 'diabetes') or financial status (e.g., 'credit score', 'high income') will be flagged and prevented from being used to run ad campaigns."* Effects: cannot use flagged custom conversions in new campaigns; the API field `is_unavailable` returns `true` on flagged custom conversions (example: `{"is_unavailable": true, "id": "30141209892193360"}`). Resolution paths: create a new/different custom conversion, duplicate the campaign, or request a review via Ads Manager or Events Manager.
+- Relation to custom events: any tracked event (standard or custom) can be surfaced via URL-based custom conversions if its resulting page view matches a rule; alternatively, custom conversions can target any standard or custom event directly through Events Manager (implied by *"further refine custom audiences that rely on standard or custom events"*).
+
+### 6. Full "Standard Parameters" (`custom_data`) key table
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md - table header: *"This table lists all standard parameters users can send to Meta."* Columns are Website / App / Offline; blank cells mean the docs list no equivalent name for that channel.
+
+| Website key | App key | Offline key | Description (docs' own wording) |
+| --- | --- | --- | --- |
+| `availability` | `fb_availability` | `availability` | "Value must be `available_soon`, `for_rent`, `for_sale`, `off_market`, `recently_sold` or `sale_pending`." |
+| `body_style` | `fb_body_style` | `body_style` | "Body style of the vehicle: `CONVERTIBLE`, `COUPE`, `HATCHBACK`, `MINIVAN`, `TRUCK`, `SUV`, `SEDAN`, `VAN`, `WAGON`, `CROSSOVER`, `OTHER`." |
+| `checkin_date` | `fb_checkin_date` | `checkin_date` | "The date the user is wanting to check-in to the hotel in the hotel's time-zone. We accept dates in `YYYYMMDD`, `YYYY-MM-DD`, `YYYY-MM-DDThh:mmTZD` and `YYYY-MM-DDThh:mm:ssTZD`." |
+| `city` | `fb_city` | `city` | "Provide the city of the location from user intent." |
+| `condition_of_vehicle` | `fb_condition_of_vehicle` | `condition_of_vehicle` | "Condition of vehicle." |
+| `content_ids` | `fb_content_ids` | `content_ids` | "The content IDs associated with the event, such as product SKUs for items in an `AddToCart` event." |
+| `content_type` | `fb_content_type` | `content_type` | "Should be set to `product` or `product_group`: Use `product` if the keys you send represent products. Sent keys could be `content_ids` or `contents`. Use `product_group` if the keys you send in `content_ids` represent product groups. Product groups are used to distinguish products that are identical but have variations such as color, material, size or pattern." |
+| `contents` | `fb_contents` | `contents` | "A list of JSON objects that contain the product IDs associated with the event plus information about the products. Available fields: `id`, `quantity`, `item_price`, `delivery_category`." |
+| `country` | `fb_country` | `country` | "Provide the country of the location from user intent." |
+| `currency` | `fb_currency` | `currency` | "Required for purchase events. The currency for the `value` specified, if applicable. Currency must be a valid ISO 4217 three-digit currency code." |
+| `delivery_category` | `fb_delivery_category` | `delivery_category` | "Optional for purchase events. Type of delivery for a purchase event. Supported values are: `in_store` — Customer needs to enter the store to get the purchased product. `curbside` — Customer picks up their order by driving to a store and waiting inside their vehicle. `home_delivery` — Purchase is delivered to the customer's home." |
+| `departing_arrival_date` | `fb_departing_arrival_date` | `departing_arrival_date` | "The date and time for arrival at the destination of the outbound journey." |
+| `departing_departure_date` | `fb_departing_departure_date` | `departing_departure_date` | "The date and time for start of the outbound journey." |
+| `destination_airport` | `fb_destination_airport` | `destination_airport` | "Use official IATA code of destination airport." |
+| `destination_ids` | `fb_destination_ids` | `destination_ids` | "If you have a destination catalog, you can associate one or more destinations in your destination catalog with a specific hotel event." |
+| `dma_code` | `fb_dma_code` | `dma_code` | "The Designated Market Area (DMA) code, which the user looks at for offers." |
+| `drivetrain` | `fb_drivetrain` | `drivetrain` | "Drivetrain of the vehicle: `4X2`, `4X4`, `AWD`, `FWD`, `RWD`, `OTHER`, `NONE`." |
+| `exterior_color` | `fb_exterior_color` | `exterior_color` | "Exterior color." |
+| `fuel_type` | `fb_fuel_type` | `fuel_type` | "Fuel type of the vehicle: `DIESEL`, `ELECTRIC`, `FLEX`, `GASOLINE`, `HYBRID`, `PETROL`, `PLUGIN_HYBRID`, `OTHER`, `NONE`." |
+| `hotel_score` | `fb_hotel_score` | `hotel_score` | "An indicator representing the relative value of this hotel to the advertiser compared to its other hotels." |
+| `interior_color` | `fb_interior_color` | `interior_color` | "Interior color." |
+| `lead_event_source` | `lead_event_source` | `lead_event_source` | "Lead event source." |
+| `lease_end_date` | `fb_lease_end_date` | `lease_end_date` | "Specified using ISO 8601 date format: `YYYY-MM-DD`." |
+| `lease_start_date` | `fb_lease_start_date` | `lease_start_date` | "Allows us to recommend properties based off their date availability (using `available_dates_price_config` in the catalog), and improve the user landing experience (using template tags)." |
+| `listing_type` | `fb_listing_type` | `listing_type` | "Value must be `for_rent_by_agent`, `for_rent_by_owner`, `for_sale_by_agent`, `for_sale_by_owner`, `foreclosed`, `new_construction` or `new_listing`." |
+| `make` | `fb_make` | `make` | "Make or brand of the vehicle." |
+| `mileage.unit` | `fb_mileage.unit` | `mileage.unit` | "Mileage unit." |
+| `mileage.value` | `fb_mileage.value` | `mileage.value` | "Mileage value." |
+| `model` | `fb_model` | `model` | "Model of the vehicle." |
+| `neighborhood` | `fb_neighborhood` | `neighborhood` | "Neighborhood of interest." |
+| `net_revenue` | `net_revenue` | `net_revenue` | "The margin value of a conversion event." (no App-column equivalent name given; type not specified in this table) |
+| `num_adults` | `fb_num_adults` | `num_adults` | "Number of adults that will be staying." |
+| `num_children` | `fb_num_children` | `num_children` | "Number of children that will be staying." |
+| `num_infants` | `fb_num_infants` | `num_infants` | "Number of infants that will be staying." |
+| `num_items` | `fb_num_items` | `num_items` | "Use only with `InitiateCheckout` events. The number of items that a user tries to buy during checkout." |
+| `order_id` | `fb_order_id` | `order_id` | "The order ID for this transaction as a string." |
+| `origin_airport` | `fb_origin_airport` | `origin_airport` | "Use official IATA code of departure airport." |
+| `postal_code` | `fb_postal_code` | `postal_code` | "Postal code." |
+| `predicted_ltv` | `predicted_ltv` | `predicted_ltv` | "The predicted lifetime value of a conversion event." |
+| `preferred_baths_range` | `fb_preferred_baths_range` | `preferred_baths_range` | "Number of bathrooms chosen as range." |
+| `preferred_beds_range` | `fb_preferred_beds_range` | `preferred_beds_range` | "Number of bedrooms chosen as range." |
+| `preferred_neighborhoods` | `fb_preferred_neighborhoods` | `preferred_neighborhoods` | "Preferred neighborhoods." |
+| `preferred_num_stops` | `fb_preferred_num_stops` | `preferred_num_stops` | "Indicate the preferred number of stops the user is looking for." |
+| `preferred_price_range` | `fb_preferred_price_range` | `preferred_price_range` | "Preferred price range for vehicle. Min/max, up to 2 decimals." |
+| `preferred_star_ratings` | `fb_preferred_star_ratings` | `preferred_star_ratings` | "A tuple of minimum and maximum hotel star rating that a user is filtering for." |
+| `price` | `fb_price` | `price` | "Cost and currency of the vehicle. Format the price as the cost, followed by the ISO currency code, with a space between cost and currency." |
+| `product_catalog_id` | `product_catalog_id` | `product_catalog_id` | "Product catalog id." |
+| `property_type` | `fb_property_type` | `property_type` | "Must be `apartment`, `condo`, `house`, `land`, `manufactured`, `other` or `townhouse`." |
+| `region` | `fb_region` | `region` | "State, district, or region of interest." |
+| `returning_arrival_date` | `fb_returning_arrival_date` | `returning_arrival_date` | "The date and time when the return journey is done." |
+| `returning_departure_date` | `fb_returning_departure_date` | `returning_departure_date` | "The date and time for start of the return journey." |
+| `search_string` | `fb_search_string` | `search_string` | "Use only with `Search` events. A search query made by a user." |
+| `state_of_vehicle` | `fb_state_of_vehicle` | `state_of_vehicle` | "State of vehicle." |
+| `suggested_destinations` | `fb_suggested_destinations` | `suggested_destinations` | "Suggested destinations." |
+| `suggested_home_listings` | `fb_suggested_home_listings` | `suggested_home_listings` | "Suggested home listings." |
+| `suggested_hotels` | `fb_suggested_hotels` | `suggested_hotels` | "Suggested hotels." |
+| `suggested_jobs` | `fb_suggested_jobs` | `suggested_jobs` | "Suggested jobs." |
+| `suggested_local_service_businesses` | `fb_suggested_local_service_businesses` | `suggested_local_service_businesses` | "Suggested local service businesses." |
+| `suggested_location_based_items` | `fb_suggested_location_based_items` | `suggested_location_based_items` | "Suggested location based items." |
+| `suggested_vehicles` | `fb_suggested_vehicles` | `suggested_vehicles` | "Suggested vehicles." |
+| `transmission` | `fb_transmission` | `transmission` | "Transmission of the vehicle:: `AUTOMATIC`, `MANUAL`, `OTHER`, `NONE`." |
+| `travel_class` | `fb_travel_class` | `travel_class` | "Must be `economy`, `premium`, `business` or `first`." |
+| `travel_end` | `fb_travel_end` | `travel_end` | "Travel end date." |
+| `travel_start` | `fb_travel_start` | `travel_start` | "Travel start date." |
+| `trim` | `fb_trim` | `trim` | "Max characters: 50." |
+| `user_bucket` | `fb_user_bucket` | `user_bucket` | "User bucket." |
+| `value` | `_valueToSum` | `value` | "Required for purchase events or any events that utilize value optimization. A numeric value associated with the event. This must represent a monetary amount." |
+| `vin` | `fb_vin` | `vin` | "VIN." |
+| `year` | `fb_year` | `year` | "Year the vehicle was launched in `yyyy` format." |
+| *(none)* | *(none)* | `item_number` | "Unique identifier to distinguish events within the same order or transaction." - **`item_number` has no Website column entry; per this table it is an Offline-only parameter.** |
+| *(none)* | `ad_type` | *(none)* | "Ad type." (App-only) |
+| *(none)* | `fb_content` | *(none)* | "A list of JSON object that contains the International Article Number (EAN) when applicable, or other product or content identifier(s) as well as quantities and prices of the products. Required: `id`, `quantity`." (App-only equivalent of `contents`) |
+| *(none)* | `fb_content_id` | *(none)* | "International Article Number (EAN) when applicable, or other product or content identifier(s). For multiple product ids: e.g. `[\"1234\",\"5678\"]`." (App-only equivalent of `content_ids`) |
+| *(none)* | `fb_description` | *(none)* | "A string description." (App-only) |
+| *(none)* | `fb_level` | *(none)* | "Level of a game." (App-only) |
+| *(none)* | `fb_max_rating_value` | *(none)* | "Upper bounds of a rating scale, for example 5 on a 5 star scale." (App-only) |
+| *(none)* | `fb_payment_info_available` | *(none)* | "`1` for yes, `0` for no." (App-only) |
+| *(none)* | `fb_registration_method` | *(none)* | "Facebook, Email, Twitter, etc." (App-only) |
+| *(none)* | `fb_success` | *(none)* | "`1` for yes, `0` for no.." (App-only) |
+| *(none)* | `_valueToSum` | *(none)* | "Numeric value of individual event to be summed in reporting." (App-only, duplicate row of the App-column `value` mapping) |
+
+Note: this single table is the union of ecommerce, automotive, real estate, travel, and hotel verticals - it is the complete "Standard Parameters" list the custom-data.md page documents, not a web-ecommerce-filtered subset, per the assignment's "be exhaustive" instruction.
+
+### 7. `contents` array item fields - what is and is not documented
+
+Every source consulted defines the same two required sub-fields and caps the rest at four total fields:
+
+- https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md: *"Available fields: `id`, `quantity`, `item_price`, `delivery_category`."*
+- https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md: *"Array of JSON objects that contains the International Article Number (EAN) when applicable or other product or content identifier(s) associated with the event, and quantities and prices of the products. **Required**: `id` and `quantity`."*
+- https://developers.facebook.com/documentation/meta-pixel/reference.md: *"`id` and `quantity` are the required fields."*
+
+No fetched page documents `title`, `brand`, or `category` as fields of a `contents` array item. See Contradictions and gaps.
+
+### 8. `content_type` and Advantage+ catalog ads (dynamic ads) requirements
+
+Source: https://developers.facebook.com/documentation/meta-pixel/get-started/advantage-catalog-ads.md
+
+- *"Before you can set up Advantage+ catalog ads, you must first be tracking the following standard events. You must also include a parameter object with specific object properties with each tracked event."*
+
+| Required event | Required object properties (this page's own table) |
+| --- | --- |
+| `AddToCart` | "Either `content_ids` or `contents`" |
+| `Purchase` | "Either `content_ids` or `contents`" |
+| `ViewContent` | "Either `content_ids` or `contents`" |
+
+This page's required-events table does **not** mention `content_type` as a required property at all, and does **not** list `Search` among the events needing catalog parameters (contrast with the Pixel reference table in section 1, which lists `content_type` as an available - not required - property, and lists `Search` as needing `contents` or `content_ids` "for Advantage+ catalog ads"). Per `content_type`'s own description (section 2/6): if omitted, *"Meta will match the event to every item that has the same ID, independent of its type"* - i.e. the docs describe `content_type` as a disambiguator rather than an absolute requirement, even for catalog ads.
+
+- `content_ids` usage for catalog ads: *"its value should correspond to the product ID or product IDs associated with the action. IDs must match the IDs found in your product catalog. Values can be either single IDs, or an array of IDs."*
+- `contents` usage for catalog ads: *"you must include the `id` property, with the product ID or product IDs as its value, and include the `quantity` property with a number of product items being added to cart or purchased. IDs must match the IDs found in your product catalog. `contents` property value must be an array of objects."*
+
+### 9. Value optimization guide
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/value-optimization.md
+
+- *"Value optimization works for all standard and custom events on the Sales objective."*
+- *"Value and currency should be added to existing events you want to use value optimization for. If you use the Meta Pixel and the Conversions API, ensure that the parameters are added to both sources and are consistent across both sources."*
+- Definitions given verbatim: **Value**: *"A numerical figure associated with an event. The value should be correlated to your true business goal... Our system values conversions proportional to the value that is passed back."* **Currency**: *"The unit or standard used to express the value specified. Currency must be a valid ISO 4217 three-digit currency code."*
+- Pixel code sample: `fbq("track", "<EVENT_NAME>", {value: 10.00, currency: "USD"});`
+- CAPI code sample: `custom_data: {"currency": "USD", "value": "142.52"}` - note `value` is sent here as a **string** in this example, whereas other CAPI examples on `using-the-api.md` send it as a bare **number** (e.g. `123.45`, `100.2`, `50.5`). See Contradictions and gaps.
+
+### 10. Server event parameters (envelope around `custom_data`)
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/server-event.md
+
+| Parameter | Required? | Description (docs' wording, condensed) |
+| --- | --- | --- |
+| `event_name` (string) | **Required** | "A standard event or custom event name." Used with `event_id` for dedup against Pixel's `event`/`eventID`. |
+| `event_time` (integer) | **Required** | "A Unix timestamp in seconds indicating when the actual event occurred... may be earlier than the time you send the event... up to 7 days before you send an event... You must send this date in GMT time zone." Error + entire request rejected if `event_time` > 7 days in the past. |
+| `user_data` (object) | **Required** | Customer info map, see Customer Information Parameters (out of this catalog's scope). |
+| `custom_data` (object) | **Optional** | "A map that includes additional business data about the event." Points to the Standard Parameters page (section 6 above). |
+| `event_source_url` (string) | **Optional**, but *"required for website events shared using the Conversions API"* | "The browser URL where the event happened. The URL should match the verified domain." |
+| `opt_out` (boolean) | Optional | "A flag that indicates we should not use this event for ads delivery optimization. If set to `true`, we only use the event for attribution." |
+| `event_id` (string) | Optional (recommended for dedup) | "This ID can be any unique string chosen by the advertiser." |
+| `action_source` (string) | **Required** | Allowed values: `email`, `website`, `app`, `phone_call`, `chat`, `physical_store`, `system_generated`, `business_messaging`, `other`. |
+| `data_processing_options` (array) | Optional | Current accepted value: `LDU`. |
+| `data_processing_options_country` (integer) | Required if `LDU` sent | `1` = USA, `0` = geolocate. |
+| `data_processing_options_state` (integer) | Required in some cases | `1000` = California, `0` = geolocate. |
+| `app_data` (object) | Required for app events | Out of web scope. |
+| `extinfo` (object, sub-param of `app_data`) | Required for app events | Out of web scope. |
+| `referrer_url` (string) | Optional | "The HTTP referrer header as observed by the page triggering the Conversions API or Meta Pixel event." |
+| `original_event_data` (object) | Optional | For associating a delayed event with a past acquisition event; see Original Event Data Parameters page (not fetched in full). |
+| `customer_segmentation` (enum) | Optional | Values: `new_customer_to_business`, `new_customer_to_business_line`, `new_customer_to_product_area`, `new_customer_to_medium`, `existing_customer_to_business`, `existing_customer_to_business_line`, `existing_customer_to_product_area`, `existing_customer_to_medium`, `customer_in_loyalty_program`. |
+
+Note on `action_source`: *"All action source values enable ad measurement and custom audience creation capabilities. All action sources enable ad optimization capabilities."* (This differs from `append-attribution/reference.md`'s own restatement of `action_source`, which instead says *"All action sources except `physical_store` enable ad optimization capabilities"* - see Contradictions and gaps.)
+
+### 11. Main body / request envelope
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/main-body.md
+
+- `data` (array\<object\>, **Required**): "An array of server event objects."
+- `test_event_code` (string, Optional): "Code used to verify that your server events are received correctly by Facebook."
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/using-the-api.md
+
+- Endpoint: `POST https://graph.facebook.com/{API_VERSION}/{PIXEL_ID}/events?access_token={TOKEN}`
+- Batch: *"You can send up to 1,000 events in `data`... If any event you send in a batch is invalid, we reject the entire batch."*
+- `event_time` window: up to 7 days in the past; *"For offline and physical store events with `physical_store` as `action_source`, you should upload transactions within 62 days of the conversion."*
+- `test_event_code`: *"should be used only for testing... Events sent with `test_event_code` are not dropped. They flow into Events Manager."*
+- Example payload shows `custom_data.currency` sent lowercase (`"usd"`) in one sample and uppercase (`"USD"`) in another, within the same page (no normalization rule stated - see Contradictions and gaps).
+
+### 12. Deduplication (Pixel vs Conversions API for the same event)
+
+Source: https://developers.facebook.com/documentation/ads-commerce/conversions-api/deduplicate-pixel-and-server-events.md
+
+- Two dedup methods documented:
+  1. **Event ID + event name (recommended)**: Pixel `eventID` (4th `fbq` arg) must equal CAPI `event_id`; Pixel `event` must equal CAPI `event_name`. *"If we find the same server key combination (`event_id` and `event_name`) and browser key combination (`eventID` and `event`) sent to the same Pixel ID within 48 hours, we discard the subsequent events."* *"If a server and browser/app event arrive at approximately the same time (that is, within 5 minutes of each other), we favor the browser/app event."* Generally *"we generally prefer the event that is received first."*
+  2. **`fbp` or `external_id`**: matched together with `event_name` across browser and server events. Limitations: *"it only works for deduplicating events sent first from the browser and then through the server... Does not deduplicate events when only using one event source."*
+- Example Pixel calls with `eventID`: `fbq('track', 'Purchase', {...}, {eventID: 'EVENT_ID'});`, `fbq('trackSingle', 'SPECIFIC_PIXEL_ID', 'Purchase', {...}, {eventID: 'EVENT_ID'});`, and the no-JS image pixel form `<img src="https://www.facebook.com/tr?id=PIXEL_ID&ev=Purchase&eid=EVENT_ID"/>`.
+- Empty-parameter events can still be deduplicated: `fbq('track', 'Lead', {}, {eventID: 'EVENT_ID'});`
+
+## Contradictions and gaps
+
+- **`AddToCart` and Advantage+ catalog ads - direct contradiction between two Meta pages.** The Pixel Standard Events reference table (https://developers.facebook.com/documentation/meta-pixel/reference.md) states `AddToCart`'s "Required for Advantage+ catalog ads" property is `contents` only (no `content_ids` alternative given). The dedicated catalog-ads guide (https://developers.facebook.com/documentation/meta-pixel/get-started/advantage-catalog-ads.md) states the requirement for `AddToCart` is "Either `content_ids` or `contents`". These two Meta pages disagree on whether `content_ids` alone satisfies the `AddToCart` catalog-ads requirement.
+- **`Search` present in one catalog-ads requirement list, absent from the other.** The Pixel reference table lists `Search` as requiring `contents` or `content_ids` "for Advantage+ catalog ads" (https://developers.facebook.com/documentation/meta-pixel/reference.md). The dedicated Advantage+ catalog ads guide's required-events table lists only `AddToCart`, `Purchase`, and `ViewContent` - `Search` does not appear at all (https://developers.facebook.com/documentation/meta-pixel/get-started/advantage-catalog-ads.md).
+- **`content_type` requirement for dynamic/catalog ads is not actually documented as required anywhere fetched.** The assignment brief asks what `content_type` is required for (dynamic ads), but no fetched page states `content_type` as a required field for Advantage+ catalog ads - the dedicated catalog-ads guide's required-properties table omits it entirely, and `content_type`'s own definition (https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md and https://developers.facebook.com/documentation/meta-pixel/reference.md) frames it as optional disambiguation ("If no `content_type` is provided, Meta will match the event to every item that has the same ID, independent of its type"), not as a hard requirement.
+- **`contents` array item fields: `title`, `brand`, `category` not found.** Three independent sources (https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md, https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md, https://developers.facebook.com/documentation/meta-pixel/reference.md) each cap the documented `contents` item fields at `id`, `quantity`, `item_price`, `delivery_category` (the custom-data.md page is the only one naming all four; the other two name only `id`/`quantity` as required). No fetched page lists `title`, `brand`, or `category` as `contents` item fields. The interactive Payload Helper page (https://developers.facebook.com/documentation/ads-commerce/conversions-api/payload-helper.md) returned no static field list to check against. This may exist in catalog/product-feed schema documentation rather than event-parameter documentation, but that page was not located under the ads-commerce llms.txt index searched.
+- **`predicted-lifetime-value.md` guide could not be retrieved.** https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value.md returns HTTP 500 consistently - confirmed on 3 separate curl attempts (both `.md` and non-`.md` URL forms) and via WebFetch, all returning either the generic Meta "Sorry, something went wrong" error page or a raw HTTP 500 with no body. This page is listed in the ads-commerce llms.txt index (https://developers.facebook.com/documentation/ads-commerce/llms.txt) under the exact URL that fails, so the index itself does not resolve to working content for this guide. `predicted_ltv`'s parameter-level documentation was still recovered from `custom-data.md` and the Pixel reference table (section 6/2), but the dedicated integration guide's content (event sequencing, per-event usage rules, examples) is a genuine gap.
+- **No documented character-set or reserved-name rule for custom event names.** Only one constraint is documented anywhere: "cannot exceed 50 characters in length" and "must be strings" (https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md). No page documents allowed characters (e.g., whether spaces, unicode, or punctuation are permitted in the event name itself - the "no spaces" rule found only applies to custom-property key values used for Custom Audiences, not to the event name), case-sensitivity behavior, or a list of reserved/disallowed names (e.g., whether a custom event can reuse one of the 17 standard event names). This 50-character rule is also not restated on any Conversions API (server-side) page fetched - only the Pixel `conversion-tracking` page states it, so it is unconfirmed whether the same limit is enforced server-side for CAPI-only custom events.
+- **No documented limit on the number of distinct custom events** (as opposed to the 100/ad-account limit that is explicitly documented for custom conversions). No fetched page states a cap on how many distinct custom event names an advertiser may define/send.
+- **`currency` format wording is internally imprecise but consistent.** Three independently-fetched pages (https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md, https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/value-optimization.md, https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution/reference.md) all use the identical phrase "Currency must be a valid ISO 4217 three-digit currency code" - despite ISO 4217 currency codes actually being three-**letter** alphabetic codes (e.g. `USD`), not digits. This is quoted verbatim as a finding, not corrected, since it is the documentation's own consistent wording across three separate pages.
+- **`value` sent as string vs number - inconsistent across examples on the same/sibling pages.** https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/value-optimization.md's CAPI example sends `"value": "142.52"` (string). https://developers.facebook.com/documentation/ads-commerce/conversions-api/using-the-api.md's examples send `"value": 123.45`, `100.2`, and `50.5` (bare numbers) in three different request bodies on the same page, and elsewhere on that same page a placeholder example uses `"value": "<VALUE>"` (string placeholder). No page states definitively whether `value` must be numeric JSON type or numeric string, only that its logical type is "Integer or float" / "integer or float" (per section 2/6 tables).
+- **`action_source` optimization-capability wording differs between two pages.** https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/server-event.md states "All action sources enable ad optimization capabilities." https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution/reference.md states "All action sources except `physical_store` enable ad optimization capabilities" for the same `action_source` field description. These two Meta pages give contradictory statements about whether `physical_store` enables ad optimization.
+- **`item_number` is documented only as an Offline parameter**, per the custom-data.md table's blank Website/App columns for that row - it is not part of the website `custom_data` key set despite being named explicitly in the assignment's list of keys to research.
+- **`net_revenue` has no documented type, format, or required-for-which-event note** beyond "The margin value of a conversion event" (https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md) - no other fetched page mentions `net_revenue` at all.
+- **No ads-commerce llms.txt entries exist for "custom events," "standard events," or "custom conversions" as page titles** - grepping the full 711-line index (https://developers.facebook.com/documentation/ads-commerce/llms.txt) for those terms returned zero matches; this content lives exclusively under the separate `/docs/meta-pixel/` and `/documentation/meta-pixel/` tree, which is not indexed by the ads-commerce llms.txt or by any llms.txt discovered from the root index (https://developers.facebook.com/llms.txt lists no dedicated Meta Pixel llms.txt section).
+- **`Donate`'s Promoted Object `custom_event_type` value is blank** in the Pixel reference table (https://developers.facebook.com/documentation/meta-pixel/reference.md) - every other of the 17 standard events has a value in that column; `Donate`'s cell is empty in the raw table markup.
