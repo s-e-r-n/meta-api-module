@@ -170,8 +170,10 @@ describe("post_events_to_graph", () => {
   it("throws a transport error carrying every failure after three 5xx answers", async () => {
     const fetch_mock = vi
       .fn()
-      .mockResolvedValue(
-        json_response(500, { error: { message: "down", code: 1 } }),
+      .mockImplementation(() =>
+        Promise.resolve(
+          json_response(500, { error: { message: "down", code: 1 } }),
+        ),
       );
     vi.stubGlobal("fetch", fetch_mock);
     const outcome = settled(post_events_to_graph(config, request));
