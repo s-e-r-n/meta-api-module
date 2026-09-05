@@ -1,11 +1,13 @@
 import "server-only";
 import * as z from "zod/mini";
 import { engine_config } from "./config";
+import { wire_custom_data } from "./custom_data";
 import {
   event_schema,
   issue_list,
   type meta_event,
   type meta_event_input,
+  recommendation_warnings,
 } from "./event_schema";
 import {
   type graph_error,
@@ -78,30 +80,19 @@ const wire_event_of = (
   const hashed = hashed_user_data(event.user_data ?? {});
   warnings.push(
     ...hashed.warnings.map((warning) => `data[${index}].${warning}`),
+    ...recommendation_warnings(event).map(
+      (warning) => `data[${index}]: ${warning}`,
+    ),
   );
-  const action_source = event.action_source ?? "website";
-  if (
-    action_source === "website" &&
-    hashed.user_data.client_user_agent === undefined
-  ) {
-    warnings.push(
-      `data[${index}].user_data.client_user_agent missing: Meta documents it as required for website events`,
-    );
-  }
-  const currency = event.custom_data?.currency;
   return {
     ...event,
     event_time: event.event_time ?? now_s,
-    action_source,
+    action_source: event.action_source ?? "website",
     user_data: hashed.user_data,
     custom_data:
       event.custom_data === undefined
         ? undefined
-        : {
-            ...event.custom_data,
-            currency:
-              currency === undefined ? undefined : currency.toUpperCase(),
-          },
+        : wire_custom_data(event.custom_data),
   };
 };
 

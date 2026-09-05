@@ -3,12 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   meta_capi_rejected_error,
   send_parsed_meta_events,
-} from "./send_meta_events";
-import { submit_browser_meta_event } from "./submit_browser_meta_event";
+} from "../meta-capi/send_meta_events";
+import { submit_browser_meta_event } from "../meta-capi/submit_browser_meta_event";
 
 vi.mock("next/headers", () => ({ headers: vi.fn(), cookies: vi.fn() }));
-vi.mock("./send_meta_events", async (import_actual) => ({
-  ...(await import_actual<typeof import("./send_meta_events")>()),
+vi.mock("../meta-capi/send_meta_events", async (import_actual) => ({
+  ...(await import_actual<typeof import("../meta-capi/send_meta_events")>()),
   send_parsed_meta_events: vi.fn(),
 }));
 

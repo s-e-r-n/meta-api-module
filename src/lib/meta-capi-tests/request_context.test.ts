@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { fbc_from_click_id, visitor_identity } from "./visitor_identity";
+import { request_context } from "../meta-capi/request_context";
+import { fbc_from_click_id } from "../meta-capi/user_data";
 
 const now_ms = 1_700_000_000_000;
 
@@ -8,9 +9,9 @@ const identity_for = (options: {
   cookies?: Record<string, string>;
   event_source_url?: string;
 }) =>
-  visitor_identity({
+  request_context({
     headers: new Headers(options.headers ?? {}),
-    cookie: (name) => options.cookies?.[name],
+    cookie: (name: string) => options.cookies?.[name],
     event_source_url: options.event_source_url ?? "https://shop.example/",
     now_ms,
   });
@@ -21,7 +22,7 @@ describe("fbc_from_click_id", () => {
   });
 });
 
-describe("visitor_identity", () => {
+describe("request_context", () => {
   it("prefers Vercel's forwarded header, then x-real-ip, then the first x-forwarded-for entry", () => {
     expect(
       identity_for({

@@ -1,11 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { meta_capi_config_error } from "./config";
-import type { meta_event_input } from "./event_schema";
-import { post_events_to_graph } from "./graph_api_client";
-import { send_inbound_meta_events, send_meta_events } from "./send_meta_events";
+import { meta_capi_config_error } from "../meta-capi/config";
+import type { meta_event_input } from "../meta-capi/event_schema";
+import { post_events_to_graph } from "../meta-capi/graph_api_client";
+import {
+  send_inbound_meta_events,
+  send_meta_events,
+} from "../meta-capi/send_meta_events";
 
-vi.mock("./graph_api_client", async (import_actual) => ({
-  ...(await import_actual<typeof import("./graph_api_client")>()),
+vi.mock("../meta-capi/graph_api_client", async (import_actual) => ({
+  ...(await import_actual<typeof import("../meta-capi/graph_api_client")>()),
   post_events_to_graph: vi.fn(),
 }));
 

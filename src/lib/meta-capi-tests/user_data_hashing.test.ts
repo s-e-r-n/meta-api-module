@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hashed_user_data, sha256_hex } from "./user_data_hashing";
+import { hashed_user_data, sha256_hex } from "../meta-capi/user_data_hashing";
 
 const hash_of = {
   john_smith:

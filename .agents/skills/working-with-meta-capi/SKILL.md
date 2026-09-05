@@ -1,24 +1,43 @@
 ---
 name: working-with-meta-capi
-description: Send, verify and debug Meta Conversions API (CAPI) events from a Next.js app with the meta-capi engine in src/lib/meta-capi - tagging a page or a gesture, hashing rules, what Graph really answers, and how to read Meta's docs as markdown. Use this whenever the work touches Meta, Facebook, Instagram, pixel, dataset, Events Manager, conversions, CAPI, server-side tracking, fbclid, fbp, fbc, event match quality, a Purchase or Lead event, or any tracking tag on a Next.js page, even when nobody says "Conversions API".
+description: Send, verify and debug Meta Conversions API (CAPI) events from a Next.js app with the meta-capi engine in src/lib/meta-capi - tagging a page or a gesture, the site policy file, hashing rules, what Graph really answers, and how to read Meta's docs as markdown. Use this whenever the work touches Meta, Facebook, Instagram, pixel, dataset, Events Manager, conversions, CAPI, server-side tracking, fbclid, fbp, fbc, event match quality, a Purchase or Lead event, a required field on a form's event, or any tracking tag on a Next.js page, even when nobody says "Conversions API".
 ---
 
 # Working with the Meta Conversions API
 
-The engine lives in `src/lib/meta-capi/`. Read `README.md` at the project root for the user-facing manual. This skill holds what the manual leaves out: what Meta's API actually does, verified live on 2026-09-05, and the traps that produce double or missing events.
+The engine lives in `src/lib/meta-capi/`. Read `README.md` at the project root first: it is the manual, and its section 3 maps plain-language requests to the exact edit. This skill holds what the manual leaves out: what Meta's API actually does, verified live on 2026-09-05, and the traps that produce double or missing events.
 
 ## Where things go
 
-| Need                                                          | Do                                                                                                                                                                        |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| An event when something is shown                              | `<MetaEvent event_name="..." custom_data={...} />` in the Server Component that shows it. Never in a layout, never in a Server Component's body as a function call        |
-| An event on a click or submit                                 | `void track_meta_event({...})` inside the handler of a Client Component                                                                                                   |
-| An event born on the server (webhook, payment callback, cron) | `send_meta_events([...])` from `@/lib/meta-capi/server`, with `event_source_url`, `client_ip_address` and `client_user_agent` you stored at the time of the user's action |
-| JSON arriving from outside your code (a relay, a partner system) | `send_inbound_meta_events(payload)` from `@/lib/meta-capi/server`; it parses the unknown body and answers with the same result shape |
-| A custom event | declare its name once with `custom_event("Name")`; a plain string literal is refused by the types unless it is one of the 19 standard names |
-| Configuration                                                 | `META_CAPI_*` environment variables only. Never read a vault or hard-code a dataset id                                                                                    |
+| Need | Do |
+| --- | --- |
+| An event when something is shown | `<MetaEvent event_name="..." custom_data={...} />` in the Server Component that shows it. Never in a layout, never in a Server Component's body as a function call |
+| An event on a click or submit | `void track_meta_event({...})` inside the handler of a Client Component |
+| An event born on the server (webhook, payment callback, cron) | `send_meta_events([...])` from `@/lib/meta-capi/server`, with `event_source_url`, `client_ip_address` and `client_user_agent` stored at the time of the user's action |
+| JSON arriving from outside the code | `send_inbound_meta_events(payload)` from `@/lib/meta-capi/server`; it parses the unknown body and answers with the same result shape |
+| A field the site requires or recommends on an event, or a custom event | One line in `src/lib/meta-capi/policy.ts`. Nothing else in the engine is site-specific |
+| Configuration | `META_CAPI_*` environment variables only. Never read a vault or hard-code a dataset id |
 
 The main page stays a Server Component. `"use client"` lives in the tag's own file and nowhere above it.
+
+## How the engine is cut
+
+One Meta documentation page, or one technical boundary, is one file. A rule lives in one table, and both the TypeScript type and the runtime check derive from it.
+
+| File | Decision it holds |
+| --- | --- |
+| `event_catalog.ts` | The 19 standard names, what Meta requires and recommends per event and per `action_source`, the rule evaluator |
+| `policy.ts` | What this site requires and recommends, and its custom events |
+| `user_data.ts` | The identity keys, which are hashed, how each is normalized, the `fbc` and `fbp` formats |
+| `custom_data.ts` | The commerce keys, the custom property rule, the currency case |
+| `event_schema.ts` | The envelope (`event_time`, `action_source`, `event_source_url`, privacy flags), the assembly of the tables into schemas, the declaration types |
+| `user_data_hashing.ts` | SHA-256 over the normalized values, server only |
+| `browser_context.ts` | What the browser contributes and its contract |
+| `request_context.ts` | What the HTTP request says about the client machine: IP, user agent, cookies |
+| `config.ts`, `graph_api_client.ts`, `send_meta_events.ts` | Environment, transport, the send pipeline and its result |
+| `submit_browser_meta_event.ts`, `track_meta_event.ts`, `meta_event.tsx` | The client-server seam, the client entry, the tag |
+
+Unit tests sit in the sibling folder `src/lib/meta-capi-tests/`, one file per module. Playwright owns `tests/`.
 
 ## Why the tag is built the way it is
 
@@ -37,7 +56,7 @@ Per event: `event_name`, `event_time` (unix seconds, at most 7 days old; older g
 
 Verified live: `PageView` is accepted; `value` as a JSON number and lowercase `currency` are accepted; a website event without `client_user_agent` is accepted although the docs call it required, so the engine warns instead of refusing.
 
-Typing: `event_name` is a discriminated union of the 19 standard names plus branded custom names, so `Purchase` without `value` and `currency`, or `AppendAttribution` without `attribution_data`, fails `tsc` before it fails at runtime. Invalid data can only enter through `send_inbound_meta_events`, which parses.
+Typing: `event_name` is a discriminated union of the 19 standard names plus the custom names of `policy.ts`, so `Purchase` without `value` and `currency`, `AppendAttribution` without `attribution_data`, or a `Lead` without the `em` the policy requires, fails `tsc` before it fails at runtime. Invalid data can only enter through `send_inbound_meta_events`, which parses.
 
 Full key tables and hashing rules: `references/payload-shape.md`.
 

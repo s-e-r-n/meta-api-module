@@ -1,9 +1,10 @@
 import { describe, expectTypeOf, it } from "vitest";
 import type {
+  browser_event,
   browser_meta_event,
-  custom_event_name,
+  declarations,
   meta_event_input,
-} from "./event_schema";
+} from "../meta-capi/event_schema";
 
 describe("declaration types", () => {
   it("offers the standard names and refuses a misspelt one", () => {
@@ -58,14 +59,45 @@ describe("declaration types", () => {
     }>().not.toExtend<meta_event_input>();
   });
 
-  it("takes a custom event only through its branded name", () => {
+  it("derives the site policy into the declaration types", () => {
+    type fixture_policy = {
+      readonly "*": {
+        readonly requires: { readonly custom_data: readonly ["value"] };
+      };
+      readonly Lead: {
+        readonly requires: { readonly user_data: readonly ["em"] };
+      };
+      readonly ShareDiscount: {
+        readonly requires: { readonly custom_data: readonly ["promotion"] };
+      };
+    };
+    type under_policy = declarations<browser_event, fixture_policy>;
     expectTypeOf<{
-      event_name: custom_event_name;
-      custom_data: { promotion: string };
-    }>().toExtend<browser_meta_event>();
+      event_name: "ViewContent";
+      custom_data: { value: number };
+    }>().toExtend<under_policy>();
+    expectTypeOf<{ event_name: "ViewContent" }>().not.toExtend<under_policy>();
+    expectTypeOf<{
+      event_name: "Lead";
+      custom_data: { value: number };
+      user_data: { em: string };
+    }>().toExtend<under_policy>();
+    expectTypeOf<{
+      event_name: "Lead";
+      custom_data: { value: number };
+    }>().not.toExtend<under_policy>();
     expectTypeOf<{
       event_name: "ShareDiscount";
-    }>().not.toExtend<browser_meta_event>();
+      custom_data: { value: number; promotion: string };
+    }>().toExtend<under_policy>();
+    expectTypeOf<{
+      event_name: "ShareDiscount";
+      custom_data: { value: number };
+    }>().not.toExtend<under_policy>();
+    expectTypeOf<{
+      event_name: "Unknown";
+      custom_data: { value: number };
+    }>().not.toExtend<under_policy>();
   });
 
   it("never lets the browser carry the identifiers the server reads from the request", () => {

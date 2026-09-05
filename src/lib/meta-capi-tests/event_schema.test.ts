@@ -1,13 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { standard_event_names } from "../meta-capi/event_catalog";
 import {
   browser_event_schema,
-  browser_submission_schema,
-  custom_event,
   event_schema,
   issue_list,
-  meta_capi_invalid_event_error,
-  standard_event_names,
-} from "./event_schema";
+} from "../meta-capi/event_schema";
 
 const now = Math.floor(Date.now() / 1000);
 
@@ -40,13 +37,9 @@ describe("event_schema", () => {
     expect(event_schema.safeParse(website_event).success).toBe(true);
   });
 
-  it("accepts a custom event name up to 50 characters and refuses longer or empty names", () => {
+  it("refuses a name that is neither standard nor declared in the policy, and refuses an empty one", () => {
     expect(
-      event_schema.safeParse({ ...website_event, event_name: "x".repeat(50) })
-        .success,
-    ).toBe(true);
-    expect(
-      issue_paths({ ...website_event, event_name: "x".repeat(51) }),
+      issue_paths({ ...website_event, event_name: "ShareDiscount" }),
     ).toContain("event_name");
     expect(issue_paths({ ...website_event, event_name: "" })).toContain(
       "event_name",
@@ -229,16 +222,6 @@ describe("event_schema", () => {
   });
 });
 
-describe("custom_event", () => {
-  it("returns the name it was given and refuses an empty or overlong one", () => {
-    expect(custom_event("ShareDiscount")).toBe("ShareDiscount");
-    expect(() => custom_event("")).toThrow(meta_capi_invalid_event_error);
-    expect(() => custom_event("x".repeat(51))).toThrow(
-      meta_capi_invalid_event_error,
-    );
-  });
-});
-
 describe("browser_event_schema", () => {
   it("refuses everything the server stamps itself", () => {
     const refused = browser_event_schema.safeParse({
@@ -272,32 +255,5 @@ describe("browser_event_schema", () => {
         opt_out: false,
       }).success,
     ).toBe(true);
-  });
-});
-
-describe("browser_submission_schema", () => {
-  it("needs an absolute page URL and an event id next to the event", () => {
-    const event = { event_name: "PageView" };
-    expect(
-      browser_submission_schema.safeParse({
-        event,
-        browser: {
-          event_source_url: "https://shop.example/?a=1",
-          event_id: "id-1",
-        },
-      }).success,
-    ).toBe(true);
-    expect(
-      browser_submission_schema.safeParse({
-        event,
-        browser: { event_source_url: "/relative", event_id: "id-1" },
-      }).success,
-    ).toBe(false);
-    expect(
-      browser_submission_schema.safeParse({
-        event,
-        browser: { event_source_url: "https://shop.example", event_id: "" },
-      }).success,
-    ).toBe(false);
   });
 });

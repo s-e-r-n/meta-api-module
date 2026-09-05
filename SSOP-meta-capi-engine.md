@@ -91,3 +91,37 @@ Sort:
 - 2026-09-05 `meta_event_input` and `browser_meta_event` are discriminated unions over the 19 standard names plus a zod-branded `custom_event_name`; `Purchase` requires `custom_data.value` and `custom_data.currency`, `AppendAttribution` requires `attribution_data` and `custom_data.currency`, at the type level and in `declaration_rules`. The shapes table row "a misspelt standard name silently becoming a custom event" is now enforced.
 - 2026-09-05 `send_meta_events` keeps the typed signature; `send_parsed_meta_events` (module-internal, used by the server action) and `send_inbound_meta_events` (public, unknown JSON envelope) share the same core, so the route handler no longer holds a schema of its own.
 - 2026-09-05 `MetaEvent` calls `track_declared_meta_event` with the declaration it re-parsed from its fire key; `track_meta_event` stays the typed public entry.
+
+## Amendment 2026-09-05, re-cut of the shape side by decision
+
+Shapes added:
+
+| Data | Origin | Destination | Boundary | Shape | Illegal state it forbids |
+| --- | --- | --- | --- | --- | --- |
+| `event_rules` | `event_catalog.ts` (Meta) and `policy.ts` (this site) | `event_schema` checks and the declaration types | none, literal tables | `{ requires?: { custom_data?: string[], user_data?: string[], attribution_data?: true, event_source_url?: true }, recommends?: same }` keyed by event name or `"*"` | A requirement stated twice, once for the type and once for the runtime |
+| `policy` | `policy.ts`, the one file an agent edits for this site | `event_schema` | `satisfies event_rule_table` at compile time | `{ [event_name or "*"]: event_rules }`; a key that is not a standard name declares a custom event | A custom event used without being declared; a site rule living inside the engine |
+| `declared_event_name` | catalog names plus policy keys | `event_name` | none, a literal union | `standard_event_name \| custom names of the policy` | A misspelt or undeclared name compiling |
+
+Order, replacing the `event_schema.ts` and `user_data_hashing.ts` rows:
+
+| Produces | Needs | Parameters | Returns | File |
+| --- | --- | --- | --- | --- |
+| `standard_event_names`, `standard_event_rules`, `attribution_data_schema`, `missing_fields`, types `event_rules`, `event_rule_table`, `field_requirements` | zod | `subject`, `requirements` | missing paths | `src/lib/meta-capi/event_catalog.ts` |
+| `policy` | `event_rule_table` | - | the site's table | `src/lib/meta-capi/policy.ts` |
+| `user_data_schema`, `browser_user_data_schema`, `hashed_identifiers`, `clear_identifiers`, `normalized_country`, `fbc_from_click_id`, types | zod | - | schemas, rows, formats | `src/lib/meta-capi/user_data.ts` |
+| `custom_data_schema`, `wire_custom_data`, types | zod | `custom_data` | schema, wire copy | `src/lib/meta-capi/custom_data.ts` |
+| `event_schema`, `browser_event_schema`, `recommendation_warnings`, `issue_list`, `meta_capi_invalid_event_error`, types `meta_event_input`, `browser_meta_event`, `declarations` | catalog, policy, user_data, custom_data, zod | - | envelope schemas and the declaration types | `src/lib/meta-capi/event_schema.ts` |
+| `sha256_hex`, `hashed_user_data` | node:crypto, `hashed_identifiers`, `clear_identifiers` | `user_data` | `{ user_data, warnings }` | `src/lib/meta-capi/user_data_hashing.ts` |
+| `browser_context`, `browser_context_schema` | window, document, crypto, zod | - | the browser's contribution and its contract | `src/lib/meta-capi/browser_context.ts` |
+| `request_context` (was `visitor_identity`) | Headers, cookies, `fbc_from_click_id` | request view | `{ client_ip_address?, client_user_agent?, fbp?, fbc? }` | `src/lib/meta-capi/request_context.ts` |
+
+Sort: 1. `event_catalog`, `user_data`, `custom_data`, `config`, `browser_context`, `request_context` 2. `policy`, `user_data_hashing` 3. `event_schema` 4. `graph_api_client` 5. `send_meta_events` 6. `submit_browser_meta_event` 7. `track_meta_event` 8. `MetaEvent` 9. barrels.
+
+Ownership added:
+
+| Fact | Owner | Readers | Writer |
+| --- | --- | --- | --- |
+| Which fields this site requires or recommends per event, and which custom events exist | `policy.ts` | `event_schema` at both boundaries, the declaration types | the agent editing the site |
+| Which fields Meta requires or recommends per event | `event_catalog.ts` | same | the engine's maintainer, from Meta's documentation |
+
+Tests move to `src/lib/meta-capi-tests/`, one file per module, importing `../meta-capi/<module>`.

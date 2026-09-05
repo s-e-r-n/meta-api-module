@@ -1,19 +1,29 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
+import * as z from "zod/mini";
+import {
+  type browser_context,
+  browser_context_schema,
+} from "./browser_context";
 import { engine_config } from "./config";
 import {
-  type browser_submission,
-  browser_submission_schema,
+  type browser_event,
+  browser_event_schema,
   issue_list,
   type meta_event,
 } from "./event_schema";
+import { request_context } from "./request_context";
 import {
   meta_capi_rejected_error,
   type meta_send_ok,
   send_parsed_meta_events,
 } from "./send_meta_events";
-import { visitor_identity } from "./visitor_identity";
+
+const browser_submission_schema = z.strictObject({
+  event: browser_event_schema,
+  browser: browser_context_schema,
+});
 
 const refused = (path: string, message: string) =>
   new meta_capi_rejected_error({
@@ -22,9 +32,10 @@ const refused = (path: string, message: string) =>
     issues: [{ index: 0, path, message }],
   });
 
-export const submit_browser_meta_event = async (
-  submission: browser_submission,
-): Promise<meta_send_ok> => {
+export const submit_browser_meta_event = async (submission: {
+  event: browser_event;
+  browser: browser_context;
+}): Promise<meta_send_ok> => {
   const parsed = browser_submission_schema.safeParse(submission);
   if (!parsed.success) {
     throw new meta_capi_rejected_error({
@@ -49,7 +60,7 @@ export const submit_browser_meta_event = async (
     cookies(),
   ]);
   const now_ms = Date.now();
-  const identity = visitor_identity({
+  const context = request_context({
     headers: request_headers,
     cookie: (name) => cookie_store.get(name)?.value,
     event_source_url: browser.event_source_url,
@@ -62,7 +73,7 @@ export const submit_browser_meta_event = async (
     action_source: "website",
     event_source_url: browser.event_source_url,
     referrer_url: browser.referrer_url,
-    user_data: { ...event.user_data, ...identity },
+    user_data: { ...event.user_data, ...context },
   };
   const result = await send_parsed_meta_events([server_event]);
   if (!result.ok) throw new meta_capi_rejected_error(result);

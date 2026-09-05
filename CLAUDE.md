@@ -26,7 +26,7 @@ Green lint means nothing about types, and a green build means nothing about beha
 
 ## Tests
 
-**Vitest owns the unit tests beside the source.** `src/lib/utils.test.ts` sits next to `src/lib/utils.ts`. Pure logic, helpers, and synchronous components.
+**Vitest owns the unit tests, in a sibling folder of the module they cover.** `src/lib/meta-capi/` is tested by `src/lib/meta-capi-tests/`, one test file per module, importing `../meta-capi/<module>`. Business files and test files never share a folder. Pure logic, helpers, and synchronous components.
 
 **Playwright owns `tests/`**, at the project root, outside `src/`. Real browser, real app, real user flow. Its config boots the dev server on its own, so `npm run e2e` needs nothing running first.
 

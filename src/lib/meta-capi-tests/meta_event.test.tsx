@@ -2,14 +2,14 @@ import { act, render } from "@testing-library/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { StrictMode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MetaEvent } from "./meta_event";
-import { track_declared_meta_event } from "./track_meta_event";
+import { MetaEvent } from "../meta-capi/meta_event";
+import { track_declared_meta_event } from "../meta-capi/track_meta_event";
 
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn(),
   useSearchParams: vi.fn(),
 }));
-vi.mock("./track_meta_event", () => ({
+vi.mock("../meta-capi/track_meta_event", () => ({
   track_declared_meta_event: vi.fn(),
 }));
 

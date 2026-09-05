@@ -1,6 +1,7 @@
 import "server-only";
+import { click_id_in_fbc, fbc_from_click_id } from "./user_data";
 
-export type visitor_identity = {
+export type request_context = {
   client_ip_address?: string;
   client_user_agent?: string;
   fbp?: string;
@@ -15,9 +16,6 @@ type request_view = {
   event_source_url: string;
   now_ms: number;
 };
-
-export const fbc_from_click_id = (fbclid: string, now_ms: number) =>
-  `fb.1.${now_ms}.${fbclid}`;
 
 const present = (value: string | null | undefined) => {
   const trimmed = value?.trim();
@@ -37,8 +35,6 @@ const click_id_in_url = (event_source_url: string) => {
   }
 };
 
-const click_id_in_fbc = (fbc: string | undefined) => fbc?.split(".")[3];
-
 const fbc_for = (
   cookie_fbc: string | undefined,
   event_source_url: string,
@@ -54,12 +50,12 @@ const fbc_for = (
   return cookie_fbc;
 };
 
-export const visitor_identity = ({
+export const request_context = ({
   headers,
   cookie,
   event_source_url,
   now_ms,
-}: request_view): visitor_identity => ({
+}: request_view): request_context => ({
   client_ip_address: client_ip(headers),
   client_user_agent: present(headers.get("user-agent")),
   fbp: present(cookie("_fbp")),

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { engine_config } from "./config";
+import type { engine_config } from "../meta-capi/config";
 import {
   meta_capi_transport_error,
   post_events_to_graph,
-} from "./graph_api_client";
+} from "../meta-capi/graph_api_client";
 
 const config: ReturnType<typeof engine_config> = {
   dataset_id: "123",

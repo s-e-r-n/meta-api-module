@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { engine_config, meta_capi_config_error } from "./config";
+import { engine_config, meta_capi_config_error } from "../meta-capi/config";
 
 const complete = {
   META_CAPI_DATASET_ID: "1202835294532393",

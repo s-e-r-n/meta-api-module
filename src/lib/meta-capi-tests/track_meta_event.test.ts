@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { browser_context } from "./browser_context";
-import { meta_capi_invalid_event_error } from "./event_schema";
-import { submit_browser_meta_event } from "./submit_browser_meta_event";
-import { track_meta_event } from "./track_meta_event";
+import { browser_context } from "../meta-capi/browser_context";
+import { meta_capi_invalid_event_error } from "../meta-capi/event_schema";
+import { submit_browser_meta_event } from "../meta-capi/submit_browser_meta_event";
+import { track_meta_event } from "../meta-capi/track_meta_event";
 
-vi.mock("./browser_context", () => ({ browser_context: vi.fn() }));
-vi.mock("./submit_browser_meta_event", () => ({
+vi.mock("../meta-capi/browser_context", () => ({ browser_context: vi.fn() }));
+vi.mock("../meta-capi/submit_browser_meta_event", () => ({
   submit_browser_meta_event: vi.fn(),
 }));
 

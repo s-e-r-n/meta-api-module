@@ -1,28 +1,23 @@
 import * as z from "zod/mini";
-
-export const standard_event_names = [
-  "AddPaymentInfo",
-  "AddToCart",
-  "AddToWishlist",
-  "CompleteRegistration",
-  "Contact",
-  "CustomizeProduct",
-  "Donate",
-  "FindLocation",
-  "InitiateCheckout",
-  "Lead",
-  "Purchase",
-  "Schedule",
-  "Search",
-  "StartTrial",
-  "SubmitApplication",
-  "Subscribe",
-  "ViewContent",
-  "PageView",
-  "AppendAttribution",
-] as const;
-
-export type standard_event_name = (typeof standard_event_names)[number];
+import {
+  type commerce_key,
+  type custom_data_input,
+  custom_data_schema,
+  type custom_property,
+} from "./custom_data";
+import {
+  action_source_rules,
+  type attribution_data_input,
+  attribution_data_schema,
+  type event_rules,
+  missing_fields,
+  type rule_subject,
+  type standard_event_name,
+  standard_event_names,
+  standard_event_rules,
+} from "./event_catalog";
+import { policy } from "./policy";
+import { browser_user_data_schema, user_data_schema } from "./user_data";
 
 export class meta_capi_invalid_event_error extends Error {}
 
@@ -40,27 +35,29 @@ export const issue_list = (error: z.core.$ZodError): issue[] =>
     return [{ path: path.join("."), message: issue.message }];
   });
 
+type rule_lookup = { readonly [event_name: string]: event_rules | undefined };
+
+const catalog: rule_lookup = standard_event_rules;
+const site: rule_lookup = policy;
+const action_sources: rule_lookup = action_source_rules;
+
+const declared_names = new Set<string>([
+  ...standard_event_names,
+  ...Object.keys(policy).filter((name) => name !== "*"),
+]);
+
 const seven_days_s = 7 * 86_400;
 const clock_skew_s = 600;
 
-const event_name_schema = z.string().check(z.minLength(1), z.maxLength(50));
+const event_name_text = z.string().check(z.minLength(1), z.maxLength(50));
 
-const custom_event_name_schema = event_name_schema.brand<"custom_event">();
-
-export type custom_event_name = z.infer<typeof custom_event_name_schema>;
-
-export const custom_event = (name: string): custom_event_name => {
-  const parsed = custom_event_name_schema.safeParse(name);
-  if (!parsed.success) {
-    const details = issue_list(parsed.error)
-      .map(({ message }) => message)
-      .join("; ");
-    throw new meta_capi_invalid_event_error(
-      `Custom event name refused: ${details}`,
-    );
-  }
-  return parsed.data;
-};
+const event_name_schema = z.string().check(
+  z.maxLength(50),
+  z.refine(
+    (name) => declared_names.has(name),
+    "unknown event name, declare it in policy.ts",
+  ),
+);
 
 const event_time_schema = z.int().check(
   z.gte(0),
@@ -83,111 +80,6 @@ const action_source_schema = z.enum([
 ]);
 
 export type action_source = z.infer<typeof action_source_schema>;
-
-const identifier_list = z.union([z.string(), z.array(z.string())]);
-
-const hashed_identifier_shape = {
-  em: z.optional(identifier_list),
-  ph: z.optional(identifier_list),
-  fn: z.optional(identifier_list),
-  ln: z.optional(identifier_list),
-  ge: z.optional(identifier_list),
-  db: z.optional(identifier_list),
-  ct: z.optional(identifier_list),
-  st: z.optional(identifier_list),
-  zp: z.optional(identifier_list),
-  country: z.optional(identifier_list),
-  external_id: z.optional(identifier_list),
-};
-
-const browser_user_data_shape = {
-  ...hashed_identifier_shape,
-  subscription_id: z.optional(z.string()),
-  fb_login_id: z.optional(z.int()),
-  lead_id: z.optional(z.int()),
-};
-
-const user_data_shape = {
-  ...browser_user_data_shape,
-  client_ip_address: z.optional(z.string()),
-  client_user_agent: z.optional(z.string()),
-  fbc: z.optional(z.string()),
-  fbp: z.optional(z.string()),
-};
-
-export const user_data_schema = z.strictObject(user_data_shape);
-const browser_user_data_schema = z.strictObject(browser_user_data_shape);
-
-export type user_data_input = z.infer<typeof user_data_schema>;
-
-const delivery_category_schema = z.enum([
-  "in_store",
-  "curbside",
-  "home_delivery",
-]);
-
-const content_schema = z.strictObject({
-  id: z.string().check(z.minLength(1)),
-  quantity: z.int().check(z.gte(1)),
-  item_price: z.optional(z.number().check(z.gte(0))),
-  delivery_category: z.optional(delivery_category_schema),
-});
-
-const commerce_shape = {
-  value: z.optional(z.number().check(z.gte(0))),
-  currency: z.optional(
-    z
-      .string()
-      .check(
-        z.regex(
-          /^[A-Za-z]{3}$/,
-          "currency must be a three-letter ISO 4217 code",
-        ),
-      ),
-  ),
-  content_ids: z.optional(z.array(z.string())),
-  content_type: z.optional(z.enum(["product", "product_group"])),
-  contents: z.optional(z.array(content_schema)),
-  content_name: z.optional(z.string()),
-  content_category: z.optional(z.string()),
-  order_id: z.optional(z.string()),
-  search_string: z.optional(z.string()),
-  num_items: z.optional(z.int().check(z.gte(0))),
-  predicted_ltv: z.optional(z.number()),
-  net_revenue: z.optional(z.number()),
-  status: z.optional(z.boolean()),
-  delivery_category: z.optional(delivery_category_schema),
-};
-
-const custom_property_schema = z.union([
-  z.string(),
-  z.number(),
-  z.boolean(),
-  z.array(z.union([z.string(), z.number()])),
-]);
-
-const custom_property_issue = (key: string, value: Record<string, unknown>) => {
-  if (/\s/.test(key)) return "custom_data keys must not contain whitespace";
-  if (key in commerce_shape) return undefined;
-  return custom_property_schema.safeParse(value[key]).success
-    ? undefined
-    : "a custom property must be a string, a number, a boolean, or a list of strings or numbers";
-};
-
-export const custom_data_schema = z.looseObject(commerce_shape).check((ctx) => {
-  for (const key of Object.keys(ctx.value)) {
-    const message = custom_property_issue(key, ctx.value);
-    if (message)
-      ctx.issues.push({
-        code: "custom",
-        message,
-        input: ctx.value,
-        path: [key],
-      });
-  }
-});
-
-export type custom_data_input = z.infer<typeof custom_data_schema>;
 
 const data_processing_shape = {
   data_processing_options: z.optional(z.array(z.literal("LDU"))),
@@ -216,20 +108,11 @@ const customer_segmentation_schema = z.enum([
 ]);
 
 const original_event_data_schema = z.strictObject({
-  event_name: z.optional(event_name_schema),
+  event_name: z.optional(event_name_text),
   event_time: z.optional(z.int().check(z.gte(0))),
   order_id: z.optional(z.string()),
   event_id: z.optional(z.string()),
 });
-
-const attribution_data_schema = z.strictObject({
-  ad_id: z.string().check(z.minLength(1)),
-  touchpoint_ts: z.int().check(z.gte(0)),
-  attribution_share: z.number().check(z.gte(0), z.lte(1)),
-  attribution_value: z.number().check(z.gte(0)),
-});
-
-export type attribution_data_input = z.infer<typeof attribution_data_schema>;
 
 const declaration_shape = {
   event_name: event_name_schema,
@@ -242,50 +125,60 @@ const declaration_shape = {
   attribution_data: z.optional(attribution_data_schema),
 };
 
-type declaration = {
+type declaration_value = rule_subject & {
   event_name: string;
-  custom_data?: { value?: number; currency?: string };
-  attribution_data?: attribution_data_input;
-  data_processing_options?: "LDU"[];
+  action_source?: string;
+  data_processing_options?: readonly "LDU"[];
   data_processing_options_country?: number;
 };
 
-const declaration_rules = (ctx: z.core.ParsePayload<declaration>) => {
-  const { value } = ctx;
-  const missing = (path: string[], message: string) =>
-    ctx.issues.push({ code: "custom", message, input: value, path });
-  if (value.event_name === "Purchase") {
-    if (value.custom_data?.value === undefined)
-      missing(["custom_data", "value"], "Purchase requires custom_data.value");
-    if (value.custom_data?.currency === undefined)
-      missing(
-        ["custom_data", "currency"],
-        "Purchase requires custom_data.currency",
-      );
-  }
-  if (value.event_name === "AppendAttribution") {
-    if (value.attribution_data === undefined)
-      missing(
-        ["attribution_data"],
-        "AppendAttribution requires attribution_data",
-      );
-    if (value.custom_data?.currency === undefined) {
-      missing(
-        ["custom_data", "currency"],
-        "AppendAttribution requires custom_data.currency",
-      );
+type rule_source = readonly [label: string, rules: event_rules | undefined];
+
+const declaration_sources = (value: declaration_value): rule_source[] => [
+  [value.event_name, catalog[value.event_name]],
+  [value.event_name, site[value.event_name]],
+  ["every event", site["*"]],
+];
+
+const envelope_sources = (value: declaration_value): rule_source[] => {
+  const source = value.action_source ?? "website";
+  return [[`${source} events`, action_sources[source]]];
+};
+
+const push_missing = (
+  ctx: z.core.ParsePayload<declaration_value>,
+  sources: rule_source[],
+) => {
+  for (const [label, rules] of sources) {
+    for (const path of missing_fields(ctx.value, rules?.requires)) {
+      ctx.issues.push({
+        code: "custom",
+        message: `${label} requires ${path.join(".")}`,
+        input: ctx.value,
+        path,
+      });
     }
   }
+};
+
+const declaration_rules = (ctx: z.core.ParsePayload<declaration_value>) => {
+  const { value } = ctx;
+  push_missing(ctx, declaration_sources(value));
   if (
     value.data_processing_options?.includes("LDU") &&
     value.data_processing_options_country === undefined
   ) {
-    missing(
-      ["data_processing_options_country"],
-      "Limited Data Use requires data_processing_options_country",
-    );
+    ctx.issues.push({
+      code: "custom",
+      message: "Limited Data Use requires data_processing_options_country",
+      input: value,
+      path: ["data_processing_options_country"],
+    });
   }
 };
+
+const envelope_rules = (ctx: z.core.ParsePayload<declaration_value>) =>
+  push_missing(ctx, envelope_sources(ctx.value));
 
 export const browser_event_schema = z
   .strictObject({
@@ -303,62 +196,99 @@ export const event_schema = z
     referrer_url: z.optional(z.string()),
     user_data: z.optional(user_data_schema),
   })
-  .check(declaration_rules, (ctx) => {
-    const { value } = ctx;
-    if (
-      (value.action_source ?? "website") === "website" &&
-      value.event_source_url === undefined
-    ) {
-      ctx.issues.push({
-        code: "custom",
-        message: "website events require event_source_url",
-        input: value,
-        path: ["event_source_url"],
-      });
-    }
-  });
-
-export const browser_context_schema = z.strictObject({
-  event_source_url: z.url(),
-  referrer_url: z.optional(z.string()),
-  event_id: z.string().check(z.minLength(1)),
-});
-
-export const browser_submission_schema = z.strictObject({
-  event: browser_event_schema,
-  browser: browser_context_schema,
-});
+  .check(declaration_rules, envelope_rules);
 
 export type meta_event = z.infer<typeof event_schema>;
 export type browser_event = z.infer<typeof browser_event_schema>;
-export type browser_context = z.infer<typeof browser_context_schema>;
-export type browser_submission = z.infer<typeof browser_submission_schema>;
 
-type required_for<name extends standard_event_name> = name extends "Purchase"
-  ? { custom_data: custom_data_input & { value: number; currency: string } }
-  : name extends "AppendAttribution"
-    ? {
-        attribution_data: attribution_data_input;
-        custom_data: custom_data_input & { currency: string };
-      }
-    : { custom_data?: custom_data_input };
+export const recommendation_warnings = (event: meta_event): string[] =>
+  [...declaration_sources(event), ...envelope_sources(event)].flatMap(
+    ([label, rules]) =>
+      missing_fields(event, rules?.recommends).map(
+        (path) =>
+          `${label}: ${path.join(".")} is recommended by Meta and missing`,
+      ),
+  );
 
-type declared_as<base, name extends string, extras> = Omit<
+type catalog_rules = typeof standard_event_rules;
+type site_rules = typeof policy;
+
+type rules_of<table, name> = name extends keyof table ? table[name] : never;
+
+type listed<rules, section extends string> = rules extends {
+  readonly requires: {
+    readonly [k in section]: readonly (infer key extends string)[];
+  };
+}
+  ? key
+  : never;
+
+type required_keys<pol, name, section extends string> =
+  | listed<rules_of<catalog_rules, name>, section>
+  | listed<rules_of<pol, name>, section>
+  | listed<rules_of<pol, "*">, section>;
+
+type requires_attribution<pol, name> =
+  | rules_of<catalog_rules, name>
+  | rules_of<pol, name>
+  | rules_of<pol, "*"> extends infer r
+  ? r extends { readonly requires: { readonly attribution_data: true } }
+    ? true
+    : never
+  : never;
+
+type required_custom<keys extends string> = {
+  [key in keys]-?: key extends commerce_key
+    ? Exclude<custom_data_input[key], undefined>
+    : custom_property;
+};
+
+type required_user<u, keys extends string> = {
+  [key in keys]-?: key extends keyof u ? Exclude<u[key], undefined> : never;
+};
+
+type custom_data_part<pol, name> = [
+  required_keys<pol, name, "custom_data">,
+] extends [never]
+  ? { custom_data?: custom_data_input }
+  : {
+      custom_data: custom_data_input &
+        required_custom<required_keys<pol, name, "custom_data">>;
+    };
+
+type user_data_part<u, pol, name> = [
+  required_keys<pol, name, "user_data">,
+] extends [never]
+  ? { user_data?: u }
+  : { user_data: u & required_user<u, required_keys<pol, name, "user_data">> };
+
+type attribution_part<pol, name> = [requires_attribution<pol, name>] extends [
+  never,
+]
+  ? { attribution_data?: attribution_data_input }
+  : { attribution_data: attribution_data_input };
+
+type user_data_of<base> = base extends { user_data?: infer u }
+  ? Exclude<u, undefined>
+  : never;
+
+type declared<base, pol, name extends string> = Omit<
   base,
-  "event_name" | keyof extras
+  "event_name" | "custom_data" | "user_data" | "attribution_data"
 > & {
   event_name: name;
-} & extras;
+} & custom_data_part<pol, name> &
+  user_data_part<user_data_of<base>, pol, name> &
+  attribution_part<pol, name>;
 
-type declarations<base> =
-  | {
-      [name in standard_event_name]: declared_as<
-        base,
-        name,
-        required_for<name>
-      >;
-    }[standard_event_name]
-  | declared_as<base, custom_event_name, { custom_data?: custom_data_input }>;
+type names_under<pol> =
+  | standard_event_name
+  | Exclude<keyof pol & string, "*" | standard_event_name>;
 
-export type meta_event_input = declarations<meta_event>;
-export type browser_meta_event = declarations<browser_event>;
+export type declarations<base, pol> = {
+  [name in names_under<pol>]: declared<base, pol, name>;
+}[names_under<pol>];
+
+export type declared_event_name = names_under<site_rules>;
+export type meta_event_input = declarations<meta_event, site_rules>;
+export type browser_meta_event = declarations<browser_event, site_rules>;
