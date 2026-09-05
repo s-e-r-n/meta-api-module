@@ -1,23 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  browser_event_schema,
-  event_schema,
-  issue_list,
-  recommendation_warnings,
-} from "../meta-capi/event_schema";
+import { person_identity_warning } from "../meta-capi/event_catalog";
+import { browser_event_schema, issue_list } from "../meta-capi/event_schema";
 
 vi.mock("../meta-capi/policy", () => ({
-  policy: {
-    custom_events: ["ShareDiscount"],
-    every_event: { requires: { custom_data: ["value", "currency"] } },
-    events: {
-      Lead: {
-        requires: { user_data: ["em"] },
-        recommends: { user_data: ["ph"] },
-      },
-      ShareDiscount: { requires: { custom_data: ["promotion"] } },
-    },
-  },
+  policy: { custom_events: ["ShareDiscount"] },
 }));
 
 const paths = (input: unknown) => {
@@ -28,64 +14,51 @@ const paths = (input: unknown) => {
 };
 
 describe("policy", () => {
-  it("makes a field required for every event", () => {
-    expect(paths({ event_name: "ViewContent" })).toEqual([
-      "custom_data.value",
-      "custom_data.currency",
-    ]);
+  it("declares a custom event by naming it, and refuses an undeclared one", () => {
     expect(
       browser_event_schema.safeParse({
-        event_name: "ViewContent",
-        custom_data: { value: 0, currency: "CHF" },
+        event_name: "ShareDiscount",
+        custom_data: { promotion: "x" },
       }).success,
     ).toBe(true);
+    expect(paths({ event_name: "Undeclared" })).toEqual(["event_name"]);
   });
 
-  it("makes a field required for one event", () => {
-    expect(
-      paths({ event_name: "Lead", custom_data: { value: 0, currency: "CHF" } }),
-    ).toEqual(["user_data.em"]);
+  it("requires nothing about the person", () => {
+    expect(browser_event_schema.safeParse({ event_name: "Lead" }).success).toBe(
+      true,
+    );
     expect(
       browser_event_schema.safeParse({
         event_name: "Lead",
-        custom_data: { value: 0, currency: "CHF" },
-        user_data: { em: "a@b.c" },
+        user_data: { ph: "+41791234567" },
       }).success,
     ).toBe(true);
   });
+});
 
-  it("declares a custom event by naming it", () => {
-    expect(
-      browser_event_schema.safeParse({
-        event_name: "ShareDiscount",
-        custom_data: { value: 0, currency: "CHF", promotion: "x" },
-      }).success,
-    ).toBe(true);
-    expect(
-      paths({
-        event_name: "ShareDiscount",
-        custom_data: { value: 0, currency: "CHF" },
-      }),
-    ).toEqual(["custom_data.promotion"]);
-    expect(
-      paths({
-        event_name: "Undeclared",
-        custom_data: { value: 0, currency: "CHF" },
-      }),
-    ).toEqual(["event_name"]);
+describe("person_identity_warning", () => {
+  it("names a conversion event that leaves without em, ph or a site external_id", () => {
+    expect(person_identity_warning("Lead", undefined)).toMatch(
+      /^Lead left without em, ph or a site external_id/,
+    );
+    expect(person_identity_warning("Schedule", { fn: "Mary" })).toMatch(
+      /^Schedule left without/,
+    );
+    expect(person_identity_warning("Purchase", { em: [] })).toMatch(
+      /^Purchase left without/,
+    );
   });
 
-  it("turns a recommendation into a warning at send time, never a refusal", () => {
-    const parsed = event_schema.safeParse({
-      event_name: "Lead",
-      event_source_url: "https://shop.example/",
-      custom_data: { value: 0, currency: "CHF" },
-      user_data: { em: "a@b.c", client_user_agent: "ua" },
-    });
-    expect(parsed.success).toBe(true);
-    if (!parsed.success) return;
-    expect(recommendation_warnings(parsed.data)).toEqual([
-      "Lead: user_data.ph is recommended by Meta and missing",
-    ]);
+  it("stays silent when any identifier is there, or when the event expects none", () => {
+    expect(person_identity_warning("Lead", { em: "a@b.c" })).toBeUndefined();
+    expect(
+      person_identity_warning("Lead", { ph: "+41791234567" }),
+    ).toBeUndefined();
+    expect(
+      person_identity_warning("Lead", { external_id: "crm-1" }),
+    ).toBeUndefined();
+    expect(person_identity_warning("Contact", undefined)).toBeUndefined();
+    expect(person_identity_warning("PageView", undefined)).toBeUndefined();
   });
 });

@@ -156,3 +156,14 @@ Tests move to `src/lib/meta-capi-tests/`, one file per module, importing `../met
 - `limited_data_use_part` and `server_envelope` unions tie `["LDU"]` to a country and `"website"` to `event_source_url` at the type level; the runtime rules were already there.
 - `post_events_to_graph`: three attempts, backoff `400 ms * 2^(n-1) * (0.5 + random)`, retried on network failure, 5xx, or `is_transient: true`; a non-transient refusal returns at once.
 - Identity cookies are `HttpOnly`.
+
+## Amendment 2026-09-05, the net
+
+- Reversal: `policy.ts` holds `custom_events` only. Site-level `requires`, `recommends` and `every_event` are gone; the declaration types derive requirements from the catalogue alone.
+- `person_identity_warning(event_name, user_data)` in `event_catalog.ts`: for `Lead`, `Schedule`, `CompleteRegistration`, `SubmitApplication`, `Purchase`, a send without `em`, `ph` or a site-given `external_id` adds a warning. Applied on the declaration before the engine merges its own identity, in `visitor_request.ts` and in `send_meta_events`.
+- `visitor_request.ts`: `send_within_visitor_request({ event, event_source_url, referrer_url?, event_id? })` is the one assembly for events inside a visitor's request; `submit_browser_meta_event` and `send_visitor_meta_event` both call it.
+- `send_visitor_meta_event(event, { event_source_url? })`: page URL from the argument, else `Referer`, else `META_CAPI_SITE_ORIGIN`, else refused; returns `meta_send_result`.
+
+| Fact | Owner | Readers | Writer |
+| --- | --- | --- | --- |
+| The page a form was posted from | the `Referer` header of the request | `send_visitor_meta_event` | the browser |

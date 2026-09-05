@@ -73,6 +73,17 @@ afterEach(() => {
 });
 
 describe("submit_browser_meta_event", () => {
+  it("warns, and still sends, when a conversion leaves without any person identifier", async () => {
+    const result = await submit_browser_meta_event({
+      ...submission,
+      event: { event_name: "Lead" },
+    });
+    expect(result.warnings).toEqual([
+      expect.stringMatching(/^Lead left without/),
+    ]);
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
   it("sends the visitor's external_id next to the one the site declares", async () => {
     await submit_browser_meta_event({
       ...submission,

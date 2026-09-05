@@ -13,9 +13,10 @@ The engine lives in `src/lib/meta-capi/`. Read `README.md` at the project root f
 | --- | --- |
 | An event when something is shown | `<MetaEvent event_name="..." custom_data={...} />` in the Server Component that shows it. Never in a layout, never in a Server Component's body as a function call |
 | An event on a click or submit | `void track_meta_event({...})` inside the handler of a Client Component |
+| An event inside a form's server action, in the visitor's own request | `send_visitor_meta_event({...})` from `@/lib/meta-capi/server`; page from `Referer`, identity from the request, cookies minted |
 | An event born on the server (webhook, payment callback, cron) | `send_meta_events([...])` from `@/lib/meta-capi/server`, with `event_source_url`, `client_ip_address` and `client_user_agent` stored at the time of the user's action |
 | JSON arriving from outside the code | `send_inbound_meta_events(payload)` from `@/lib/meta-capi/server`; it parses the unknown body and answers with the same result shape |
-| A field the site requires or recommends on an event, or a custom event | One line in `src/lib/meta-capi/policy.ts`, inside `define_policy({ custom_events, every_event, events })`. Nothing else in the engine is site-specific |
+| A custom event | One line in `src/lib/meta-capi/policy.ts`: `define_policy({ custom_events: ["Name"] })`. Nothing else is site-specific |
 | Configuration | `META_CAPI_*` environment variables only. Never read a vault or hard-code a dataset id |
 
 The main page stays a Server Component. `"use client"` lives in the tag's own file and nowhere above it.
@@ -27,7 +28,7 @@ One Meta documentation page, or one technical boundary, is one file. A rule live
 | File | Decision it holds |
 | --- | --- |
 | `event_catalog.ts` | The 19 standard names, what Meta requires and recommends per event and per `action_source`, the rule evaluator |
-| `policy.ts` | What this site requires and recommends, and its custom events |
+| `policy.ts` | This site's custom events, nothing else |
 | `user_data.ts` | The identity keys, which are hashed, how each is normalized, the `fbc` and `fbp` formats |
 | `custom_data.ts` | The commerce keys, the custom property rule, the currency case |
 | `event_schema.ts` | The envelope (`event_time`, `action_source`, `event_source_url`, privacy flags), the assembly of the tables into schemas, the declaration types |
@@ -35,7 +36,8 @@ One Meta documentation page, or one technical boundary, is one file. A rule live
 | `browser_context.ts` | What the browser contributes and its contract |
 | `request_context.ts` | What the HTTP request says about the client machine: IP, user agent, cookies |
 | `config.ts`, `graph_api_client.ts`, `send_meta_events.ts` | Environment, transport, the send pipeline and its result |
-| `submit_browser_meta_event.ts`, `track_meta_event.ts`, `meta_event.tsx` | The client-server seam, the client entry, the tag |
+| `visitor_request.ts` | How an event inside a visitor's request is completed and sent: identity from headers and cookies, cookies minted, the person-identity warning |
+| `submit_browser_meta_event.ts`, `send_visitor_meta_event.ts`, `track_meta_event.ts`, `meta_event.tsx` | The client-server seam, the form entry, the client entry, the tag |
 
 Unit tests sit in the sibling folder `src/lib/meta-capi-tests/`, one file per module. Playwright owns `tests/`.
 
@@ -57,7 +59,9 @@ Per event: `event_name`, `event_time` (unix seconds, at most 7 days old; older g
 
 Verified live: `PageView` is accepted; `value` as a JSON number and lowercase `currency` are accepted; a website event without `client_user_agent` is accepted although the docs call it required, so the engine warns instead of refusing.
 
-Typing, in the spirit of Rust: every state Meta or the policy would refuse, and that a type can express, is unrepresentable. `event_name` is a union of the 19 standard names and the policy's `custom_events`; `Purchase` needs `value` and `currency`; `AppendAttribution` needs `attribution_data`; `value` needs `currency`; `content_type` needs `content_ids` or `contents`; `num_items`, `search_string` and `status` exist only on `InitiateCheckout`, `Search` and `CompleteRegistration`; `currency` and `country` are the ISO enumerations Meta's own SDK validates against (`iso_codes.ts`, 179 and 249 codes); `ge` is `"f" | "m"`; `db` is `YYYY-MM-DD`; `["LDU"]` needs a country; a website event needs its URL; `event_time` is the `unix_seconds` newtype minted from a `Date`; a policy key that is neither standard nor declared is an error. What a type cannot know, the content of a string that came from a form, is parsed at the boundary and dropped with a warning. Invalid data can only enter through `send_inbound_meta_events`, which parses.
+The net: a hook catches what is present where it is placed; an absent field is absent, an event always goes. No identifier of the person is required anywhere; a conversion (`Lead`, `Schedule`, `CompleteRegistration`, `SubmitApplication`, `Purchase`) leaving without `em`, `ph` or a site `external_id` is sent and named in `warnings`. `PageView` and `ViewContent` are not sent on a single-page site. The main conversion is chosen in Ads Manager, never in code.
+
+Typing, in the spirit of Rust: every state Meta would refuse, and that a type can express, is unrepresentable. `event_name` is a union of the 19 standard names and the policy's `custom_events`; `Purchase` needs `value` and `currency`; `AppendAttribution` needs `attribution_data`; `value` needs `currency`; `content_type` needs `content_ids` or `contents`; `num_items`, `search_string` and `status` exist only on `InitiateCheckout`, `Search` and `CompleteRegistration`; `currency` and `country` are the ISO enumerations Meta's own SDK validates against (`iso_codes.ts`, 179 and 249 codes); `ge` is `"f" | "m"`; `db` is `YYYY-MM-DD`; `["LDU"]` needs a country; a website event needs its URL; `event_time` is the `unix_seconds` newtype minted from a `Date`; an undeclared event name is an error. What a type cannot know, the content of a string that came from a form, is parsed at the boundary and dropped with a warning. Invalid data can only enter through `send_inbound_meta_events`, which parses.
 
 Full key tables and hashing rules: `references/payload-shape.md`.
 

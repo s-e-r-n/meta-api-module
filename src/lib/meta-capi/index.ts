@@ -1,10 +1,5 @@
 export type { custom_data_input } from "./custom_data";
-export type {
-  event_rule_table,
-  event_rules,
-  field_requirements,
-  standard_event_name,
-} from "./event_catalog";
+export type { meta_capi_policy, standard_event_name } from "./event_catalog";
 export { standard_event_names } from "./event_catalog";
 export type {
   action_source,

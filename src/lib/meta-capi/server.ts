@@ -8,7 +8,12 @@ export type {
   field_requirements,
   standard_event_name,
 } from "./event_catalog";
-export { standard_event_names } from "./event_catalog";
+export {
+  define_policy,
+  events_expecting_a_person,
+  person_identity_keys,
+  standard_event_names,
+} from "./event_catalog";
 export type {
   action_source,
   browser_meta_event,
@@ -30,5 +35,9 @@ export {
   send_meta_events,
   type send_options,
 } from "./send_meta_events";
+export {
+  send_visitor_meta_event,
+  type visitor_send_options,
+} from "./send_visitor_meta_event";
 export type { user_data_input } from "./user_data";
 export { visitor_external_id } from "./visitor_external_id";

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import * as z from "zod/mini";
 import { engine_config } from "./config";
 import { wire_custom_data } from "./custom_data";
+import { person_identity_warning } from "./event_catalog";
 import {
   event_schema,
   issue_list,
@@ -133,10 +134,18 @@ const send_after_parse = async (
   return { ok: true, ...outcome.body, warnings };
 };
 
-export const send_meta_events = (
+export const send_meta_events = async (
   events: meta_event_input[],
   options: send_options = {},
-) => send_after_parse(events, options);
+): Promise<meta_send_result> => {
+  const result = await send_after_parse(events, options);
+  if (!result.ok) return result;
+  const warnings = events.flatMap((event, index) => {
+    const warning = person_identity_warning(event.event_name, event.user_data);
+    return warning === undefined ? [] : [`data[${index}]: ${warning}`];
+  });
+  return { ...result, warnings: [...result.warnings, ...warnings] };
+};
 
 export const send_parsed_meta_events = (
   events: meta_event[],

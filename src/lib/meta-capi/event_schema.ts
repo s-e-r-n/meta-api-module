@@ -45,11 +45,7 @@ export const issue_list = (error: z.core.$ZodError): issue[] =>
 
 type rule_lookup = { readonly [event_name: string]: event_rules | undefined };
 
-type site_view = {
-  readonly custom_events?: readonly string[];
-  readonly every_event?: event_rules;
-  readonly events?: rule_lookup;
-};
+type site_view = { readonly custom_events?: readonly string[] };
 
 const catalog: rule_lookup = standard_event_rules;
 const site: site_view = policy;
@@ -157,8 +153,6 @@ type rule_source = readonly [label: string, rules: event_rules | undefined];
 
 const declaration_sources = (value: declaration_value): rule_source[] => [
   [value.event_name, catalog[value.event_name]],
-  [value.event_name, site.events?.[value.event_name]],
-  ["every event", site.every_event],
 ];
 
 const envelope_sources = (value: declaration_value): rule_source[] => {
@@ -253,12 +247,6 @@ type names_under<pol> = standard_event_name | custom_names<pol>;
 
 type rules_of<table, name> = name extends keyof table ? table[name] : never;
 
-type site_rules_of<pol, name> = pol extends { readonly events: infer e }
-  ? rules_of<e, name>
-  : never;
-
-type every_of<pol> = pol extends { readonly every_event: infer r } ? r : never;
-
 type listed<rules, section extends string> = rules extends {
   readonly requires: {
     readonly [k in section]: readonly (infer key extends string)[];
@@ -267,28 +255,22 @@ type listed<rules, section extends string> = rules extends {
   ? key
   : never;
 
-type required_keys<pol, name, section extends string> =
-  | listed<rules_of<catalog_rules, name>, section>
-  | listed<site_rules_of<pol, name>, section>
-  | listed<every_of<pol>, section>;
+type required_keys<name, section extends string> = listed<
+  rules_of<catalog_rules, name>,
+  section
+>;
 
-type requires_attribution<pol, name> =
-  | rules_of<catalog_rules, name>
-  | site_rules_of<pol, name>
-  | every_of<pol> extends infer r
-  ? r extends { readonly requires: { readonly attribution_data: true } }
-    ? true
-    : never
-  : never;
+type requires_attribution<name> =
+  rules_of<catalog_rules, name> extends infer r
+    ? r extends { readonly requires: { readonly attribution_data: true } }
+      ? true
+      : never
+    : never;
 
 type required_custom<keys extends string> = {
   [key in keys]-?: key extends commerce_key
     ? Exclude<custom_data_input[key], undefined>
     : custom_property;
-};
-
-type required_user<u, keys extends string> = {
-  [key in keys]-?: key extends keyof u ? Exclude<u[key], undefined> : never;
 };
 
 type out_of_scope<name> = {
@@ -301,24 +283,16 @@ type custom_data_for<name> = custom_data_input & {
   [key in out_of_scope<name>]?: undefined;
 };
 
-type custom_data_part<pol, name> = [
-  required_keys<pol, name, "custom_data">,
-] extends [never]
+type custom_data_part<name> = [required_keys<name, "custom_data">] extends [
+  never,
+]
   ? { custom_data?: custom_data_for<name> }
   : {
       custom_data: custom_data_for<name> &
-        required_custom<required_keys<pol, name, "custom_data">>;
+        required_custom<required_keys<name, "custom_data">>;
     };
 
-type user_data_part<u, pol, name> = [
-  required_keys<pol, name, "user_data">,
-] extends [never]
-  ? { user_data?: u }
-  : { user_data: u & required_user<u, required_keys<pol, name, "user_data">> };
-
-type attribution_part<pol, name> = [requires_attribution<pol, name>] extends [
-  never,
-]
+type attribution_part<name> = [requires_attribution<name>] extends [never]
   ? { attribution_data?: attribution_data_input }
   : { attribution_data: attribution_data_input };
 
@@ -375,17 +349,17 @@ type overlaid_keys =
   | "action_source"
   | "event_source_url";
 
-type declared<base, u, pol, name extends string, envelope> = Omit<
+type declared<base, u, name extends string, envelope> = Omit<
   base,
   overlaid_keys
-> & { event_name: name } & custom_data_part<pol, name> &
-  user_data_part<u, pol, name> &
-  attribution_part<pol, name> &
+> & { event_name: name } & custom_data_part<name> & {
+    user_data?: u;
+  } & attribution_part<name> &
   limited_data_use_part &
   envelope;
 
 export type declarations<base, u, pol, envelope = Record<never, never>> = {
-  [name in names_under<pol>]: declared<base, u, pol, name, envelope>;
+  [name in names_under<pol>]: declared<base, u, name, envelope>;
 }[names_under<pol>];
 
 export type declared_event_name = names_under<site_rules>;

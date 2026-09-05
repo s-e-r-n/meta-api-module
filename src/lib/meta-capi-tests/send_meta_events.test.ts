@@ -167,6 +167,23 @@ describe("send_meta_events", () => {
     });
   });
 
+  it("warns when a conversion leaves without any person identifier the site gave", async () => {
+    const lead = {
+      event_name: "Lead" as const,
+      event_source_url: "https://shop.example/",
+      user_data: { client_user_agent: "ua" },
+    };
+    await expect(send_meta_events([lead])).resolves.toMatchObject({
+      ok: true,
+      warnings: [expect.stringMatching(/^data\[0\]: Lead left without/)],
+    });
+    await expect(
+      send_meta_events([
+        { ...lead, user_data: { ph: "+41791234567", client_user_agent: "ua" } },
+      ]),
+    ).resolves.toMatchObject({ warnings: [] });
+  });
+
   it("points at the failing event in a batch", async () => {
     const result = await send_inbound_meta_events({
       events: [purchase, { ...purchase, event_name: "" }],

@@ -70,30 +70,36 @@ export const attribution_data_schema = z.strictObject({
 
 export type attribution_data_input = z.infer<typeof attribution_data_schema>;
 
-type custom_events_of<p> = p extends {
-  readonly custom_events: infer c extends readonly string[];
-}
-  ? c
-  : readonly [];
+export type meta_capi_policy = { readonly custom_events?: readonly string[] };
 
-type events_of<p> = p extends { readonly events: infer e }
-  ? e
-  : Record<never, never>;
-
-export type meta_capi_policy<p> = {
-  readonly custom_events?: readonly string[];
-  readonly every_event?: event_rules;
-  readonly events?: {
-    readonly [name in keyof events_of<p>]: name extends
-      | standard_event_name
-      | custom_events_of<p>[number]
-      ? event_rules
-      : never;
-  };
-};
-
-export const define_policy = <const p extends meta_capi_policy<p>>(policy: p) =>
+export const define_policy = <const p extends meta_capi_policy>(policy: p) =>
   policy;
+
+export const person_identity_keys = ["em", "ph", "external_id"] as const;
+
+export const events_expecting_a_person = [
+  "Lead",
+  "Schedule",
+  "CompleteRegistration",
+  "SubmitApplication",
+  "Purchase",
+] as const;
+
+const expecting_a_person = new Set<string>(events_expecting_a_person);
+
+const given = (value: unknown) =>
+  value !== undefined &&
+  value !== "" &&
+  !(Array.isArray(value) && value.length === 0);
+
+export const person_identity_warning = (
+  event_name: string,
+  user_data: Record<string, unknown> | undefined,
+) =>
+  expecting_a_person.has(event_name) &&
+  !person_identity_keys.some((key) => given(user_data?.[key]))
+    ? `${event_name} left without em, ph or a site external_id: a wiring gap, the event was sent anyway`
+    : undefined;
 
 export type rule_subject = {
   custom_data?: Record<string, unknown>;

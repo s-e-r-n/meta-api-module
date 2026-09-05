@@ -40,41 +40,54 @@ npm i zod server-only
 
 ## 2. The one file that belongs to this site: `policy.ts`
 
-**Add this site's own rules on top of the engine's defaults, in one file: `src/lib/meta-capi/policy.ts`.**
+**Declare this site's own events in one file: `src/lib/meta-capi/policy.ts`.**
 
 - Everything Meta demands is already inside the engine.
-- Everything this site demands on top goes in `src/lib/meta-capi/policy.ts`, and nowhere else.
-- `every_event` holds the rules for every event, `events` the rules per event name, `custom_events` the names of this site's own events.
+- The only site-specific thing is the list of custom events, if any.
 
 ```ts
 import { define_policy } from "./event_catalog";
 
-export const policy = define_policy({
-  custom_events: ["ShareDiscount"],
-  every_event: { requires: { custom_data: ["value", "currency"] } },
-  events: {
-    Lead: { requires: { user_data: ["em"] }, recommends: { user_data: ["ph"] } },
-    ShareDiscount: { requires: { custom_data: ["promotion"] } },
-  },
-});
+export const policy = define_policy({ custom_events: ["ShareDiscount"] });
 ```
 
-What a line does:
+- A name listed in `custom_events` becomes an event like the standard ones: it autocompletes, and an undeclared name does not compile.
+- Nothing else is configured per site. No field is required per site: forms differ from one site to the next, and the engine catches what each one has.
 
-- `requires` makes the listed keys mandatory for that event. The type checker refuses every declaration that lacks them, and the server refuses the event if one slips through.
-- `recommends` lets the event through and adds a warning naming the missing key in the send result.
-- A name listed in `custom_events` becomes an event like the standard ones: it autocompletes, it may carry rules, and an undeclared name does not compile.
-- A key under `events` that is neither a standard name nor a declared custom event does not compile, so a misspelt event name cannot pass as a new one.
+## 3. The net
 
-Sections a rule can name:
+**Hook an event where a gesture happens, and let it catch whatever is available there.**
 
-- `custom_data` (a list of keys)
-- `user_data` (a list of keys)
-- `attribution_data: true`
+- A hook does not validate a contract: it collects what is present where it is placed.
+- An absent field is absent, not an error. An event always goes, with what it has.
+- The only locks are the ones Meta's own structure imposes: `Purchase` without `value` and `currency`, `AppendAttribution` without `attribution_data`, a website event without its URL. They do not compile.
+- No identifier of the person is required. A form with a phone and no email is as valid as the reverse.
+- A conversion that leaves without `em`, `ph` or an `external_id` the site gave is sent anyway and named in `warnings`: a wiring gap to read in the logs, not a refusal. The conversions concerned: `Lead`, `Schedule`, `CompleteRegistration`, `SubmitApplication`, `Purchase`.
+- `external_id` and `fbp` go on every event without exception: the server makes them, they cannot be missing.
 
-## 3. Tag a page or a component that is shown
+Examples of hooks and what each one catches. Every funnel is different; these are prises, not a path:
 
-**Tag a page or a component that is shown on screen.**
+| Gesture on the site | Event | Catches, when present |
+| --- | --- | --- |
+| Request form | `Lead` | `em`, `ph`, `fn`, `ln` |
+| Appointment booked | `Schedule` | `em`, `ph` |
+| Newsletter | `CompleteRegistration` | `em`, plus `custom_data.status` |
+| Phone call button | `Contact` | nothing new |
+| Application submitted | `SubmitApplication` | `em`, `ph` |
+| Quote signed, from the CRM | `Purchase` | `em`, `ph`, `value`, `currency` |
+
+What is not sent on a site:
+
+- `PageView`, and `ViewContent` on a single page: on load it duplicates `PageView`, on scroll it carries no identity.
+- `Search`, `AddToWishlist`, `CustomizeProduct`, `Donate`, `StartTrial` and `FindLocation` open only when a site really has the gesture.
+
+What stays outside the code:
+
+- The choice of the main conversion is made in Ads Manager, at the ad set level. The engine has no notion of a main conversion.
+
+## 4. Tag a page or a component that is shown
+
+**Tag a page or a component that is shown on screen, a confirmation page for instance.**
 
 1. Import `MetaEvent` in a Server Component.
 2. Keep the page a Server Component; the tag is the only client leaf.
@@ -82,11 +95,11 @@ Sections a rule can name:
 ```tsx
 import { MetaEvent } from "@/lib/meta-capi";
 
-const ProductPage = async ({ params }: PageProps<"/products/[id]">) => {
-  const { id } = await params;
+const BookingConfirmation = async ({ params }: PageProps<"/booking/[id]">) => {
+  const booking = await booking_of((await params).id);
   return (
     <main>
-      <MetaEvent event_name="ViewContent" custom_data={{ content_ids: [id], content_type: "product" }} />
+      <MetaEvent event_name="Schedule" user_data={{ em: booking.email, ph: booking.phone }} />
       ...
     </main>
   );
@@ -101,7 +114,7 @@ Rules of the tag:
 - Put it in the page or component that shows the thing it describes. In a layout it would fire once per visit, not once per page.
 - It works inside Client Components too.
 
-## 4. Tag a gesture
+## 5. Tag a gesture
 
 **Tag a gesture from a Client Component.**
 
@@ -127,9 +140,29 @@ export const AddToCartButton = ({ sku, price }: { sku: string; price: number }) 
 );
 ```
 
-## 5. Send from the server
+## 6. Send from the server
 
-**Send an event from the server: a webhook, a route handler, or a server action.**
+**Send an event from the server.**
+
+From a form's server action, inside the visitor's own request:
+
+1. Import `send_visitor_meta_event` from `@/lib/meta-capi/server`.
+2. Give it the event with what the form had. The engine reads the page from the `Referer` header, the IP, the user agent and the cookies from the request, and mints what is missing.
+
+```ts
+"use server";
+import { send_visitor_meta_event, visitor_external_id } from "@/lib/meta-capi/server";
+
+export const save_lead = async (form: FormData) => {
+  const em = String(form.get("email"));
+  await crm.create_contact({ em, external_id: await visitor_external_id() });
+  await send_visitor_meta_event({ event_name: "Lead", user_data: { em } });
+};
+```
+
+- Pass `{ event_source_url }` as a second argument when the request carries no `Referer`; without either, `META_CAPI_SITE_ORIGIN` is used, and without all three the event is refused.
+
+From a webhook, a route handler, or a job, outside any visitor request:
 
 1. Import `send_meta_events` from `@/lib/meta-capi/server`.
 2. Give the event what the browser would have given.
@@ -174,7 +207,7 @@ For JSON that comes from outside the code:
 - `send_inbound_meta_events(payload)` takes an unknown body shaped `{ "events": [ ... ] }` and returns the same `result`.
 - The reference route `src/app/api/meta-events/route.ts` uses it: `POST /api/meta-events` with `Authorization: Bearer $META_CAPI_INBOUND_SECRET`.
 
-## 6. What an event may carry
+## 7. What an event may carry
 
 **Know what fields an event may carry.**
 
@@ -238,14 +271,14 @@ From the server only:
 - `event_source_url`
 - `referrer_url`
 
-## 7. Identity
+## 8. Identity
 
 **Give identity in `user_data`; the server normalizes and hashes it.**
 
 - Give raw values in `user_data`.
 - The server normalizes and hashes them.
 - A value already hashed with SHA-256 is sent as is for `em`, `ph`, `fn`, `ln`, `db`, `ct`, `st`, `zp` and `external_id`.
-- What the type checker refuses is what Meta or this site's policy would refuse: a wrong event name, a `Purchase` without `value` and `currency`, a `value` without `currency`, a `content_type` without ids, a key outside its event, an unknown currency or country code, a birth date in another format, `["LDU"]` without a country, a website event without its URL, an `event_time` that is not `unix_seconds`.
+- What the type checker refuses is what Meta would refuse: a wrong event name, a `Purchase` without `value` and `currency`, a `value` without `currency`, a `content_type` without ids, a key outside its event, an unknown currency or country code, a birth date in another format, `["LDU"]` without a country, a website event without its URL, an `event_time` that is not `unix_seconds`.
 
 | Key | Give | Example |
 | --- | --- | --- |
@@ -281,7 +314,7 @@ To carry that id into the CRM and back:
 - `event_time`
 - a UUID `event_id` when the declaration carries none
 
-## 8. Consent
+## 9. Consent
 
 **Gate the engine behind consent, the same way the pixel is gated.**
 
@@ -289,7 +322,7 @@ To carry that id into the CRM and back:
 - It writes three first-party cookies, `_fbc`, `_fbp` and `external_id`, `HttpOnly`, only inside a send, so never before the consent manager let the tag or the call run.
 - Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
-## 9. Check that it works
+## 10. Check that it works
 
 **Confirm that a tagged event reaches Meta.**
 
@@ -307,7 +340,7 @@ Check:
 
 3. Remove the test code before going to production.
 
-## 10. Commands
+## 11. Commands
 
 **Run the project's commands.**
 

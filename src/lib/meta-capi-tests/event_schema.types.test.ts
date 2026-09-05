@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, it } from "vitest";
-import type { meta_capi_policy } from "../meta-capi/event_catalog";
 import type {
   browser_event,
   browser_meta_event,
@@ -20,6 +19,19 @@ describe("declaration types", () => {
     }>().not.toExtend<browser_meta_event>();
     expectTypeOf<{ event_name: "" }>().not.toExtend<browser_meta_event>();
     expectTypeOf<{ event_name: string }>().not.toExtend<browser_meta_event>();
+  });
+
+  it("requires nothing about the person: a Lead goes with whatever the form had", () => {
+    expectTypeOf<{ event_name: "Lead" }>().toExtend<browser_meta_event>();
+    expectTypeOf<{
+      event_name: "Lead";
+      user_data: { ph: string };
+    }>().toExtend<browser_meta_event>();
+    expectTypeOf<{
+      event_name: "Schedule";
+      user_data: { em: string; ph: string };
+    }>().toExtend<browser_meta_event>();
+    expectTypeOf<{ event_name: "Contact" }>().toExtend<browser_meta_event>();
   });
 
   it("requires value and currency on a Purchase, in the browser and on the server", () => {
@@ -45,7 +57,7 @@ describe("declaration types", () => {
     }>().not.toExtend<meta_event_input>();
   });
 
-  it("requires attribution_data and a currency on AppendAttribution", () => {
+  it("requires attribution_data and a currency on AppendAttribution, and on nothing else", () => {
     expectTypeOf<{
       event_name: "AppendAttribution";
       event_source_url: string;
@@ -62,6 +74,9 @@ describe("declaration types", () => {
       event_source_url: string;
       custom_data: { currency: "USD" };
     }>().not.toExtend<meta_event_input>();
+    expectTypeOf<{
+      event_name: "SubmitApplication";
+    }>().toExtend<browser_meta_event>();
   });
 
   it("types the enumerations: currency, country, gender, birth date", () => {
@@ -167,20 +182,9 @@ describe("declaration types", () => {
     }>().toExtend<meta_event_input>();
   });
 
-  it("derives the site policy into the declaration types", () => {
+  it("adds the custom events the policy declares, and nothing it does not", () => {
     type fixture_policy = {
       readonly custom_events: readonly ["ShareDiscount"];
-      readonly every_event: {
-        readonly requires: { readonly custom_data: readonly ["value"] };
-      };
-      readonly events: {
-        readonly Lead: {
-          readonly requires: { readonly user_data: readonly ["em"] };
-        };
-        readonly ShareDiscount: {
-          readonly requires: { readonly custom_data: readonly ["promotion"] };
-        };
-      };
     };
     type under_policy = declarations<
       browser_event,
@@ -188,55 +192,14 @@ describe("declaration types", () => {
       fixture_policy
     >;
     expectTypeOf<{
-      event_name: "ViewContent";
-      custom_data: { value: number; currency: "CHF" };
+      event_name: "ShareDiscount";
+      custom_data: { promotion: string };
     }>().toExtend<under_policy>();
-    expectTypeOf<{ event_name: "ViewContent" }>().not.toExtend<under_policy>();
-    expectTypeOf<{
-      event_name: "Lead";
-      custom_data: { value: number; currency: "CHF" };
-      user_data: { em: string };
-    }>().toExtend<under_policy>();
-    expectTypeOf<{
-      event_name: "Lead";
-      custom_data: { value: number; currency: "CHF" };
-    }>().not.toExtend<under_policy>();
+    expectTypeOf<{ event_name: "ShareDiscount" }>().toExtend<under_policy>();
+    expectTypeOf<{ event_name: "Unknown" }>().not.toExtend<under_policy>();
     expectTypeOf<{
       event_name: "ShareDiscount";
-      custom_data: { value: number; currency: "CHF"; promotion: string };
-    }>().toExtend<under_policy>();
-    expectTypeOf<{
-      event_name: "ShareDiscount";
-      custom_data: { value: number; currency: "CHF" };
-    }>().not.toExtend<under_policy>();
-    expectTypeOf<{
-      event_name: "Unknown";
-      custom_data: { value: number; currency: "CHF" };
-    }>().not.toExtend<under_policy>();
-  });
-
-  it("refuses a policy that names an event neither standard nor declared, or a user_data key that does not exist", () => {
-    type lead_only = { events: { Lead: { requires: { user_data: ["em"] } } } };
-    type misspelt = { events: { Leed: { requires: { user_data: ["em"] } } } };
-    type declared_custom = {
-      custom_events: ["ShareDiscount"];
-      events: { ShareDiscount: { requires: { custom_data: ["promotion"] } } };
-    };
-    type undeclared_custom = {
-      events: { ShareDiscount: { requires: { custom_data: ["promotion"] } } };
-    };
-    type misspelt_key = {
-      events: { Lead: { requires: { user_data: ["emai"] } } };
-    };
-    expectTypeOf<lead_only>().toExtend<meta_capi_policy<lead_only>>();
-    expectTypeOf<misspelt>().not.toExtend<meta_capi_policy<misspelt>>();
-    expectTypeOf<declared_custom>().toExtend<
-      meta_capi_policy<declared_custom>
-    >();
-    expectTypeOf<undeclared_custom>().not.toExtend<
-      meta_capi_policy<undeclared_custom>
-    >();
-    expectTypeOf<misspelt_key>().not.toExtend<meta_capi_policy<misspelt_key>>();
+    }>().not.toExtend<browser_meta_event>();
   });
 
   it("never lets the browser carry the identifiers the server reads from the request", () => {
