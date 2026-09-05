@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   browser_event_schema,
   browser_submission_schema,
+  custom_event,
   event_schema,
   issue_list,
+  meta_capi_invalid_event_error,
   standard_event_names,
 } from "./event_schema";
 
@@ -212,12 +214,28 @@ describe("event_schema", () => {
       },
     };
     expect(event_schema.safeParse(append).success).toBe(true);
+    expect(issue_paths({ ...append, attribution_data: undefined })).toContain(
+      "attribution_data",
+    );
+    expect(issue_paths({ ...append, custom_data: {} })).toContain(
+      "custom_data.currency",
+    );
     expect(
       issue_paths({
         ...append,
         attribution_data: { ...append.attribution_data, attribution_share: 2 },
       }),
     ).toContain("attribution_data.attribution_share");
+  });
+});
+
+describe("custom_event", () => {
+  it("returns the name it was given and refuses an empty or overlong one", () => {
+    expect(custom_event("ShareDiscount")).toBe("ShareDiscount");
+    expect(() => custom_event("")).toThrow(meta_capi_invalid_event_error);
+    expect(() => custom_event("x".repeat(51))).toThrow(
+      meta_capi_invalid_event_error,
+    );
   });
 });
 

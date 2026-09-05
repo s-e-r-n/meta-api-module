@@ -43,7 +43,18 @@ curl -X POST https://graph.facebook.com/v26.0/1202835294532393/events -H "Author
 `HTTP 400`
 
 ```json
-{"error":{"message":"Invalid parameter","type":"OAuthException","code":100,"error_subcode":2804003,"is_transient":false,"error_user_title":"Timestamp de l’évènement trop ancien","error_user_msg":"Le timestamp pour cet évènement est trop éloigné dans le passé. Les évènements doivent être envoyés depuis votre serveur dans les 7 jours après avoir eu lieu. Entrez un timestamp qui a eu lieu au cours des 7 derniers jours.","fbtrace_id":"ASrojb9Zf5r-cU8FBLq9HY0"}}
+{
+  "error": {
+    "message": "Invalid parameter",
+    "type": "OAuthException",
+    "code": 100,
+    "error_subcode": 2804003,
+    "is_transient": false,
+    "error_user_title": "Timestamp de l’évènement trop ancien",
+    "error_user_msg": "Le timestamp pour cet évènement est trop éloigné dans le passé. Les évènements doivent être envoyés depuis votre serveur dans les 7 jours après avoir eu lieu. Entrez un timestamp qui a eu lieu au cours des 7 derniers jours.",
+    "fbtrace_id": "ASrojb9Zf5r-cU8FBLq9HY0"
+  }
+}
 ```
 
 Every field of `graph_error_schema` appears: `message`, `type`, `code`, `error_subcode`, `is_transient`, `error_user_title`, `error_user_msg`, `fbtrace_id`. The 7-day rule of research/02 §3 is enforced by Meta with code 100 and subcode 2804003; the engine refuses such an event locally before sending.

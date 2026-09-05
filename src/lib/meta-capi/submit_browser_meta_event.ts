@@ -6,12 +6,12 @@ import {
   type browser_submission,
   browser_submission_schema,
   issue_list,
-  type meta_event_input,
+  type meta_event,
 } from "./event_schema";
 import {
   meta_capi_rejected_error,
   type meta_send_ok,
-  send_meta_events,
+  send_parsed_meta_events,
 } from "./send_meta_events";
 import { visitor_identity } from "./visitor_identity";
 
@@ -55,7 +55,7 @@ export const submit_browser_meta_event = async (
     event_source_url: browser.event_source_url,
     now_ms,
   });
-  const server_event: meta_event_input = {
+  const server_event: meta_event = {
     ...event,
     event_id: event.event_id ?? browser.event_id,
     event_time: Math.floor(now_ms / 1000),
@@ -64,7 +64,7 @@ export const submit_browser_meta_event = async (
     referrer_url: browser.referrer_url,
     user_data: { ...event.user_data, ...identity },
   };
-  const result = await send_meta_events([server_event]);
+  const result = await send_parsed_meta_events([server_event]);
   if (!result.ok) throw new meta_capi_rejected_error(result);
   return result;
 };

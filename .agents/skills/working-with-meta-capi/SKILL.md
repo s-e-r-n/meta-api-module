@@ -9,12 +9,14 @@ The engine lives in `src/lib/meta-capi/`. Read `README.md` at the project root f
 
 ## Where things go
 
-| Need | Do |
-| --- | --- |
-| An event when something is shown | `<MetaEvent event_name="..." custom_data={...} />` in the Server Component that shows it. Never in a layout, never in a Server Component's body as a function call |
-| An event on a click or submit | `void track_meta_event({...})` inside the handler of a Client Component |
+| Need                                                          | Do                                                                                                                                                                        |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| An event when something is shown                              | `<MetaEvent event_name="..." custom_data={...} />` in the Server Component that shows it. Never in a layout, never in a Server Component's body as a function call        |
+| An event on a click or submit                                 | `void track_meta_event({...})` inside the handler of a Client Component                                                                                                   |
 | An event born on the server (webhook, payment callback, cron) | `send_meta_events([...])` from `@/lib/meta-capi/server`, with `event_source_url`, `client_ip_address` and `client_user_agent` you stored at the time of the user's action |
-| Configuration | `META_CAPI_*` environment variables only. Never read a vault or hard-code a dataset id |
+| JSON arriving from outside your code (a relay, a partner system) | `send_inbound_meta_events(payload)` from `@/lib/meta-capi/server`; it parses the unknown body and answers with the same result shape |
+| A custom event | declare its name once with `custom_event("Name")`; a plain string literal is refused by the types unless it is one of the 19 standard names |
+| Configuration                                                 | `META_CAPI_*` environment variables only. Never read a vault or hard-code a dataset id                                                                                    |
 
 The main page stays a Server Component. `"use client"` lives in the tag's own file and nowhere above it.
 
@@ -34,6 +36,8 @@ Endpoint `POST https://graph.facebook.com/v26.0/{dataset_id}/events`, JSON body 
 Per event: `event_name`, `event_time` (unix seconds, at most 7 days old; older gets code 100, subcode 2804003), `action_source`, `event_source_url` (required for website events, the engine sends the full URL with its query string), `event_id` (dedup key with the pixel within 48 h), `user_data`, `custom_data`, `opt_out`, `data_processing_options` (`[]` or `["LDU"]`, US states only), `referrer_url`, `original_event_data`, `attribution_data`.
 
 Verified live: `PageView` is accepted; `value` as a JSON number and lowercase `currency` are accepted; a website event without `client_user_agent` is accepted although the docs call it required, so the engine warns instead of refusing.
+
+Typing: `event_name` is a discriminated union of the 19 standard names plus branded custom names, so `Purchase` without `value` and `currency`, or `AppendAttribution` without `attribution_data`, fails `tsc` before it fails at runtime. Invalid data can only enter through `send_inbound_meta_events`, which parses.
 
 Full key tables and hashing rules: `references/payload-shape.md`.
 

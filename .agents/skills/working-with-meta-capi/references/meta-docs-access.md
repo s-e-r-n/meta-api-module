@@ -13,29 +13,29 @@ curl -sL -A "MetaCapiHarness/0.1 (claude-sonnet-5) curl/8" https://developers.fa
 
 ## Indexes
 
-| Index | Covers |
-| --- | --- |
-| https://developers.facebook.com/llms.txt | root, agent identification rules |
-| https://developers.facebook.com/documentation/ads-commerce/llms.txt | every Ads and Commerce page, Conversions API and Dataset Quality API included |
-| https://developers.facebook.com/documentation/ads-commerce/marketing-api/reference/llms.txt | Marketing API nodes, including the Ads Pixel node and its edges |
+| Index                                                                                       | Covers                                                                        |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| https://developers.facebook.com/llms.txt                                                    | root, agent identification rules                                              |
+| https://developers.facebook.com/documentation/ads-commerce/llms.txt                         | every Ads and Commerce page, Conversions API and Dataset Quality API included |
+| https://developers.facebook.com/documentation/ads-commerce/marketing-api/reference/llms.txt | Marketing API nodes, including the Ads Pixel node and its edges               |
 
 ## Pages that settle questions
 
-| Question | Page |
-| --- | --- |
-| Endpoint, batches, `test_event_code`, version policy | `.../conversions-api/using-the-api.md` |
-| Every event-level key | `.../conversions-api/parameters/server-event.md` |
-| Every `user_data` key with hashing and normalization | `.../conversions-api/parameters/customer-information-parameters.md` |
-| `fbc` and `fbp` formats, `fbclid` handling | `.../conversions-api/parameters/fbp-and-fbc.md` |
-| Every `custom_data` key | `.../conversions-api/parameters/custom-data.md` |
-| Standard events and their parameters | `https://developers.facebook.com/documentation/meta-pixel/reference.md` |
-| Custom events, custom conversions | `https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md` |
-| Deduplication with the pixel | `.../conversions-api/deduplicate-pixel-and-server-events.md` |
-| Required and recommended keys, matching baseline | `https://developers.facebook.com/docs/marketing-api/conversions-api/best-practices` |
-| Limited Data Use | `.../marketing-api/overview/data-processing-options.md` |
-| Dataset Quality API | `.../conversions-api/dataset-quality-api.md` |
-| `POST /{pixel_id}/events` reference and error codes | `.../marketing-api/reference/ads-pixel/events.md` |
-| Meta's own normalizer | `https://raw.githubusercontent.com/facebook/facebook-nodejs-business-sdk/main/src/objects/serverside/utils.js` |
+| Question                                             | Page                                                                                                           |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Endpoint, batches, `test_event_code`, version policy | `.../conversions-api/using-the-api.md`                                                                         |
+| Every event-level key                                | `.../conversions-api/parameters/server-event.md`                                                               |
+| Every `user_data` key with hashing and normalization | `.../conversions-api/parameters/customer-information-parameters.md`                                            |
+| `fbc` and `fbp` formats, `fbclid` handling           | `.../conversions-api/parameters/fbp-and-fbc.md`                                                                |
+| Every `custom_data` key                              | `.../conversions-api/parameters/custom-data.md`                                                                |
+| Standard events and their parameters                 | `https://developers.facebook.com/documentation/meta-pixel/reference.md`                                        |
+| Custom events, custom conversions                    | `https://developers.facebook.com/documentation/meta-pixel/implementation/conversion-tracking.md`               |
+| Deduplication with the pixel                         | `.../conversions-api/deduplicate-pixel-and-server-events.md`                                                   |
+| Required and recommended keys, matching baseline     | `https://developers.facebook.com/docs/marketing-api/conversions-api/best-practices`                            |
+| Limited Data Use                                     | `.../marketing-api/overview/data-processing-options.md`                                                        |
+| Dataset Quality API                                  | `.../conversions-api/dataset-quality-api.md`                                                                   |
+| `POST /{pixel_id}/events` reference and error codes  | `.../marketing-api/reference/ads-pixel/events.md`                                                              |
+| Meta's own normalizer                                | `https://raw.githubusercontent.com/facebook/facebook-nodejs-business-sdk/main/src/objects/serverside/utils.js` |
 
 `...` stands for `https://developers.facebook.com/documentation/ads-commerce`.
 

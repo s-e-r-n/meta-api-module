@@ -1,10 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { browser_context } from "./browser_context";
+import { meta_capi_invalid_event_error } from "./event_schema";
 import { submit_browser_meta_event } from "./submit_browser_meta_event";
-import {
-  meta_capi_invalid_event_error,
-  track_meta_event,
-} from "./track_meta_event";
+import { track_meta_event } from "./track_meta_event";
 
 vi.mock("./browser_context", () => ({ browser_context: vi.fn() }));
 vi.mock("./submit_browser_meta_event", () => ({
@@ -12,6 +10,8 @@ vi.mock("./submit_browser_meta_event", () => ({
 }));
 
 const submit = vi.mocked(submit_browser_meta_event);
+const purchase_without_currency =
+  '{"event_name":"Purchase","custom_data":{"value":1}}';
 const context = {
   event_source_url: "https://shop.example/p/1?x=1",
   event_id: "uuid-1",
@@ -46,10 +46,10 @@ describe("track_meta_event", () => {
 
   it("refuses an invalid declaration before any network call", async () => {
     await expect(
-      track_meta_event({ event_name: "Purchase", custom_data: { value: 1 } }),
+      track_meta_event(JSON.parse(purchase_without_currency)),
     ).rejects.toBeInstanceOf(meta_capi_invalid_event_error);
     await expect(
-      track_meta_event({ event_name: "Purchase", custom_data: { value: 1 } }),
+      track_meta_event(JSON.parse(purchase_without_currency)),
     ).rejects.toThrow(/custom_data\.currency/);
     expect(submit).not.toHaveBeenCalled();
   });

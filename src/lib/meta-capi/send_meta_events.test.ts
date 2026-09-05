@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { meta_capi_config_error } from "./config";
 import type { meta_event_input } from "./event_schema";
 import { post_events_to_graph } from "./graph_api_client";
-import { send_meta_events } from "./send_meta_events";
+import { send_inbound_meta_events, send_meta_events } from "./send_meta_events";
 
 vi.mock("./graph_api_client", async (import_actual) => ({
   ...(await import_actual<typeof import("./graph_api_client")>()),
@@ -40,9 +40,9 @@ afterEach(() => {
 
 describe("send_meta_events", () => {
   it("returns the refusal of an invalid event without touching the network", async () => {
-    const result = await send_meta_events([
-      { ...purchase, custom_data: { value: 42 } },
-    ]);
+    const result = await send_inbound_meta_events({
+      events: [{ ...purchase, custom_data: { value: 42 } }],
+    });
     expect(result).toEqual({
       ok: false,
       reason: "invalid_event",
@@ -151,14 +151,34 @@ describe("send_meta_events", () => {
   });
 
   it("points at the failing event in a batch", async () => {
-    const result = await send_meta_events([
-      purchase,
-      { ...purchase, event_name: "" },
-    ]);
+    const result = await send_inbound_meta_events({
+      events: [purchase, { ...purchase, event_name: "" }],
+    });
     expect(result).toMatchObject({
       ok: false,
       reason: "invalid_event",
       issues: [{ index: 1, path: "event_name" }],
+    });
+  });
+
+  it("takes an inbound JSON envelope and refuses any other shape", async () => {
+    await expect(
+      send_inbound_meta_events({ events: [purchase] }),
+    ).resolves.toMatchObject({ ok: true });
+    await expect(
+      send_inbound_meta_events({ events: [{ ...purchase, event_name: "" }] }),
+    ).resolves.toMatchObject({
+      ok: false,
+      reason: "invalid_event",
+      issues: [{ index: 0, path: "event_name" }],
+    });
+    await expect(send_inbound_meta_events([purchase])).resolves.toMatchObject({
+      ok: false,
+      reason: "invalid_event",
+    });
+    await expect(send_inbound_meta_events(undefined)).resolves.toMatchObject({
+      ok: false,
+      reason: "invalid_event",
     });
   });
 

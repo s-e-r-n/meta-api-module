@@ -24,10 +24,43 @@ export const standard_event_names = [
 
 export type standard_event_name = (typeof standard_event_names)[number];
 
+export class meta_capi_invalid_event_error extends Error {}
+
+export type issue = { path: string; message: string };
+
+export const issue_list = (error: z.core.$ZodError): issue[] =>
+  error.issues.flatMap((issue) => {
+    const path = issue.path.map(String);
+    if (issue.code === "unrecognized_keys") {
+      return issue.keys.map((key) => ({
+        path: [...path, key].join("."),
+        message: `Unknown key "${key}"`,
+      }));
+    }
+    return [{ path: path.join("."), message: issue.message }];
+  });
+
 const seven_days_s = 7 * 86_400;
 const clock_skew_s = 600;
 
 const event_name_schema = z.string().check(z.minLength(1), z.maxLength(50));
+
+const custom_event_name_schema = event_name_schema.brand<"custom_event">();
+
+export type custom_event_name = z.infer<typeof custom_event_name_schema>;
+
+export const custom_event = (name: string): custom_event_name => {
+  const parsed = custom_event_name_schema.safeParse(name);
+  if (!parsed.success) {
+    const details = issue_list(parsed.error)
+      .map(({ message }) => message)
+      .join("; ");
+    throw new meta_capi_invalid_event_error(
+      `Custom event name refused: ${details}`,
+    );
+  }
+  return parsed.data;
+};
 
 const event_time_schema = z.int().check(
   z.gte(0),
@@ -196,6 +229,8 @@ const attribution_data_schema = z.strictObject({
   attribution_value: z.number().check(z.gte(0)),
 });
 
+export type attribution_data_input = z.infer<typeof attribution_data_schema>;
+
 const declaration_shape = {
   event_name: event_name_schema,
   event_id: z.optional(z.string().check(z.minLength(1))),
@@ -210,6 +245,7 @@ const declaration_shape = {
 type declaration = {
   event_name: string;
   custom_data?: { value?: number; currency?: string };
+  attribution_data?: attribution_data_input;
   data_processing_options?: "LDU"[];
   data_processing_options_country?: number;
 };
@@ -226,6 +262,19 @@ const declaration_rules = (ctx: z.core.ParsePayload<declaration>) => {
         ["custom_data", "currency"],
         "Purchase requires custom_data.currency",
       );
+  }
+  if (value.event_name === "AppendAttribution") {
+    if (value.attribution_data === undefined)
+      missing(
+        ["attribution_data"],
+        "AppendAttribution requires attribution_data",
+      );
+    if (value.custom_data?.currency === undefined) {
+      missing(
+        ["custom_data", "currency"],
+        "AppendAttribution requires custom_data.currency",
+      );
+    }
   }
   if (
     value.data_processing_options?.includes("LDU") &&
@@ -280,28 +329,36 @@ export const browser_submission_schema = z.strictObject({
   browser: browser_context_schema,
 });
 
-type with_meta_name<event> = Omit<event, "event_name"> & {
-  event_name: standard_event_name | (string & {});
-};
-
 export type meta_event = z.infer<typeof event_schema>;
-export type meta_event_input = with_meta_name<meta_event>;
-export type browser_meta_event = with_meta_name<
-  z.infer<typeof browser_event_schema>
->;
+export type browser_event = z.infer<typeof browser_event_schema>;
 export type browser_context = z.infer<typeof browser_context_schema>;
 export type browser_submission = z.infer<typeof browser_submission_schema>;
 
-export type issue = { path: string; message: string };
+type required_for<name extends standard_event_name> = name extends "Purchase"
+  ? { custom_data: custom_data_input & { value: number; currency: string } }
+  : name extends "AppendAttribution"
+    ? {
+        attribution_data: attribution_data_input;
+        custom_data: custom_data_input & { currency: string };
+      }
+    : { custom_data?: custom_data_input };
 
-export const issue_list = (error: z.core.$ZodError): issue[] =>
-  error.issues.flatMap((issue) => {
-    const path = issue.path.map(String);
-    if (issue.code === "unrecognized_keys") {
-      return issue.keys.map((key) => ({
-        path: [...path, key].join("."),
-        message: `Unknown key "${key}"`,
-      }));
-    }
-    return [{ path: path.join("."), message: issue.message }];
-  });
+type declared_as<base, name extends string, extras> = Omit<
+  base,
+  "event_name" | keyof extras
+> & {
+  event_name: name;
+} & extras;
+
+type declarations<base> =
+  | {
+      [name in standard_event_name]: declared_as<
+        base,
+        name,
+        required_for<name>
+      >;
+    }[standard_event_name]
+  | declared_as<base, custom_event_name, { custom_data?: custom_data_input }>;
+
+export type meta_event_input = declarations<meta_event>;
+export type browser_meta_event = declarations<browser_event>;

@@ -1,4 +1,5 @@
 import "server-only";
+import * as z from "zod/mini";
 import { engine_config } from "./config";
 import {
   event_schema,
@@ -46,13 +47,15 @@ export class meta_capi_rejected_error extends Error {
 
 const batch_limit = 1000;
 
+const inbound_envelope_schema = z.object({ events: z.array(z.unknown()) });
+
 const invalid = (issues: event_issue[]): meta_send_refusal => ({
   ok: false,
   reason: "invalid_event",
   issues,
 });
 
-const parsed_events = (events: meta_event_input[]) => {
+const parsed_events = (events: readonly unknown[]) => {
   const valid: meta_event[] = [];
   const issues: event_issue[] = [];
   events.forEach((event, index) => {
@@ -102,9 +105,9 @@ const wire_event_of = (
   };
 };
 
-export const send_meta_events = async (
-  events: meta_event_input[],
-  options: send_options = {},
+const send_after_parse = async (
+  events: readonly unknown[],
+  options: send_options,
 ): Promise<meta_send_result> => {
   const config = engine_config();
   if (events.length === 0 || events.length > batch_limit) {
@@ -135,4 +138,33 @@ export const send_meta_events = async (
       error: outcome.body.error,
     };
   return { ok: true, ...outcome.body, warnings };
+};
+
+export const send_meta_events = (
+  events: meta_event_input[],
+  options: send_options = {},
+) => send_after_parse(events, options);
+
+export const send_parsed_meta_events = (
+  events: meta_event[],
+  options: send_options = {},
+) => send_after_parse(events, options);
+
+export const send_inbound_meta_events = (
+  payload: unknown,
+  options: send_options = {},
+) => {
+  const envelope = inbound_envelope_schema.safeParse(payload);
+  if (!envelope.success) {
+    return Promise.resolve(
+      invalid([
+        {
+          index: 0,
+          path: "events",
+          message: 'the body must be { "events": [ ... ] }',
+        },
+      ]),
+    );
+  }
+  return send_after_parse(envelope.data.events, options);
 };

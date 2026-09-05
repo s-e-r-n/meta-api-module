@@ -4,7 +4,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import * as z from "zod/mini";
 import { browser_event_schema, type browser_meta_event } from "./event_schema";
-import { track_meta_event } from "./track_meta_event";
+import { track_declared_meta_event } from "./track_meta_event";
 
 const fire_key_schema = z.object({
   url: z.string(),
@@ -31,7 +31,7 @@ const MetaEventLeaf = (declaration: browser_meta_event) => {
   useEffect(() => {
     let current = true;
     queueMicrotask(() => {
-      if (current) void track_meta_event(declared_in(fire_key));
+      if (current) void track_declared_meta_event(declared_in(fire_key));
     });
     return () => {
       current = false;

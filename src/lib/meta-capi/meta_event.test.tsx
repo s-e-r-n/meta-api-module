@@ -3,15 +3,17 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { StrictMode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MetaEvent } from "./meta_event";
-import { track_meta_event } from "./track_meta_event";
+import { track_declared_meta_event } from "./track_meta_event";
 
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn(),
   useSearchParams: vi.fn(),
 }));
-vi.mock("./track_meta_event", () => ({ track_meta_event: vi.fn() }));
+vi.mock("./track_meta_event", () => ({
+  track_declared_meta_event: vi.fn(),
+}));
 
-const track = vi.mocked(track_meta_event);
+const track = vi.mocked(track_declared_meta_event);
 
 const at_url = (pathname: string, search: string) => {
   vi.mocked(usePathname).mockReturnValue(pathname);
