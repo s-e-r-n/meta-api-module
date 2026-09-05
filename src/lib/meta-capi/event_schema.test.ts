@@ -3,6 +3,7 @@ import {
   browser_event_schema,
   browser_submission_schema,
   event_schema,
+  issue_list,
   standard_event_names,
 } from "./event_schema";
 
@@ -18,7 +19,9 @@ const website_event = {
 
 const issue_paths = (input: unknown) => {
   const result = event_schema.safeParse(input);
-  return result.success ? [] : result.error.issues.map((issue) => issue.path.join("."));
+  return result.success
+    ? []
+    : issue_list(result.error).map((issue) => issue.path);
 };
 
 describe("standard_event_names", () => {
@@ -36,33 +39,64 @@ describe("event_schema", () => {
   });
 
   it("accepts a custom event name up to 50 characters and refuses longer or empty names", () => {
-    expect(event_schema.safeParse({ ...website_event, event_name: "x".repeat(50) }).success).toBe(true);
-    expect(issue_paths({ ...website_event, event_name: "x".repeat(51) })).toContain("event_name");
-    expect(issue_paths({ ...website_event, event_name: "" })).toContain("event_name");
+    expect(
+      event_schema.safeParse({ ...website_event, event_name: "x".repeat(50) })
+        .success,
+    ).toBe(true);
+    expect(
+      issue_paths({ ...website_event, event_name: "x".repeat(51) }),
+    ).toContain("event_name");
+    expect(issue_paths({ ...website_event, event_name: "" })).toContain(
+      "event_name",
+    );
   });
 
   it("refuses an unknown action_source", () => {
-    expect(issue_paths({ ...website_event, action_source: "kiosk" })).toContain("action_source");
+    expect(issue_paths({ ...website_event, action_source: "kiosk" })).toContain(
+      "action_source",
+    );
   });
 
   it("requires event_source_url for website events only", () => {
     const { event_source_url: _dropped, ...without_url } = website_event;
     expect(issue_paths(without_url)).toContain("event_source_url");
-    expect(event_schema.safeParse({ ...without_url, action_source: "email" }).success).toBe(true);
+    expect(
+      event_schema.safeParse({ ...without_url, action_source: "email" })
+        .success,
+    ).toBe(true);
   });
 
   it("requires value and currency on a Purchase", () => {
     const purchase = { ...website_event, event_name: "Purchase" };
-    expect(issue_paths(purchase)).toEqual(expect.arrayContaining(["custom_data.value", "custom_data.currency"]));
-    expect(issue_paths({ ...purchase, custom_data: { value: 10 } })).toEqual(["custom_data.currency"]);
-    expect(event_schema.safeParse({ ...purchase, custom_data: { value: 10, currency: "chf" } }).success).toBe(true);
+    expect(issue_paths(purchase)).toEqual(
+      expect.arrayContaining(["custom_data.value", "custom_data.currency"]),
+    );
+    expect(issue_paths({ ...purchase, custom_data: { value: 10 } })).toEqual([
+      "custom_data.currency",
+    ]);
+    expect(
+      event_schema.safeParse({
+        ...purchase,
+        custom_data: { value: 10, currency: "chf" },
+      }).success,
+    ).toBe(true);
   });
 
   it("keeps event_time inside Meta's window: seven days back, ten minutes ahead", () => {
-    expect(issue_paths({ ...website_event, event_time: now - 8 * 86_400 })).toContain("event_time");
-    expect(issue_paths({ ...website_event, event_time: now + 3_600 })).toContain("event_time");
-    expect(event_schema.safeParse({ ...website_event, event_time: now - 6 * 86_400 }).success).toBe(true);
-    expect(event_schema.safeParse({ ...website_event, event_time: now + 300 }).success).toBe(true);
+    expect(
+      issue_paths({ ...website_event, event_time: now - 8 * 86_400 }),
+    ).toContain("event_time");
+    expect(
+      issue_paths({ ...website_event, event_time: now + 3_600 }),
+    ).toContain("event_time");
+    expect(
+      event_schema.safeParse({ ...website_event, event_time: now - 6 * 86_400 })
+        .success,
+    ).toBe(true);
+    expect(
+      event_schema.safeParse({ ...website_event, event_time: now + 300 })
+        .success,
+    ).toBe(true);
     const { event_time: _dropped, ...without_time } = website_event;
     expect(event_schema.safeParse(without_time).success).toBe(true);
   });
@@ -75,7 +109,14 @@ describe("event_schema", () => {
         currency: "CHF",
         content_ids: ["42"],
         content_type: "product",
-        contents: [{ id: "42", quantity: 2, item_price: 9.95, delivery_category: "home_delivery" }],
+        contents: [
+          {
+            id: "42",
+            quantity: 2,
+            item_price: 9.95,
+            delivery_category: "home_delivery",
+          },
+        ],
         num_items: 2,
         status: true,
         compared_product: "banner-shoes",
@@ -84,36 +125,72 @@ describe("event_schema", () => {
       },
     };
     expect(event_schema.safeParse(with_custom).success).toBe(true);
-    expect(issue_paths({ ...website_event, custom_data: { "has space": "x" } })).toContain("custom_data.has space");
-    expect(issue_paths({ ...website_event, custom_data: { contents: [{ id: "42" }] } })).toContain(
-      "custom_data.contents.0.quantity",
-    );
-    expect(issue_paths({ ...website_event, custom_data: { content_ids: [42] } })).toContain("custom_data.content_ids.0");
-    expect(issue_paths({ ...website_event, custom_data: { value: -1 } })).toContain("custom_data.value");
-    expect(issue_paths({ ...website_event, custom_data: { currency: "CHF1" } })).toContain("custom_data.currency");
-    expect(issue_paths({ ...website_event, custom_data: { content_type: "sku" } })).toContain("custom_data.content_type");
+    expect(
+      issue_paths({ ...website_event, custom_data: { "has space": "x" } }),
+    ).toContain("custom_data.has space");
+    expect(
+      issue_paths({
+        ...website_event,
+        custom_data: { contents: [{ id: "42" }] },
+      }),
+    ).toContain("custom_data.contents.0.quantity");
+    expect(
+      issue_paths({ ...website_event, custom_data: { content_ids: [42] } }),
+    ).toContain("custom_data.content_ids.0");
+    expect(
+      issue_paths({ ...website_event, custom_data: { value: -1 } }),
+    ).toContain("custom_data.value");
+    expect(
+      issue_paths({ ...website_event, custom_data: { currency: "CHF1" } }),
+    ).toContain("custom_data.currency");
+    expect(
+      issue_paths({ ...website_event, custom_data: { content_type: "sku" } }),
+    ).toContain("custom_data.content_type");
   });
 
   it("only knows Meta's user_data keys and takes lists for the hashed ones", () => {
-    expect(issue_paths({ ...website_event, user_data: { email: "a@b.c" } })).toContain("user_data.email");
-    expect(event_schema.safeParse({ ...website_event, user_data: { em: ["a@b.c", "c@d.e"], ph: "+41791234567" } }).success).toBe(
-      true,
-    );
-    expect(issue_paths({ ...website_event, user_data: { fb_login_id: "12" } })).toContain("user_data.fb_login_id");
-    expect(issue_paths({ ...website_event, user_data: { client_ip_address: ["1.1.1.1"] } })).toContain(
-      "user_data.client_ip_address",
-    );
+    expect(
+      issue_paths({ ...website_event, user_data: { email: "a@b.c" } }),
+    ).toContain("user_data.email");
+    expect(
+      event_schema.safeParse({
+        ...website_event,
+        user_data: { em: ["a@b.c", "c@d.e"], ph: "+41791234567" },
+      }).success,
+    ).toBe(true);
+    expect(
+      issue_paths({ ...website_event, user_data: { fb_login_id: "12" } }),
+    ).toContain("user_data.fb_login_id");
+    expect(
+      issue_paths({
+        ...website_event,
+        user_data: { client_ip_address: ["1.1.1.1"] },
+      }),
+    ).toContain("user_data.client_ip_address");
   });
 
   it("ties Limited Data Use to a country and refuses any other processing option", () => {
-    expect(issue_paths({ ...website_event, data_processing_options: ["LDU"] })).toContain("data_processing_options_country");
     expect(
-      event_schema.safeParse({ ...website_event, data_processing_options: ["LDU"], data_processing_options_country: 1, data_processing_options_state: 1000 })
+      issue_paths({ ...website_event, data_processing_options: ["LDU"] }),
+    ).toContain("data_processing_options_country");
+    expect(
+      event_schema.safeParse({
+        ...website_event,
+        data_processing_options: ["LDU"],
+        data_processing_options_country: 1,
+        data_processing_options_state: 1000,
+      }).success,
+    ).toBe(true);
+    expect(
+      event_schema.safeParse({ ...website_event, data_processing_options: [] })
         .success,
     ).toBe(true);
-    expect(event_schema.safeParse({ ...website_event, data_processing_options: [] }).success).toBe(true);
-    expect(issue_paths({ ...website_event, data_processing_options: ["GDPR"] })).toContain("data_processing_options.0");
-    expect(issue_paths({ ...website_event, data_processing_options_state: 1014 })).toContain("data_processing_options_state");
+    expect(
+      issue_paths({ ...website_event, data_processing_options: ["GDPR"] }),
+    ).toContain("data_processing_options.0");
+    expect(
+      issue_paths({ ...website_event, data_processing_options_state: 1014 }),
+    ).toContain("data_processing_options_state");
   });
 
   it("carries attribution_data and original_event_data for AppendAttribution", () => {
@@ -121,13 +198,26 @@ describe("event_schema", () => {
       ...website_event,
       event_name: "AppendAttribution",
       custom_data: { currency: "USD" },
-      attribution_data: { ad_id: "123", touchpoint_ts: now - 100, attribution_share: 0.5, attribution_value: 5 },
-      original_event_data: { event_name: "Purchase", event_time: now - 200, order_id: "o-1", event_id: "e-1" },
+      attribution_data: {
+        ad_id: "123",
+        touchpoint_ts: now - 100,
+        attribution_share: 0.5,
+        attribution_value: 5,
+      },
+      original_event_data: {
+        event_name: "Purchase",
+        event_time: now - 200,
+        order_id: "o-1",
+        event_id: "e-1",
+      },
     };
     expect(event_schema.safeParse(append).success).toBe(true);
-    expect(issue_paths({ ...append, attribution_data: { ...append.attribution_data, attribution_share: 2 } })).toContain(
-      "attribution_data.attribution_share",
-    );
+    expect(
+      issue_paths({
+        ...append,
+        attribution_data: { ...append.attribution_data, attribution_share: 2 },
+      }),
+    ).toContain("attribution_data.attribution_share");
   });
 });
 
@@ -142,9 +232,15 @@ describe("browser_event_schema", () => {
     });
     expect(refused.success).toBe(false);
     if (refused.success) return;
-    const paths = refused.error.issues.map((issue) => issue.path.join("."));
+    const paths = issue_list(refused.error).map((issue) => issue.path);
     expect(paths).toEqual(
-      expect.arrayContaining(["event_time", "action_source", "event_source_url", "user_data.client_ip_address", "user_data.fbc"]),
+      expect.arrayContaining([
+        "event_time",
+        "action_source",
+        "event_source_url",
+        "user_data.client_ip_address",
+        "user_data.fbc",
+      ]),
     );
   });
 
@@ -165,9 +261,25 @@ describe("browser_submission_schema", () => {
   it("needs an absolute page URL and an event id next to the event", () => {
     const event = { event_name: "PageView" };
     expect(
-      browser_submission_schema.safeParse({ event, browser: { event_source_url: "https://shop.example/?a=1", event_id: "id-1" } }).success,
+      browser_submission_schema.safeParse({
+        event,
+        browser: {
+          event_source_url: "https://shop.example/?a=1",
+          event_id: "id-1",
+        },
+      }).success,
     ).toBe(true);
-    expect(browser_submission_schema.safeParse({ event, browser: { event_source_url: "/relative", event_id: "id-1" } }).success).toBe(false);
-    expect(browser_submission_schema.safeParse({ event, browser: { event_source_url: "https://shop.example", event_id: "" } }).success).toBe(false);
+    expect(
+      browser_submission_schema.safeParse({
+        event,
+        browser: { event_source_url: "/relative", event_id: "id-1" },
+      }).success,
+    ).toBe(false);
+    expect(
+      browser_submission_schema.safeParse({
+        event,
+        browser: { event_source_url: "https://shop.example", event_id: "" },
+      }).success,
+    ).toBe(false);
   });
 });
