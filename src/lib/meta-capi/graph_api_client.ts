@@ -48,6 +48,15 @@ export class meta_capi_transport_error extends Error {}
 
 const graph_origin = "https://graph.facebook.com";
 
+export const retry_attempts = 3;
+const first_backoff_ms = 400;
+
+export const backoff_ms = (failed_attempts: number, random: number) =>
+  Math.round(first_backoff_ms * 2 ** (failed_attempts - 1) * (0.5 + random));
+
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 const parsed_json = (text: string): unknown => {
   try {
     return JSON.parse(text);
@@ -90,22 +99,32 @@ const attempt = async (
   );
 };
 
+const transient = (outcome: graph_outcome) =>
+  "error" in outcome.body && outcome.body.error.is_transient === true;
+
 export const post_events_to_graph = async (
   config: engine_config,
   request: graph_events_request,
 ): Promise<graph_outcome> => {
-  try {
-    return await attempt(config, request);
-  } catch (first_failure) {
+  const failures: unknown[] = [];
+  for (let attempts = 1; attempts <= retry_attempts; attempts++) {
+    if (attempts > 1) await sleep(backoff_ms(attempts - 1, Math.random()));
     try {
-      return await attempt(config, request);
-    } catch (second_failure) {
-      throw new meta_capi_transport_error(
-        `Graph API unreachable after one retry (first failure: ${String(first_failure)})`,
-        {
-          cause: second_failure,
-        },
-      );
+      const outcome = await attempt(config, request);
+      if (!transient(outcome) || attempts === retry_attempts) return outcome;
+      failures.push(outcome.body);
+    } catch (failure) {
+      failures.push(failure);
+      if (attempts === retry_attempts) {
+        throw new meta_capi_transport_error(
+          `Graph API unreachable after ${retry_attempts} attempts`,
+          { cause: failures },
+        );
+      }
     }
   }
+  throw new meta_capi_transport_error(
+    `Graph API unreachable after ${retry_attempts} attempts`,
+    { cause: failures },
+  );
 };

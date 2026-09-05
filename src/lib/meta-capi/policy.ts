@@ -1,3 +1,3 @@
-import type { event_rule_table } from "./event_catalog";
+import { define_policy } from "./event_catalog";
 
-export const policy = {} as const satisfies event_rule_table;
+export const policy = define_policy({});

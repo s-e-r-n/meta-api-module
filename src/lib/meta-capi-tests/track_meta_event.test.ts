@@ -35,11 +35,11 @@ describe("track_meta_event", () => {
     await expect(
       track_meta_event({
         event_name: "Lead",
-        custom_data: { value: 1, currency: "chf" },
+        custom_data: { value: 1, currency: "CHF" },
       }),
     ).resolves.toEqual(sent);
     expect(submit).toHaveBeenCalledWith({
-      event: { event_name: "Lead", custom_data: { value: 1, currency: "chf" } },
+      event: { event_name: "Lead", custom_data: { value: 1, currency: "CHF" } },
       browser: context,
     });
   });

@@ -112,14 +112,46 @@ describe("event_schema", () => {
             delivery_category: "home_delivery",
           },
         ],
-        num_items: 2,
-        status: true,
         compared_product: "banner-shoes",
         tags: ["a", "b"],
         rank: 3,
       },
     };
     expect(event_schema.safeParse(with_custom).success).toBe(true);
+    expect(
+      event_schema.safeParse({
+        ...website_event,
+        event_name: "InitiateCheckout",
+        custom_data: { num_items: 2 },
+      }).success,
+    ).toBe(true);
+    expect(
+      issue_paths({ ...website_event, custom_data: { num_items: 2 } }),
+    ).toContain("custom_data.num_items");
+    expect(
+      issue_paths({ ...website_event, custom_data: { status: true } }),
+    ).toContain("custom_data.status");
+    expect(
+      issue_paths({ ...website_event, custom_data: { value: 3 } }),
+    ).toContain("custom_data.currency");
+    expect(
+      issue_paths({
+        ...website_event,
+        custom_data: { content_type: "product" },
+      }),
+    ).toContain("custom_data.content_type");
+    expect(
+      issue_paths({
+        ...website_event,
+        custom_data: { value: 3, currency: "XXX1" },
+      }),
+    ).toContain("custom_data.currency");
+    expect(
+      event_schema.safeParse({
+        ...website_event,
+        custom_data: { value: 3, currency: "chf" },
+      }).success,
+    ).toBe(true);
     expect(
       issue_paths({ ...website_event, custom_data: { "has space": "x" } }),
     ).toContain("custom_data.has space");

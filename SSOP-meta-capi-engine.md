@@ -143,3 +143,16 @@ Tests move to `src/lib/meta-capi-tests/`, one file per module, importing `../met
 
 - `request_context` returns `external_id` and asks to store it when new; the action sends `[...declared external ids, visitor id]` on every event.
 - `identity_cookie_options({ https, domain })` in `request_context.ts` is the single cookie policy for `_fbc`, `_fbp` and `external_id`.
+
+## Amendment 2026-09-05, compile-time gates and transport retry
+
+| Data | Origin | Destination | Boundary | Shape | Illegal state it forbids |
+| --- | --- | --- | --- | --- | --- |
+| `currency_code`, `country_code` | `iso_codes.ts`, generated from the `currency-codes` and `iso-3166-1` packages Meta's SDK validates against | `custom_data`, `user_data` | literal unions; runtime accepts any case and hashed values | 179 ISO 4217 codes, 249 ISO 3166-1 alpha-2 codes | A misspelt or invented code compiling |
+| `unix_seconds` | `unix_seconds(date)` in `event_schema.ts` | `event_time` | zod brand | `number & brand` | Milliseconds or a naive timestamp passed as `event_time` |
+| `meta_capi_policy<p>` | `define_policy` in `event_catalog.ts` | `policy.ts` | validated mapped type | `{ custom_events?, every_event?, events? }` where a key of `events` must be standard or declared | A misspelt event name silently becoming a custom event |
+
+- `custom_data_input` is an intersection of unions: `value` with its `currency`, `content_type` with `content_ids` or `contents`; `num_items`, `search_string` and `status` are `undefined` outside their event (`custom_data_key_scopes` in the catalog drives both the type and the runtime issue).
+- `limited_data_use_part` and `server_envelope` unions tie `["LDU"]` to a country and `"website"` to `event_source_url` at the type level; the runtime rules were already there.
+- `post_events_to_graph`: three attempts, backoff `400 ms * 2^(n-1) * (0.5 + random)`, retried on network failure, 5xx, or `is_transient: true`; a non-transient refusal returns at once.
+- Identity cookies are `HttpOnly`.

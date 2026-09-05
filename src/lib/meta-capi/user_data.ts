@@ -1,18 +1,43 @@
 import * as z from "zod/mini";
+import { type country_code, country_codes } from "./iso_codes";
+
+const country_set = new Set<string>(country_codes);
+const already_hashed = /^[a-f0-9]{64}$/;
 
 const identifier_list = z.union([z.string(), z.array(z.string())]);
+
+const each_value = (accepts: (value: string) => boolean, message: string) =>
+  z.refine<string | string[]>(
+    (given) =>
+      (Array.isArray(given) ? given : [given]).every(
+        (value) =>
+          already_hashed.test(value.trim().toLowerCase()) || accepts(value),
+      ),
+    message,
+  );
+
+const gender_list = identifier_list.check(
+  each_value((value) => /^[fm]$/i.test(value.trim()), "ge must be f or m"),
+);
+
+const country_list = identifier_list.check(
+  each_value(
+    (value) => country_set.has(value.trim().toUpperCase()),
+    "country must be an ISO 3166-1 alpha-2 code",
+  ),
+);
 
 const hashed_shape = {
   em: z.optional(identifier_list),
   ph: z.optional(identifier_list),
   fn: z.optional(identifier_list),
   ln: z.optional(identifier_list),
-  ge: z.optional(identifier_list),
+  ge: z.optional(gender_list),
   db: z.optional(identifier_list),
   ct: z.optional(identifier_list),
   st: z.optional(identifier_list),
   zp: z.optional(identifier_list),
-  country: z.optional(identifier_list),
+  country: z.optional(country_list),
   external_id: z.optional(identifier_list),
 };
 
@@ -39,8 +64,27 @@ export const user_data_schema = z.strictObject({
   ...request_clear_shape,
 });
 
-export type browser_user_data_input = z.infer<typeof browser_user_data_schema>;
-export type user_data_input = z.infer<typeof user_data_schema>;
+type one_or_many<value> = value | value[];
+export type gender = "f" | "m";
+export type birth_date = `${number}-${number}-${number}`;
+
+type typed_identity = {
+  ge?: one_or_many<gender>;
+  db?: one_or_many<birth_date>;
+  country?: one_or_many<country_code>;
+};
+
+export type browser_user_data_input = Omit<
+  z.infer<typeof browser_user_data_schema>,
+  keyof typed_identity
+> &
+  typed_identity;
+export type user_data_input = Omit<
+  z.infer<typeof user_data_schema>,
+  keyof typed_identity
+> &
+  typed_identity;
+export type parsed_user_data = z.infer<typeof user_data_schema>;
 export type hashed_key = keyof typeof hashed_shape;
 export type clear_key = keyof typeof request_clear_shape | "subscription_id";
 
@@ -62,10 +106,10 @@ const phone: normalizer = (value) => {
 const person_name: normalizer = (value) =>
   value.replace(/\p{P}/gu, "").trim() || undefined;
 
-const gender: normalizer = (value) =>
+const gender_initial: normalizer = (value) =>
   value[0] === "f" || value[0] === "m" ? value[0] : undefined;
 
-const birth_date: normalizer = (value) => {
+const birth_date_digits: normalizer = (value) => {
   const match = /^(\d{4})-?(\d{2})-?(\d{2})$/.exec(value);
   if (!match) return undefined;
   const [, year = "", month = "", day = ""] = match;
@@ -87,7 +131,7 @@ const postal_code: normalizer = (value, country) => {
   return code.length >= 2 ? code : undefined;
 };
 
-const country_code: normalizer = (value) =>
+const country_alpha2: normalizer = (value) =>
   /^[a-z]{2}$/.test(value) ? value : undefined;
 
 const as_is: normalizer = (value) => value;
@@ -97,12 +141,12 @@ export const hashed_identifiers = [
   { key: "ph", normalize: phone },
   { key: "fn", normalize: person_name },
   { key: "ln", normalize: person_name },
-  { key: "ge", normalize: gender },
-  { key: "db", normalize: birth_date },
+  { key: "ge", normalize: gender_initial },
+  { key: "db", normalize: birth_date_digits },
   { key: "ct", normalize: place },
   { key: "st", normalize: place },
   { key: "zp", normalize: postal_code },
-  { key: "country", normalize: country_code },
+  { key: "country", normalize: country_alpha2 },
   { key: "external_id", normalize: as_is },
 ] as const satisfies readonly { key: hashed_key; normalize: normalizer }[];
 
@@ -136,8 +180,8 @@ export const clear_identifiers = [
 export const as_list = (value: string | string[] | undefined) =>
   value === undefined ? [] : Array.isArray(value) ? value : [value];
 
-export const normalized_country = (user_data: user_data_input) =>
-  country_code(
+export const normalized_country = (user_data: parsed_user_data) =>
+  country_alpha2(
     as_list(user_data.country)[0]?.trim().toLowerCase() ?? "",
     undefined,
   );

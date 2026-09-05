@@ -50,7 +50,7 @@ describe("visitor_external_id", () => {
       maxAge: 7_776_000,
       sameSite: "lax",
       secure: true,
-      httpOnly: false,
+      httpOnly: true,
       domain: undefined,
     });
   });

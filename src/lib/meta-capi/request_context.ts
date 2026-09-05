@@ -38,7 +38,7 @@ export const identity_cookie_options = ({
   maxAge: identity_cookie_max_age_s,
   sameSite: "lax" as const,
   secure: https,
-  httpOnly: false,
+  httpOnly: true,
   domain,
 });
 

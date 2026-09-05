@@ -6,17 +6,17 @@ Next 16 (App Router, Turbopack), React Compiler, Tailwind 4, Biome, Cache Compon
 
 ## Commands
 
-| Command             | What it does                                              |
-| ------------------- | --------------------------------------------------------- |
-| `npm run dev`       | Dev server. The MCP server in `.mcp.json` attaches to it. |
-| `npm run typecheck` | `next typegen && tsc --noEmit`. The only thing that decides type safety. |
-| `npm run lint`      | Biome check. Does not type-check.                         |
-| `npm run format`    | Biome write: formatting, safe fixes and import sorting in one pass. |
-| `npm test`          | Vitest, single run.                                       |
-| `npm run test:watch` | Vitest in watch mode.                                    |
-| `npm run e2e`       | Playwright. Boots the dev server itself.                  |
-| `npm run build`     | Where `cacheComponents` enforces its rules.               |
-| `npm run verify`    | All of the above, in order. The one to run before saying it works. |
+| Command              | What it does                                                             |
+| -------------------- | ------------------------------------------------------------------------ |
+| `npm run dev`        | Dev server. The MCP server in `.mcp.json` attaches to it.                |
+| `npm run typecheck`  | `next typegen && tsc --noEmit`. The only thing that decides type safety. |
+| `npm run lint`       | Biome check. Does not type-check.                                        |
+| `npm run format`     | Biome write: formatting, safe fixes and import sorting in one pass.      |
+| `npm test`           | Vitest, single run.                                                      |
+| `npm run test:watch` | Vitest in watch mode.                                                    |
+| `npm run e2e`        | Playwright. Boots the dev server itself.                                 |
+| `npm run build`      | Where `cacheComponents` enforces its rules.                              |
+| `npm run verify`     | All of the above, in order. The one to run before saying it works.       |
 
 Green lint means nothing about types, and a green build means nothing about behaviour. `verify` is what "it works" means here.
 
@@ -43,7 +43,13 @@ Setup guides for both ship with the install: `node_modules/next/dist/docs/01-app
 **Components take a `className` prop and merge it last.** Base styles live in the component, `cn()` from `@/lib/utils` puts the caller's classes last so they win. This is what lets one component ship across brands without being reset first.
 
 ```tsx
-<hr className={cn("m-0 shrink-0 border-0", isVertical ? "h-full w-px" : "h-px w-full", className)} />
+<hr
+  className={cn(
+    "m-0 shrink-0 border-0",
+    isVertical ? "h-full w-px" : "h-px w-full",
+    className,
+  )}
+/>
 ```
 
 `cn()` wraps `tailwind-merge` only. It handles strings, arrays, and falsy values, but not object syntax (`{ "p-2": on }`). Use a ternary or `&&` rather than adding `clsx`.

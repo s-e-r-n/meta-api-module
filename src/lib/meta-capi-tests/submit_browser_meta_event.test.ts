@@ -109,7 +109,7 @@ describe("submit_browser_meta_event", () => {
         maxAge: 7_776_000,
         sameSite: "lax",
         secure: true,
-        httpOnly: false,
+        httpOnly: true,
         domain: undefined,
       },
     );

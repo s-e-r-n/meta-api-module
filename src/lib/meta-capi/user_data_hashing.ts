@@ -7,19 +7,19 @@ import {
   hashed_identifiers,
   type hashed_key,
   normalized_country,
-  type user_data_input,
+  type parsed_user_data,
 } from "./user_data";
 
 export const sha256_hex = (value: string) =>
   createHash("sha256").update(value, "utf8").digest("hex");
 
 export type hashed_user_data = Partial<Record<hashed_key, string[]>> &
-  Pick<user_data_input, clear_key | "fb_login_id" | "lead_id">;
+  Pick<parsed_user_data, clear_key | "fb_login_id" | "lead_id">;
 
 const already_hashed = /^[a-f0-9]{64}$/;
 
 export const hashed_user_data = (
-  user_data: user_data_input,
+  user_data: parsed_user_data,
 ): { user_data: hashed_user_data; warnings: string[] } => {
   const warnings: string[] = [];
   const country = normalized_country(user_data);

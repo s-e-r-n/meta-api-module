@@ -66,13 +66,13 @@ test.describe("identity cookies", () => {
       value.startsWith("external_id="),
     );
     expect(fbc_header).toMatch(
-      /^_fbc=fb\.1\.\d{13}\.E2EClick; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
+      /^_fbc=fb\.1\.\d{13}\.E2EClick; Path=\/; Expires=[^;]+; Max-Age=7776000; HttpOnly; SameSite=lax$/i,
     );
     expect(fbp_header).toMatch(
-      /^_fbp=fb\.1\.\d{13}\.\d{10}; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
+      /^_fbp=fb\.1\.\d{13}\.\d{10}; Path=\/; Expires=[^;]+; Max-Age=7776000; HttpOnly; SameSite=lax$/i,
     );
     expect(external_id_header).toMatch(
-      /^external_id=[0-9a-f-]{36}; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
+      /^external_id=[0-9a-f-]{36}; Path=\/; Expires=[^;]+; Max-Age=7776000; HttpOnly; SameSite=lax$/i,
     );
 
     const stored = await context.cookies();
@@ -80,21 +80,21 @@ test.describe("identity cookies", () => {
     const fbp = stored.find((cookie) => cookie.name === "_fbp");
     const external_id = stored.find((cookie) => cookie.name === "external_id");
     expect(fbc).toMatchObject({
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "Lax",
       path: "/",
       domain: "localhost",
     });
     expect(fbp).toMatchObject({
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "Lax",
       path: "/",
       domain: "localhost",
     });
     expect(external_id).toMatchObject({
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "Lax",
       path: "/",

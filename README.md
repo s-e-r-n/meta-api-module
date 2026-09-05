@@ -44,23 +44,27 @@ npm i zod server-only
 
 - Everything Meta demands is already inside the engine.
 - Everything this site demands on top goes in `src/lib/meta-capi/policy.ts`, and nowhere else.
-- The file is a table keyed by event name, or `"*"` for every event.
+- `every_event` holds the rules for every event, `events` the rules per event name, `custom_events` the names of this site's own events.
 
 ```ts
-import type { event_rule_table } from "./event_catalog";
+import { define_policy } from "./event_catalog";
 
-export const policy = {
-  "*": { requires: { custom_data: ["value", "currency"] } },
-  Lead: { requires: { user_data: ["em"] }, recommends: { user_data: ["ph"] } },
-  ShareDiscount: {},
-} as const satisfies event_rule_table;
+export const policy = define_policy({
+  custom_events: ["ShareDiscount"],
+  every_event: { requires: { custom_data: ["value", "currency"] } },
+  events: {
+    Lead: { requires: { user_data: ["em"] }, recommends: { user_data: ["ph"] } },
+    ShareDiscount: { requires: { custom_data: ["promotion"] } },
+  },
+});
 ```
 
 What a line does:
 
 - `requires` makes the listed keys mandatory for that event. The type checker refuses every declaration that lacks them, and the server refuses the event if one slips through.
 - `recommends` lets the event through and adds a warning naming the missing key in the send result.
-- A key that is not one of Meta's standard names declares a custom event. `ShareDiscount: {}` is enough; from then on `event_name="ShareDiscount"` autocompletes and an undeclared name does not compile.
+- A name listed in `custom_events` becomes an event like the standard ones: it autocompletes, it may carry rules, and an undeclared name does not compile.
+- A key under `events` that is neither a standard name nor a declared custom event does not compile, so a misspelt event name cannot pass as a new one.
 
 Sections a rule can name:
 
@@ -131,13 +135,13 @@ export const AddToCartButton = ({ sku, price }: { sku: string; price: number }) 
 2. Give the event what the browser would have given.
 
 ```ts
-import { send_meta_events } from "@/lib/meta-capi/server";
+import { send_meta_events, unix_seconds } from "@/lib/meta-capi/server";
 
 const result = await send_meta_events([
   {
     event_name: "Purchase",
     event_id: order.id,
-    event_time: Math.floor(order.paid_at.getTime() / 1000),
+    event_time: unix_seconds(order.paid_at),
     event_source_url: "https://www.example.ch/checkout/thank-you",
     user_data: {
       em: order.email,
@@ -151,8 +155,8 @@ const result = await send_meta_events([
 ]);
 ```
 
-- `order.paid_at` must be a real `Date`, built from a timestamp that carries its offset.
-- A date parsed from a string without one is read in the server's time zone.
+- `event_time` only takes what `unix_seconds(date)` returns, so seconds and milliseconds cannot be confused.
+- `order.paid_at` must be a real `Date`, built from a timestamp that carries its offset. A date parsed from a string without one is read in the server's time zone.
 
 Check: inspect the returned `result`.
 
@@ -204,14 +208,15 @@ For JSON that comes from outside the code:
 | Key | Type |
 | --- | --- |
 | `value` | number, the amount |
-| `currency` | three-letter ISO 4217 code, any case |
+| `currency` | ISO 4217 code in capitals, offered by autocompletion; required next to `value` |
 | `content_ids` | `string[]`, catalogue ids |
-| `content_type` | `"product"` or `"product_group"` |
+| `content_type` | `"product"` or `"product_group"`, only next to `content_ids` or `contents` |
 | `contents` | `{ id, quantity, item_price?, delivery_category? }[]` |
-| `content_name`, `content_category`, `order_id`, `search_string` | string |
-| `num_items` | integer |
+| `content_name`, `content_category`, `order_id` | string |
+| `search_string` | string, `Search` only |
+| `num_items` | integer, `InitiateCheckout` only |
 | `predicted_ltv`, `net_revenue` | number |
-| `status` | boolean |
+| `status` | boolean, `CompleteRegistration` only |
 | `delivery_category` | `"in_store"`, `"curbside"` or `"home_delivery"` |
 | any other key without whitespace | string, number, boolean, or a list of strings or numbers |
 
@@ -219,7 +224,7 @@ Other event keys:
 
 - `event_id`
 - `opt_out`
-- `data_processing_options` (`[]` or `["LDU"]`, US only)
+- `data_processing_options` (`[]` or `["LDU"]`, US only; `["LDU"]` demands `data_processing_options_country`)
 - `data_processing_options_country`
 - `data_processing_options_state`
 - `customer_segmentation`
@@ -228,8 +233,8 @@ Other event keys:
 
 From the server only:
 
-- `event_time`
-- `action_source`
+- `event_time`, from `unix_seconds(date)`
+- `action_source`; `"website"`, the default, demands `event_source_url`
 - `event_source_url`
 - `referrer_url`
 
@@ -239,18 +244,19 @@ From the server only:
 
 - Give raw values in `user_data`.
 - The server normalizes and hashes them.
-- A value already hashed with SHA-256 is sent as is.
+- A value already hashed with SHA-256 is sent as is for `em`, `ph`, `fn`, `ln`, `db`, `ct`, `st`, `zp` and `external_id`.
+- What the type checker refuses is what Meta or this site's policy would refuse: a wrong event name, a `Purchase` without `value` and `currency`, a `value` without `currency`, a `content_type` without ids, a key outside its event, an unknown currency or country code, a birth date in another format, `["LDU"]` without a country, a website event without its URL, an `event_time` that is not `unix_seconds`.
 
 | Key | Give | Example |
 | --- | --- | --- |
 | `em` | email | `John.Smith@example.ch` |
 | `ph` | phone with country code | `+41 79 123 45 67` |
 | `fn`, `ln` | names | `Valéry`, `O'Brien` |
-| `ge` | gender | `f` or `m` |
-| `db` | birth date | `1997-02-16` or `19970216` |
+| `ge` | gender, `"f"` or `"m"` | `f` |
+| `db` | birth date as `YYYY-MM-DD` | `1997-02-16` |
 | `ct`, `st` | city, state | `Zürich`, `ZH` |
 | `zp` | postal code | `8000` |
-| `country` | ISO 3166-1 alpha-2 | `CH` |
+| `country` | ISO 3166-1 alpha-2 in capitals, offered by autocompletion | `CH` |
 | `external_id` | your own user id, sent next to the visitor id the engine adds | `user-42` |
 | `subscription_id`, `fb_login_id`, `lead_id` | as Meta defines them, sent in clear | |
 
@@ -280,7 +286,7 @@ To carry that id into the CRM and back:
 **Gate the engine behind consent, the same way the pixel is gated.**
 
 - The engine holds no consent state.
-- It writes three first-party cookies, `_fbc`, `_fbp` and `external_id`, only inside a send, so never before the consent manager let the tag or the call run.
+- It writes three first-party cookies, `_fbc`, `_fbp` and `external_id`, `HttpOnly`, only inside a send, so never before the consent manager let the tag or the call run.
 - Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
 ## 9. Check that it works

@@ -9,15 +9,23 @@ import {
   action_source_rules,
   type attribution_data_input,
   attribution_data_schema,
+  custom_data_key_scopes,
   type event_rules,
   missing_fields,
+  out_of_scope_keys,
   type rule_subject,
+  type scoped_custom_data_key,
   type standard_event_name,
   standard_event_names,
   standard_event_rules,
 } from "./event_catalog";
 import { policy } from "./policy";
-import { browser_user_data_schema, user_data_schema } from "./user_data";
+import {
+  type browser_user_data_input,
+  browser_user_data_schema,
+  type user_data_input,
+  user_data_schema,
+} from "./user_data";
 
 export class meta_capi_invalid_event_error extends Error {}
 
@@ -37,13 +45,19 @@ export const issue_list = (error: z.core.$ZodError): issue[] =>
 
 type rule_lookup = { readonly [event_name: string]: event_rules | undefined };
 
+type site_view = {
+  readonly custom_events?: readonly string[];
+  readonly every_event?: event_rules;
+  readonly events?: rule_lookup;
+};
+
 const catalog: rule_lookup = standard_event_rules;
-const site: rule_lookup = policy;
+const site: site_view = policy;
 const action_sources: rule_lookup = action_source_rules;
 
 const declared_names = new Set<string>([
   ...standard_event_names,
-  ...Object.keys(policy).filter((name) => name !== "*"),
+  ...(site.custom_events ?? []),
 ]);
 
 const seven_days_s = 7 * 86_400;
@@ -66,6 +80,13 @@ const event_time_schema = z.int().check(
     return event_time >= now - seven_days_s && event_time <= now + clock_skew_s;
   }, "event_time must be within the last 7 days and at most 10 minutes ahead"),
 );
+
+const unix_seconds_schema = z.int().brand<"unix_seconds">();
+
+export type unix_seconds = z.infer<typeof unix_seconds_schema>;
+
+export const unix_seconds = (date: Date): unix_seconds =>
+  unix_seconds_schema.parse(Math.floor(date.getTime() / 1000));
 
 const action_source_schema = z.enum([
   "email",
@@ -136,8 +157,8 @@ type rule_source = readonly [label: string, rules: event_rules | undefined];
 
 const declaration_sources = (value: declaration_value): rule_source[] => [
   [value.event_name, catalog[value.event_name]],
-  [value.event_name, site[value.event_name]],
-  ["every event", site["*"]],
+  [value.event_name, site.events?.[value.event_name]],
+  ["every event", site.every_event],
 ];
 
 const envelope_sources = (value: declaration_value): rule_source[] => {
@@ -164,6 +185,15 @@ const push_missing = (
 const declaration_rules = (ctx: z.core.ParsePayload<declaration_value>) => {
   const { value } = ctx;
   push_missing(ctx, declaration_sources(value));
+  for (const key of out_of_scope_keys(value.event_name, value.custom_data)) {
+    const scopes: Record<string, readonly string[]> = custom_data_key_scopes;
+    ctx.issues.push({
+      code: "custom",
+      message: `${key} is only for ${(scopes[key] ?? []).join(", ")}`,
+      input: value,
+      path: ["custom_data", key],
+    });
+  }
   if (
     value.data_processing_options?.includes("LDU") &&
     value.data_processing_options_country === undefined
@@ -213,7 +243,21 @@ export const recommendation_warnings = (event: meta_event): string[] =>
 type catalog_rules = typeof standard_event_rules;
 type site_rules = typeof policy;
 
+type custom_names<pol> = pol extends {
+  readonly custom_events: infer c extends readonly string[];
+}
+  ? c[number]
+  : never;
+
+type names_under<pol> = standard_event_name | custom_names<pol>;
+
 type rules_of<table, name> = name extends keyof table ? table[name] : never;
+
+type site_rules_of<pol, name> = pol extends { readonly events: infer e }
+  ? rules_of<e, name>
+  : never;
+
+type every_of<pol> = pol extends { readonly every_event: infer r } ? r : never;
 
 type listed<rules, section extends string> = rules extends {
   readonly requires: {
@@ -225,13 +269,13 @@ type listed<rules, section extends string> = rules extends {
 
 type required_keys<pol, name, section extends string> =
   | listed<rules_of<catalog_rules, name>, section>
-  | listed<rules_of<pol, name>, section>
-  | listed<rules_of<pol, "*">, section>;
+  | listed<site_rules_of<pol, name>, section>
+  | listed<every_of<pol>, section>;
 
 type requires_attribution<pol, name> =
   | rules_of<catalog_rules, name>
-  | rules_of<pol, name>
-  | rules_of<pol, "*"> extends infer r
+  | site_rules_of<pol, name>
+  | every_of<pol> extends infer r
   ? r extends { readonly requires: { readonly attribution_data: true } }
     ? true
     : never
@@ -247,12 +291,22 @@ type required_user<u, keys extends string> = {
   [key in keys]-?: key extends keyof u ? Exclude<u[key], undefined> : never;
 };
 
+type out_of_scope<name> = {
+  [key in scoped_custom_data_key]: name extends (typeof custom_data_key_scopes)[key][number]
+    ? never
+    : key;
+}[scoped_custom_data_key];
+
+type custom_data_for<name> = custom_data_input & {
+  [key in out_of_scope<name>]?: undefined;
+};
+
 type custom_data_part<pol, name> = [
   required_keys<pol, name, "custom_data">,
 ] extends [never]
-  ? { custom_data?: custom_data_input }
+  ? { custom_data?: custom_data_for<name> }
   : {
-      custom_data: custom_data_input &
+      custom_data: custom_data_for<name> &
         required_custom<required_keys<pol, name, "custom_data">>;
     };
 
@@ -268,27 +322,81 @@ type attribution_part<pol, name> = [requires_attribution<pol, name>] extends [
   ? { attribution_data?: attribution_data_input }
   : { attribution_data: attribution_data_input };
 
-type user_data_of<base> = base extends { user_data?: infer u }
-  ? Exclude<u, undefined>
-  : never;
+type us_state =
+  | 0
+  | 1000
+  | 1001
+  | 1002
+  | 1003
+  | 1004
+  | 1005
+  | 1006
+  | 1007
+  | 1008
+  | 1009
+  | 1010
+  | 1011
+  | 1012
+  | 1013;
 
-type declared<base, pol, name extends string> = Omit<
+type limited_data_use_part =
+  | {
+      data_processing_options?: [];
+      data_processing_options_country?: undefined;
+      data_processing_options_state?: undefined;
+    }
+  | {
+      data_processing_options: ["LDU"];
+      data_processing_options_country: 0 | 1;
+      data_processing_options_state?: us_state;
+    };
+
+type server_envelope =
+  | {
+      action_source?: "website";
+      event_source_url: string;
+      event_time?: unix_seconds;
+    }
+  | {
+      action_source: Exclude<action_source, "website">;
+      event_source_url?: string;
+      event_time?: unix_seconds;
+    };
+
+type overlaid_keys =
+  | "event_name"
+  | "custom_data"
+  | "user_data"
+  | "attribution_data"
+  | "data_processing_options"
+  | "data_processing_options_country"
+  | "data_processing_options_state"
+  | "event_time"
+  | "action_source"
+  | "event_source_url";
+
+type declared<base, u, pol, name extends string, envelope> = Omit<
   base,
-  "event_name" | "custom_data" | "user_data" | "attribution_data"
-> & {
-  event_name: name;
-} & custom_data_part<pol, name> &
-  user_data_part<user_data_of<base>, pol, name> &
-  attribution_part<pol, name>;
+  overlaid_keys
+> & { event_name: name } & custom_data_part<pol, name> &
+  user_data_part<u, pol, name> &
+  attribution_part<pol, name> &
+  limited_data_use_part &
+  envelope;
 
-type names_under<pol> =
-  | standard_event_name
-  | Exclude<keyof pol & string, "*" | standard_event_name>;
-
-export type declarations<base, pol> = {
-  [name in names_under<pol>]: declared<base, pol, name>;
+export type declarations<base, u, pol, envelope = Record<never, never>> = {
+  [name in names_under<pol>]: declared<base, u, pol, name, envelope>;
 }[names_under<pol>];
 
 export type declared_event_name = names_under<site_rules>;
-export type meta_event_input = declarations<meta_event, site_rules>;
-export type browser_meta_event = declarations<browser_event, site_rules>;
+export type meta_event_input = declarations<
+  meta_event,
+  user_data_input,
+  site_rules,
+  server_envelope
+>;
+export type browser_meta_event = declarations<
+  browser_event,
+  browser_user_data_input,
+  site_rules
+>;

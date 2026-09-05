@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { meta_capi_config_error } from "../meta-capi/config";
 import type { meta_event_input } from "../meta-capi/event_schema";
+import { unix_seconds } from "../meta-capi/event_schema";
 import { post_events_to_graph } from "../meta-capi/graph_api_client";
 import {
   send_inbound_meta_events,
@@ -21,7 +22,7 @@ const purchase: meta_event_input = {
   event_name: "Purchase",
   event_source_url: "https://shop.example/thank-you?order=1",
   user_data: { em: "John_Smith@gmail.com", client_user_agent: "Mozilla/5.0" },
-  custom_data: { value: 42, currency: "chf", content_ids: ["sku-1"] },
+  custom_data: { value: 42, currency: "CHF", content_ids: ["sku-1"] },
 };
 
 beforeEach(() => {
@@ -87,7 +88,11 @@ describe("send_meta_events", () => {
 
   it("keeps the event_time and event_id a caller provides", async () => {
     await send_meta_events([
-      { ...purchase, event_time: now - 60, event_id: "order-1" },
+      {
+        ...purchase,
+        event_time: unix_seconds(new Date((now - 60) * 1000)),
+        event_id: "order-1",
+      },
     ]);
     const request = post.mock.calls[0]?.[1];
     expect(request?.data[0]).toMatchObject({
@@ -135,11 +140,11 @@ describe("send_meta_events", () => {
 
   it("reports the identifiers it had to drop", async () => {
     const result = await send_meta_events([
-      { ...purchase, user_data: { ...purchase.user_data, ge: "unknown" } },
+      { ...purchase, user_data: { ...purchase.user_data, em: "not-an-email" } },
     ]);
     expect(result).toMatchObject({
       ok: true,
-      warnings: [expect.stringContaining("ge")],
+      warnings: [expect.stringContaining("em")],
     });
   });
 
