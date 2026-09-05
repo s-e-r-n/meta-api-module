@@ -1,0 +1,711 @@
+# Ads and Commerce Guides and Documentation
+
+&gt; Meta’s ads and commerce APIs enable businesses to programmatically create and manage ads, sell products, gather insights to optimize campaigns, and more.
+
+## Guides &amp; Documentation
+
+### Ads AI Connectors
+
+- [Ads CLI](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/ads-cli-overview.md): Ads CLI
+- [Get started](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/setup/get-started.md): Get started
+- [Configuration](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/setup/configuration.md): Configuration
+- [Command reference](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/command-reference.md): Command reference
+- [Ad creatives](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/ad-creatives.md): Ad creatives
+- [Datasets and catalogs](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/datasets-and-catalogs.md): Datasets and catalogs
+- [Tutorials and recipes](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/tutorials-and-recipes.md): Tutorials and recipes
+- [Insights](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/insights.md): Insights
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-overview.md): Overview
+- [Get started](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-get-started.md): Get started
+- [Available tools](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools.md): Available tools
+- [Comprehensive reporting](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-comprehensive-reporting.md): Comprehensive reporting
+- [Ad creation and management](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-ad-creation-and-management.md): Ad creation and management
+- [Catalog creation and management](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-catalog-creation-and-management.md): Catalog creation and management
+- [Signals and datasets](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-signals-and-datasets.md): Signals and datasets
+- [Help and troubleshooting](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-help-and-troubleshooting.md): Help and troubleshooting
+- [A/B tests and conversion lift studies](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-abtests-and-conversion-lift-studies.md): A/B tests and conversion lift studies
+- [Activity logs](https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-activity-logs.md): Activity logs
+
+### Affiliate Partnerships
+
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/overview.md): Overview
+- [Product Catalog API](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/product-catalog.md): Product Catalog API
+- [OAuth and Account Linking](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/oauth.md): OAuth and Account Linking
+- [Affiliate Status API](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/affiliate-status.md): Affiliate Status API
+- [Deeplink Support](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/deeplinks.md): Deeplink Support
+- [Content ID](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/content-id.md): Content ID
+- [Content and Creator Insights API](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/content-insights-api.md): Content and Creator Insights API
+- [Purchase Event Data](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/purchase-event-data.md): Purchase Event Data
+- [Commission Data](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/commission-data.md): Commission Data
+- [Authenticity of Link Clicks](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/link-authenticity.md): Authenticity of Link Clicks
+- [Link Resolver API](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/link-resolver-api.md): Link Resolver API
+- [Content Quality and Relevance](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/content-quality.md): Content Quality and Relevance
+- [Boosting Content via Marketing API](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/boosting-content.md): Boosting Content via Marketing API
+- [Collaborative Ads](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/collaborative-ads.md): Collaborative Ads
+- [Seller to Page ID Mapping](https://developers.facebook.com/documentation/ads-commerce/affiliate_partnership/seller-page-mapping.md): Seller to Page ID Mapping
+
+### Catalog
+
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/catalog.md): Overview
+- [Catalog Basics](https://developers.facebook.com/documentation/ads-commerce/catalog/overview.md): Catalog Basics
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/catalog/get-started.md): Get Started
+- [Supported Products and Services](https://developers.facebook.com/documentation/ads-commerce/catalog/get-started/supported-products-services.md): Supported Products and Services
+- [Catalog Integration Using Meta Business SDK](https://developers.facebook.com/documentation/ads-commerce/catalog/get-started/integrate-via-meta-sdk.md): Catalog Integration Using Meta Business SDK
+- [Guides](https://developers.facebook.com/documentation/ads-commerce/catalog/guides.md): Guides
+- [Catalog Item Types](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/catalog-item-types.md): Catalog Item Types
+- [Manage Catalog Items](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/manage-catalog-items.md): Manage Catalog Items
+- [Catalog Batch API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/manage-catalog-items/catalog-batch-api.md): Catalog Batch API
+- [Migrate to the Items Batch Endpoint](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/manage-catalog-items/catalog-batch-api/migrate-to-items-batch.md): Migrate to the Items Batch Endpoint
+- [Catalog and Signals Quality](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/cat-signals-quality.md): Catalog and Signals Quality
+- [Product Variants](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/product-variants.md): Product Variants
+- [Product Categories](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/product-categories.md): Product Categories
+- [Product Deep Links](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/product-deep-links.md): Product Deep Links
+- [Inventory](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/inventory.md): Inventory
+- [Feed API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/feed-api.md): Feed API
+- [Supplementary Feeds](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/supplementary-feeds.md): Supplementary Feeds
+- [Schedule Feeds](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/scheduled-feeds.md): Schedule Feeds
+- [Diagnostics API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/diagnostics-api.md): Diagnostics API
+- [Item Review](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/item-review.md): Item Review
+- [Microdata Tags](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/microdata-tags.md): Microdata Tags
+- [Metadata Tags](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/metadata-tags.md): Metadata Tags
+- [Localized Catalogs](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/localized-catalog.md): Localized Catalogs
+- [Localized Catalog Setup](https://developers.facebook.com/documentation/ads-commerce/catalog/localized-catalog/localized-catalog-setup.md): Localized Catalog Setup
+- [Overrides API](https://developers.facebook.com/documentation/ads-commerce/catalog/localized-catalog/localized-catalog-setup/overrides-api.md): Overrides API
+- [Localized Catalog Supported Fields](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/localized-catalog/supported-fields.md): Localized Catalog Supported Fields
+- [Localized Catalog for Advantage+ Catalog Ads](https://developers.facebook.com/documentation/ads-commerce/catalog/localized-catalog-da.md): Localized Catalog for Advantage+ Catalog Ads
+- [Localized Catalog for Instagram Shopping](https://developers.facebook.com/documentation/ads-commerce/catalog/localized-catalog-ig.md): Localized Catalog for Instagram Shopping
+- [Offers API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/offers-api.md): Offers API
+- [Generic Feed Files API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/generic-feed-files-api.md): Generic Feed Files API
+- [Commerce Merchant Settings API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/commerce-merchant-settings-api.md): Commerce Merchant Settings API
+- [Ratings and Reviews API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/ratings-and-reviews-api.md): Ratings and Reviews API
+- [Page Owned Catalog API](https://developers.facebook.com/documentation/ads-commerce/catalog/guides/page-owned-product-catalog-api.md): Page Owned Catalog API
+- [Reference](https://developers.facebook.com/documentation/ads-commerce/catalog/reference.md): Reference
+- [Media Titles](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/media-titles.md): Media Titles
+- [Media Titles Catalog Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/media-titles/catalog-edge.md): Media Titles Catalog Edge
+- [Media Titles Product Set Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/media-titles/product-set-edge.md): Media Titles Product Set Edge
+- [Media Titles Feed Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/media-titles/feed-edge.md): Media Titles Feed Edge
+- [Apps and Software](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/apps-and-software.md): Apps and Software
+- [Apps and Software Catalog Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/apps-and-software/catalog-edge.md): Apps and Software Catalog Edge
+- [Apps and Software Product Set Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/apps-and-software/product-set-edge.md): Apps and Software Product Set Edge
+- [Apps and Software Feed Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/apps-and-software/feed-edge.md): Apps and Software Feed Edge
+- [Articles and Publications](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/articles-and-publications.md): Articles and Publications
+- [Articles and Publications Catalog Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/articles-and-publications/catalog-edge.md): Articles and Publications Catalog Edge
+- [Articles and Publications Product Set Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/articles-and-publications/product-set-edge.md): Articles and Publications Product Set Edge
+- [Articles and Publications Feed Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/articles-and-publications/feed-edge.md): Articles and Publications Feed Edge
+- [Professional Services](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/professional-services.md): Professional Services
+- [Professional Services Catalog Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/professional-services/catalog-edge.md): Professional Services Catalog Edge
+- [Professional Services Product Set Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/professional-services/product-set-edge.md): Professional Services Product Set Edge
+- [Professional Services Feed Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/professional-services/feed-edge.md): Professional Services Feed Edge
+- [Activities](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/activities.md): Activities
+- [Activities Catalog Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/activities/catalog-edge.md): Activities Catalog Edge
+- [Activities Product Set Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/activities/product-set-edge.md): Activities Product Set Edge
+- [Activities Feed Edge](https://developers.facebook.com/documentation/ads-commerce/catalog/reference/activities/feed-edge.md): Activities Feed Edge
+- [Best Practices](https://developers.facebook.com/documentation/ads-commerce/catalog/best-practices.md): Best Practices
+- [Support](https://developers.facebook.com/documentation/ads-commerce/catalog/support.md): Support
+
+### Commerce Platform
+
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/commerce-platform.md): Overview
+- [Concepts](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/concepts.md): Concepts
+- [User Experience](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/concepts/user-experience.md): User Experience
+- [Payment and Data Flows](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/concepts/data-exchange.md): Payment and Data Flows
+- [Accounts and Assets](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/concepts/architecture.md): Accounts and Assets
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/get-started.md): Get Started
+- [API Integration Setup](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/api-setup.md): API Integration Setup
+- [App Dashboard](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/app-dashboard.md): App Dashboard
+- [Seller Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/project-guide.md): Seller Integration
+- [Partner Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners.md): Partner Integration
+- [Partner Integration Basics](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/overview.md): Partner Integration Basics
+- [Onboarding Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/onboarding-integration.md): Onboarding Integration
+- [Catalog Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/catalog-integration.md): Catalog Integration
+- [Build Offers Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/build-offers-integration.md): Build Offers Integration
+- [Order Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/order-integration.md): Order Integration
+- [Glossary](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/partners/glossary.md): Glossary
+- [Platform Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms.md): Platform Integration
+- [Onboarding](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding.md): Onboarding
+- [Onboarding Integration for FBE](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/fbe.md): Onboarding Integration for FBE
+- [Commerce Manager Redirect Onboarding](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/cmredirect.md): Commerce Manager Redirect Onboarding
+- [Merchant Onboarding for Platforms (beta)](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/cmredirect/beta.md): Merchant Onboarding for Platforms (beta)
+- [On Behalf Of](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/obo.md): On Behalf Of
+- [Merchant Settings API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/msapi.md): Merchant Settings API
+- [Existing Merchant Account](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/existingmerchant.md): Existing Merchant Account
+- [Page Eligibility for Commerce](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/page-elibility.md): Page Eligibility for Commerce
+- [Troubleshooting](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/onboarding/troubleshooting.md): Troubleshooting
+- [Merchant Distribution for MP/IG](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/distribution.md): Merchant Distribution for MP/IG
+- [Marketplace Approval API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/distribution/MPApprovalAPI.md): Marketplace Approval API
+- [Merchant Support](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/support.md): Merchant Support
+- [Validate the Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/validation.md): Validate the Integration
+- [Product Review Feed Schema](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/feed-schema.md): Product Review Feed Schema
+- [Feed Schema CSV](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/feed-schema-csv.md): Feed Schema CSV
+- [Automate Ratings and Reviews Seller Analysis](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/platforms/automate-seller-analysis.md): Automate Ratings and Reviews Seller Analysis
+- [Set Up Checkout URL](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/setup-checkout-url.md): Set Up Checkout URL
+- [Enable Subscriptions](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/enable-subscriptions.md): Enable Subscriptions
+- [Shops Ads Lightweight BOPIS Experience](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/shops-ads-lightweight-bopis.md): Shops Ads Lightweight BOPIS Experience
+- [Shops Ads Heavyweight BOPIS Experience](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/shops-ads-heavyweight-bopis.md): Shops Ads Heavyweight BOPIS Experience
+- [Catalog and Inventory](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog.md): Catalog and Inventory
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/get-started.md): Get Started
+- [Product Catalog](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/overview.md): Product Catalog
+- [Catalog Fields](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/fields.md): Catalog Fields
+- [disabled_capabilities](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/fields/product-visibility-per-channel.md): disabled_capabilities
+- [Product Categories](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories.md): Product Categories
+- [Clothing, Shoes &amp;amp; Accessories](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/cloth-access.md): Clothing, Shoes &amp;amp; Accessories
+- [Home Decor &amp;amp; Furniture](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/home.md): Home Decor &amp;amp; Furniture
+- [Jewelry &amp;amp; Watches](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/jewelry.md): Jewelry &amp;amp; Watches
+- [Health &amp;amp; Beauty](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/health-beauty.md): Health &amp;amp; Beauty
+- [Electronics](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/electronics.md): Electronics
+- [Baby &amp;amp; Kids](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/baby.md): Baby &amp;amp; Kids
+- [GPC-to-FPC Mappings](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/categories/google-product-category-to-facebook-product-category.md): GPC-to-FPC Mappings
+- [Product Variants](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/variants.md): Product Variants
+- [Collections API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/collections.md): Collections API
+- [Shop](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/shop.md): Shop
+- [Commerce Merchant Settings](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/commerce-merchant-settings.md): Commerce Merchant Settings
+- [Quantity to Sell](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/quantity-to-sell.md): Quantity to Sell
+- [Feed API Reference](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/feed.md): Feed API Reference
+- [Supplementary Feeds](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/supplementary-feeds.md): Supplementary Feeds
+- [Digital Goods](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/digital_goods.md): Digital Goods
+- [Batch API Reference](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/batch-api.md): Batch API Reference
+- [Best Practices](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/best-practices.md): Best Practices
+- [Localized Catalog for Instagram Shopping](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/localized.md): Localized Catalog for Instagram Shopping
+- [Updating Ads Catalog](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/updating.md): Updating Ads Catalog
+- [Multi-Platform Catalog Management](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/multiplatform.md): Multi-Platform Catalog Management
+- [Update-Only Shopify Feed](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/update-only-feed.md): Update-Only Shopify Feed
+- [Flexify Integration Guide](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/flexify-integration-guide.md): Flexify Integration Guide
+- [Inventory](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/catalog/inventory.md): Inventory
+- [Order Management](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management.md): Order Management
+- [Order Lifecycle](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/order-lifecycle.md): Order Lifecycle
+- [Using the API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/using-api.md): Using the API
+- [Integration Guide](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/integration.md): Integration Guide
+- [Order API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/order-api.md): Order API
+- [Acknowledgement API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/acknowledgement-api.md): Acknowledgement API
+- [Order Snapshot API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/order-snapshot-api.md): Order Snapshot API
+- [Fulfillment API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/fulfillment-api.md): Fulfillment API
+- [Cancellation and Refund API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/cancellation-refund-api.md): Cancellation and Refund API
+- [Returns API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/returns-api.md): Returns API
+- [Tax Override API](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/tax-override.md): Tax Override API
+- [Legacy API Reference](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/legacy-api.md): Legacy API Reference
+- [Shipping Profiles API Reference](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/shipping-profiles-api.md): Shipping Profiles API Reference
+- [Associate Shipping Profiles with Products](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/associate-shipping-profiles.md): Associate Shipping Profiles with Products
+- [Shipping Carrier Codes](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/carrier-codes.md): Shipping Carrier Codes
+- [Error Codes](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/error-codes.md): Error Codes
+- [Partner Deprecation Guidelines](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/order-management/partner-dep-guidelines.md): Partner Deprecation Guidelines
+- [Finance Reporting](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting.md): Finance Reporting
+- [Payouts](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting/payouts.md): Payouts
+- [Transactions](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting/transactions.md): Transactions
+- [Finance and Tax](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting/finance-tax.md): Finance and Tax
+- [Payments](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting/payments.md): Payments
+- [Promotions](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/reporting/promotions.md): Promotions
+- [Best Practices](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices.md): Best Practices
+- [Plan Your Integration](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/integration.md): Plan Your Integration
+- [Commerce Integration - Platform Partners](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/platform.md): Commerce Integration - Platform Partners
+- [Inventory](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/inventory.md): Inventory
+- [Orders](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/orders.md): Orders
+- [Shipping and Fulfillment](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/ship-fulfillment.md): Shipping and Fulfillment
+- [Post Purchase](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/post-purchase.md): Post Purchase
+- [Test Plan](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/best-practices/test-plan.md): Test Plan
+- [Customer Communication](https://developers.facebook.com/documentation/ads-commerce/commerce-platform/communication.md): Customer Communication
+
+### Conversions API
+
+- [Conversions API Overview](https://developers.facebook.com/documentation/ads-commerce/conversions-api.md): Conversions API Overview
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/conversions-api/get-started.md): Get Started
+- [Using the API](https://developers.facebook.com/documentation/ads-commerce/conversions-api/using-the-api.md): Using the API
+- [Verifying Setup](https://developers.facebook.com/documentation/ads-commerce/conversions-api/verifying-setup.md): Verifying Setup
+- [Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters.md): Parameters
+- [Main Body Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/main-body.md): Main Body Parameters
+- [Server Event Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/server-event.md): Server Event Parameters
+- [Customer Information Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/customer-information-parameters.md): Customer Information Parameters
+- [External ID](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/external-id.md): External ID
+- [fbp and fbc Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/fbp-and-fbc.md): fbp and fbc Parameters
+- [Standard Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/custom-data.md): Standard Parameters
+- [App Data Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/app-data.md): App Data Parameters
+- [Original Event Data](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/original-event.md): Original Event Data
+- [Parameter Builder Library](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameter-builder-library.md): Parameter Builder Library
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameter-builder-library/get-started.md): Get Started
+- [Workflow and Examples](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameter-builder-library/workflow-and-examples.md): Workflow and Examples
+- [Conversions API for App Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/app-events.md): Conversions API for App Events
+- [Conversions API for Offline Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/offline-events.md): Conversions API for Offline Events
+- [Conversions API for Business Messaging](https://developers.facebook.com/documentation/ads-commerce/conversions-api/business-messaging.md): Conversions API for Business Messaging
+- [Conversion Leads Integration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration.md): Conversion Leads Integration
+- [1: Connecting Your CRM to Download Leads](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/1-connecting-your-crm-with-lead-ads.md): 1: Connecting Your CRM to Download Leads
+- [2: Getting Started with Integration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/2-getting-started-with-integration.md): 2: Getting Started with Integration
+- [3: Developer Implementation](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/3-implementing-the-crm-integration.md): 3: Developer Implementation
+- [3: Zapier Implementation](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/zapier.md): 3: Zapier Implementation
+- [Prerequisites](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/zapier/prerequisites.md): Prerequisites
+- [Step 1: Implement Integration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/zapier/step-1-implement-integration.md): Step 1: Implement Integration
+- [Step 2: Verify Integration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/zapier/step-2-verify-integration.md): Step 2: Verify Integration
+- [4: Verify Your Data](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/4-verify-your-data.md): 4: Verify Your Data
+- [5: Configure Your Sales Funnel](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/5-configure-your-sales-funnel.md): 5: Configure Your Sales Funnel
+- [6: Follow-up Steps](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/crm-integration/6-follow-up-steps.md): 6: Follow-up Steps
+- [Payload Specification](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/payload-specification.md): Payload Specification
+- [Find the Lead ID](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/how-to-find-the-lead-id.md): Find the Lead ID
+- [FAQs](https://developers.facebook.com/documentation/ads-commerce/conversions-api/conversion-leads-integration/faq.md): FAQs
+- [Dataset Quality API](https://developers.facebook.com/documentation/ads-commerce/conversions-api/dataset-quality-api.md): Dataset Quality API
+- [Dataset Quality API for Offline Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/dataset-quality-api/offline-events.md): Dataset Quality API for Offline Events
+- [Dataset Quality API for CRM Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/dataset-quality-api/crm-events.md): Dataset Quality API for CRM Events
+- [Handling Duplicate Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/deduplicate-pixel-and-server-events.md): Handling Duplicate Events
+- [Guides](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides.md): Guides
+- [End-to-end Implementation](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/end-to-end-implementation.md): End-to-end Implementation
+- [Conversions API as a Platform](https://developers.facebook.com/documentation/ads-commerce/conversions-api/set-up-conversions-api-as-a-platform.md): Conversions API as a Platform
+- [Zapier Integration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/zapier-integration.md): Zapier Integration
+- [Conversions API for Google Tag Manager](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gtm-server-side.md): Conversions API for Google Tag Manager
+- [Conversions API for CRM for Platforms](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/conversions-api-crm-for-platforms.md): Conversions API for CRM for Platforms
+- [Set Up Conversions API with Salesforce Webhooks](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/salesforce-webhooks.md): Set Up Conversions API with Salesforce Webhooks
+- [Business SDK Features for Conversions API](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/business-sdk-features.md): Business SDK Features for Conversions API
+- [Append Attribution](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution.md): Append Attribution
+- [Event Parameters](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/append-attribution/reference.md): Event Parameters
+- [Integration Guidance: Value Optimization](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/value-optimization.md): Integration Guidance: Value Optimization
+- [Integration Guidance: Predicted Lifetime Value (pLTV)](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value.md): Integration Guidance: Predicted Lifetime Value (pLTV)
+- [Conversions API Gateway](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway.md): Conversions API Gateway
+- [Getting Started](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/configuration.md): Getting Started
+- [Setup Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/setup.md): Setup Guide
+- [DNS Setup Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/setup/dns-setup-guide.md): DNS Setup Guide
+- [Post-Setup Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/post-setup-management.md): Post-Setup Management
+- [Non-Web Server Events API Support](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/non-web-server-events.md): Non-Web Server Events API Support
+- [Upload Events](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/upload-events.md): Upload Events
+- [System Health Information](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/telemetry.md): System Health Information
+- [Enhance Events with Advanced Matching Data](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/enhance-events-advanced-matching.md): Enhance Events with Advanced Matching Data
+- [Include Facebook Login Data in the Conversions API](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/include-facebook-login-data.md): Include Facebook Login Data in the Conversions API
+- [Troubleshooting Tools](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/troubleshooting.md): Troubleshooting Tools
+- [Troubleshooting Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/troubleshooting-guide.md): Troubleshooting Guide
+- [Uninstall Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/uninstall.md): Uninstall Guide
+- [Changelog](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway/changelog.md): Changelog
+- [Conversions API Gateway: AWS App Runner](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner.md): Conversions API Gateway: AWS App Runner
+- [Setup Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/setup-guide.md): Setup Guide
+- [Architecture](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/architecture.md): Architecture
+- [Cost Monitoring](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/cost-monitoring.md): Cost Monitoring
+- [Custom Domain Setup](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/custom-domain-setup.md): Custom Domain Setup
+- [Scaling Control](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/scaling-control.md): Scaling Control
+- [Automatic and Manual Updates](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/updates.md): Automatic and Manual Updates
+- [Migrating from EC2 to AWS App Runner](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/migrations.md): Migrating from EC2 to AWS App Runner
+- [Uninstall Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-aws-app-runner/uninstallation.md): Uninstall Guide
+- [Conversions API Gateway for Multiple Accounts](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts.md): Conversions API Gateway for Multiple Accounts
+- [Host Onboarding: AWS EKS](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding.md): Host Onboarding: AWS EKS
+- [1. Create Instance](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding/create-instance.md): 1. Create Instance
+- [2. Configure a Host Account](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding/configure-host-account.md): 2. Configure a Host Account
+- [3. Set Up Custom Domain](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding/set-up-domain.md): 3. Set Up Custom Domain
+- [Host Onboarding: AWS App Runner](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-aws-app-runner.md): Host Onboarding: AWS App Runner
+- [1. Create Instance](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-aws-app-runner/create-instance.md): 1. Create Instance
+- [2. Configure a Host Account](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-aws-app-runner/configure-host-account.md): 2. Configure a Host Account
+- [3. Set Up Custom Domain](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-aws-app-runner/set-up-domain.md): 3. Set Up Custom Domain
+- [Host Onboarding: GCP](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-gcp.md): Host Onboarding: GCP
+- [1. Create Instance](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-gcp/create-instance.md): 1. Create Instance
+- [2. Create a Custom Domain](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-gcp/set-up-domain.md): 2. Create a Custom Domain
+- [3. Set Auto-Scaling Limits](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-onboarding-gcp/auto-scaling-limits.md): 3. Set Auto-Scaling Limits
+- [Host Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-management.md): Host Management
+- [Host User Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-management/host-user-management.md): Host User Management
+- [Managing Hosted Accounts](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-management/host-account-management.md): Managing Hosted Accounts
+- [Host Settings](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-management/host-settings.md): Host Settings
+- [Set Up SMTP Configuration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/host-management/set-up-smtp.md): Set Up SMTP Configuration
+- [Account Onboarding and Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding.md): Account Onboarding and Management
+- [Onboarding and Offboarding Unmanaged Accounts](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding/unmanaged-accounts.md): Onboarding and Offboarding Unmanaged Accounts
+- [User Management for Hosted Accounts](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding/account-user-management.md): User Management for Hosted Accounts
+- [Data Source Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding/data-source-management.md): Data Source Management
+- [Manage Domain Allow and Block Lists](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding/manage-allow-block-lists.md): Manage Domain Allow and Block Lists
+- [Configure Data Routing for Hosted Accounts](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/account-onboarding/account-data-routing.md): Configure Data Routing for Hosted Accounts
+- [Architecture](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/architecture.md): Architecture
+- [AWS EKS Architecture](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/architecture/aws-eks.md): AWS EKS Architecture
+- [AWS App Runner Architecture](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/architecture/aws-app-runner.md): AWS App Runner Architecture
+- [GCP Architecture](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/architecture/gcp.md): GCP Architecture
+- [Monitoring Your Setup](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/monitoring.md): Monitoring Your Setup
+- [Prospective Agencies: FAQs](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/agency-faqs.md): Prospective Agencies: FAQs
+- [Troubleshooting Tools](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/troubleshooting-tools.md): Troubleshooting Tools
+- [Troubleshooting Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/troubleshooting-guide.md): Troubleshooting Guide
+- [Uninstall Guide](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/uninstall.md): Uninstall Guide
+- [Glossary](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-multiple-accounts/glossary.md): Glossary
+- [Conversions API Gateway for Multiple Accounts Control Plane API](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api.md): Conversions API Gateway for Multiple Accounts Control Plane API
+- [Reference](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference.md): Reference
+- [Account Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/account-management.md): Account Management
+- [User Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/user-management.md): User Management
+- [Pixel Management](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/pixel-management.md): Pixel Management
+- [Account Data Routing Configuration](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/account-data-routing.md): Account Data Routing Configuration
+- [Account Event Metrics](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/account-event-metrics.md): Account Event Metrics
+- [Objects](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/gateway-control-plane-api/reference/objects.md): Objects
+- [Payload Helper](https://developers.facebook.com/documentation/ads-commerce/conversions-api/payload-helper.md): Payload Helper
+- [Best Practices](https://developers.facebook.com/documentation/ads-commerce/conversions-api/best-practices.md): Best Practices
+- [Troubleshooting](https://developers.facebook.com/documentation/ads-commerce/conversions-api/support.md): Troubleshooting
+
+### Conversions API Gateway and Signals Gateway
+
+- [Gateway Products Overview](https://developers.facebook.com/documentation/ads-commerce/gateway-products.md): Gateway Products Overview
+- [Conversions API Gateway](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway.md): Conversions API Gateway
+- [Setup Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/setup.md): Setup Guide
+- [Instance Activation](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/instance-activation.md): Instance Activation
+- [Enhance Events With Additional User Data](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/enhance-events-advanced-matching.md): Enhance Events With Additional User Data
+- [Include Facebook Login Data in the Conversions API](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/include-facebook-login-data.md): Include Facebook Login Data in the Conversions API
+- [Monitor Your Setup](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/monitoring.md): Monitor Your Setup
+- [Data Source Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/data-source-management.md): Data Source Management
+- [Upload Events](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/upload-events.md): Upload Events
+- [Uninstall Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway/uninstall.md): Uninstall Guide
+- [Signals Gateway](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway.md): Signals Gateway
+- [Setup Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/setup.md): Setup Guide
+- [Instance Activation](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/instance-activation.md): Instance Activation
+- [Upload Events](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/upload-events.md): Upload Events
+- [Pipeline Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/pipeline-management.md): Pipeline Management
+- [Data Source Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/data-source-management.md): Data Source Management
+- [Data Destination Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/data-destination-management.md): Data Destination Management
+- [Custom Data Destination](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/custom-data-destination.md): Custom Data Destination
+- [Event Filtering](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/event-filtering.md): Event Filtering
+- [Message Center](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/message-center.md): Message Center
+- [Diagnostics Tab](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/diagnostics-tab.md): Diagnostics Tab
+- [Plugins](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/plugins.md): Plugins
+- [Temporary User Creation for Debugging](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/temporary-user-for-debugging.md): Temporary User Creation for Debugging
+- [Signals Gateway Pixel Onboarding](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/signals-gateway-pixel-onboarding.md): Signals Gateway Pixel Onboarding
+- [Signals Gateway Pixel Setup in Google Tag Manager](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/pixel-setup-google-tag-manager.md): Signals Gateway Pixel Setup in Google Tag Manager
+- [Signals Gateway SDK Onboarding](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/signals-gateway-sdk-onboarding.md): Signals Gateway SDK Onboarding
+- [Signals Gateway Pixel Helper](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/signals-gateway-pixel-helper.md): Signals Gateway Pixel Helper
+- [Google BigQuery Connection Setup](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/google-bigquery-connection-setup.md): Google BigQuery Connection Setup
+- [Custom Audience](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/custom-audience.md): Custom Audience
+- [Enable CDN Domains](https://developers.facebook.com/documentation/ads-commerce/gateway-products/signals-gateway/enable-cdn.md): Enable CDN Domains
+- [Configuration](https://developers.facebook.com/documentation/ads-commerce/gateway-products/configuration.md): Configuration
+- [Host Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management.md): Host Management
+- [Post-Setup Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/post-setup-management.md): Post-Setup Management
+- [Account Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/account-management.md): Account Management
+- [Onboarding and Offboarding Unmanaged Hosted Accounts](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/account-management/onboarding-and-offboarding-accounts.md): Onboarding and Offboarding Unmanaged Hosted Accounts
+- [Data Routing](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/account-management/account-data-routing.md): Data Routing
+- [Manage Domain Allow-Lists and Block-Lists](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/account-management/manage-allow-block-lists.md): Manage Domain Allow-Lists and Block-Lists
+- [Host Settings](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/host-settings.md): Host Settings
+- [Host User Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/user-management.md): Host User Management
+- [Set Up SMTP Configuration](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/set-up-smtp.md): Set Up SMTP Configuration
+- [Set Auto-Scaling Limits](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/auto-scaling-limits.md): Set Auto-Scaling Limits
+- [System Health Information](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/system-health-information.md): System Health Information
+- [DNS Setup Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/host-management/dns-setup-guide.md): DNS Setup Guide
+- [Conversions API Gateway Pipeline](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway-pipeline.md): Conversions API Gateway Pipeline
+- [Advanced Matching](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway-pipeline/advanced-matching.md): Advanced Matching
+- [Include Facebook Login Data](https://developers.facebook.com/documentation/ads-commerce/gateway-products/conversions-api-gateway-pipeline/include-facebook-login-data.md): Include Facebook Login Data
+- [Control Plane API](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api.md): Control Plane API
+- [Account Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/account-management.md): Account Management
+- [User Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/user-management.md): User Management
+- [Pixel Management](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/pixel-management.md): Pixel Management
+- [Account Data Routing](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/account-data-routing.md): Account Data Routing
+- [Account Event Metrics](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/account-event-metrics.md): Account Event Metrics
+- [Objects](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/objects.md): Objects
+- [Set Up Data Pipelines](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/setup-data-pipelines.md): Set Up Data Pipelines
+- [Data Pipelines](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/setup-data-pipelines/data-pipelines.md): Data Pipelines
+- [Data Sources](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/setup-data-pipelines/data-sources.md): Data Sources
+- [Data Destinations](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/setup-data-pipelines/data-destinations.md): Data Destinations
+- [Objects](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-control-plane-api/setup-data-pipelines/objects.md): Objects
+- [GCP Onboarding](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-gcp/host-onboarding.md): GCP Onboarding
+- [Create an Instance: Agencies and Partners](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-gcp/create-instance-agencies-partners.md): Create an Instance: Agencies and Partners
+- [Create Instance From Events Manager](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-gcp/create-instance-from-events-manager.md): Create Instance From Events Manager
+- [GCP Architecture](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-gcp/architecture.md): GCP Architecture
+- [Create Custom Domain for GCP](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-gcp/set-up-domain.md): Create Custom Domain for GCP
+- [AWS EKS Onboarding](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-eks.md): AWS EKS Onboarding
+- [Create an Instance: Agencies and Partners](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-eks/create-instance-partners-agencies.md): Create an Instance: Agencies and Partners
+- [AWS Architecture](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-eks/eks-architecture.md): AWS Architecture
+- [Set Up Custom Domain](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-eks/set-up-domain.md): Set Up Custom Domain
+- [AWS ECS Express Onboarding](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-ecs-express.md): AWS ECS Express Onboarding
+- [AWS ECS Express Architecture](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-ecs-express/architecture.md): AWS ECS Express Architecture
+- [Custom Domain Setup](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-ecs-express/set-up-domain.md): Custom Domain Setup
+- [Cloud Migration Process](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-app-runner/app-runner-migrations.md): Cloud Migration Process
+- [Cost Monitoring](https://developers.facebook.com/documentation/ads-commerce/gateway-products/gateway-aws-ecs-express/ecs-express-cost-monitoring.md): Cost Monitoring
+- [Updates](https://developers.facebook.com/documentation/ads-commerce/gateway-products/updates.md): Updates
+- [Troubleshooting Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/troubleshooting-guide.md): Troubleshooting Guide
+- [Sending Events From a Server](https://developers.facebook.com/documentation/ads-commerce/gateway-products/non-web-server-events.md): Sending Events From a Server
+- [Uninstall Guide](https://developers.facebook.com/documentation/ads-commerce/gateway-products/uninstall.md): Uninstall Guide
+- [Changelog](https://developers.facebook.com/documentation/ads-commerce/gateway-products/changelog.md): Changelog
+
+### Marketing API
+
+- [Marketing API Overview](https://developers.facebook.com/documentation/ads-commerce/marketing-api.md): Marketing API Overview
+- [About Marketing API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview.md): About Marketing API
+- [Versioning](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/versioning.md): Versioning
+- [Rate Limiting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/rate-limiting.md): Rate Limiting
+- [Data Processing Options](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/data-processing-options.md): Data Processing Options
+- [Glossary](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/glossary.md): Glossary
+- [Get Started with Marketing API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started.md): Get Started with Marketing API
+- [Authorization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization.md): Authorization
+- [Authentication](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authentication.md): Authentication
+- [Use Cases](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/use-cases.md): Use Cases
+- [Ad Creation Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/basic-ad-creation.md): Ad Creation Guides
+- [Create an Ad Campaign](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/basic-ad-creation/create-an-ad-campaign.md): Create an Ad Campaign
+- [Create an Ad Set](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/basic-ad-creation/create-an-ad-set.md): Create an Ad Set
+- [Create an Ad Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/basic-ad-creation/create-an-ad-creative.md): Create an Ad Creative
+- [Create an Ad](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/basic-ad-creation/create-an-ad.md): Create an Ad
+- [Manage Campaigns](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/manage-campaigns.md): Manage Campaigns
+- [Ad Performance &amp;amp; Optimization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/ad-optimization-basics.md): Ad Performance &amp;amp; Optimization
+- [Monitoring and Analytics](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/ad-optimization-basics/monitoring-and-analytics.md): Monitoring and Analytics
+- [Optimization Tips](https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/ad-optimization-basics/optimization-tips.md): Optimization Tips
+- [Ad Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative.md): Ad Creative
+- [Video &amp;amp; Carousel Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/videoads.md): Video &amp;amp; Carousel Ads
+- [FB Video Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/videoads/fbvideoads.md): FB Video Ads
+- [Instant Experiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/instant-experiences.md): Instant Experiences
+- [Collection Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/collection-ads.md): Collection Ads
+- [App Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/mobile-app-ads.md): App Ads
+- [Lead Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lead-ads.md): Lead Ads Guides
+- [Creating](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lead-ads/create.md): Creating
+- [Quality Features](https://developers.facebook.com/documentation/ads-commerce/marketing-api/lead-ads/enable-quality-features.md): Quality Features
+- [Phone OTP Verification](https://developers.facebook.com/documentation/ads-commerce/marketing-api/lead-ads/enable-quality-features/phone-otp.md): Phone OTP Verification
+- [Work Email Validation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/lead-ads/enable-quality-features/work-email-validation.md): Work Email Validation
+- [Retrieving](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lead-ads/retrieving.md): Retrieving
+- [Testing and Troubleshooting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lead-ads/testing-troubleshooting.md): Testing and Troubleshooting
+- [Advantage+ Catalog Ads for Leadgen](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads-for-leadgen.md): Advantage+ Catalog Ads for Leadgen
+- [CRM Integration](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lead-ads/quickstart/webhooks-integration.md): CRM Integration
+- [Instagram Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/instagramads.md): Instagram Ads Guides
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/instagramads/get-started.md): Get Started
+- [Setup &amp;amp; Management](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides.md): Setup &amp;amp; Management
+- [Set Up Instagram Accounts On Business Manager](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/ig-accounts-with-business-manager.md): Set Up Instagram Accounts On Business Manager
+- [Set Up Instagram Accounts With Pages](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/pages-ig-account.md): Set Up Instagram Accounts With Pages
+- [Ads With Mixed Placements](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/mixed-placements-ads.md): Ads With Mixed Placements
+- [Add Call-To-Action](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/call-to-action.md): Add Call-To-Action
+- [Get Ad Preview](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/get-ad-preview.md): Get Ad Preview
+- [Get Ad Insights](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/get-ad-insights.md): Get Ad Insights
+- [Use Posts as Instagram Ads](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/use-posts-as-ads.md): Use Posts as Instagram Ads
+- [Instagram Advantage+ Catalog Ads](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/advantage-catalog-ads.md): Instagram Advantage+ Catalog Ads
+- [Carousel Ads](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/carousel-ads.md): Carousel Ads
+- [Reminder Ads](https://developers.facebook.com/documentation/ads-commerce/instagram/marketing-api/guides/reminder-ads.md): Reminder Ads
+- [Post Moderation](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/post-moderation.md): Post Moderation
+- [Use URL Tags for Tracking](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/url-tags-for-tracking.md): Use URL Tags for Tracking
+- [Customize Stories](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/customize-stories.md): Customize Stories
+- [Add Interactive Elements](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/guides/add-interactive-elements.md): Add Interactive Elements
+- [Requirements](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/requirements.md): Requirements
+- [Media Requirements](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/reference/media-requirements.md): Media Requirements
+- [Data and Call To Action Requirements](https://developers.facebook.com/documentation/ads-commerce/instagram/ads-api/reference/data-cta-requirements.md): Data and Call To Action Requirements
+- [Threads Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads.md): Threads Ads Guides
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation.md): Get Started
+- [Carousel Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/carousel-ads.md): Carousel Ads
+- [Advantage+ Catalog Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/advantage-catalog-ads.md): Advantage+ Catalog Ads
+- [App Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/app-ads.md): App Ads
+- [Use Posts as Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/use-posts-as-ads.md): Use Posts as Ads
+- [Reply Moderation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/reply-moderation.md): Reply Moderation
+- [Threads Ads Insights](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/insights.md): Threads Ads Insights
+- [Messaging Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads.md): Messaging Ads Guides
+- [Click to Messenger](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads/click-to-messenger.md): Click to Messenger
+- [Click to Instagram](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads/click-to-instagram.md): Click to Instagram
+- [Click to WhatsApp](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads/click-to-whatsapp.md): Click to WhatsApp
+- [Multidestination](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads/click-to-multidestination.md): Multidestination
+- [Website Ads Click to Message](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/messaging-ads/website-ads-click-to-message.md): Website Ads Click to Message
+- [Ads in WhatsApp Status](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-in-whatsapp-status.md): Ads in WhatsApp Status
+- [WhatsApp identity](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-in-whatsapp-status/whatsapp-identity.md): WhatsApp identity
+- [People whose age is unknown](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-in-whatsapp-status/user-age-unknown.md): People whose age is unknown
+- [Profile Visit Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/profile-visit-ads.md): Profile Visit Ads
+- [Instagram Profile Visit](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/profile-visit-ads/instagram-profile-visit.md): Instagram Profile Visit
+- [Facebook Page Visit](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/profile-visit-ads/facebook-page-visit.md): Facebook Page Visit
+- [Multidestination Profile Visit](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/profile-visit-ads/multidestination-profile-visit.md): Multidestination Profile Visit
+- [Multi-Media Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/multi-media-ads.md): Multi-Media Ads
+- [Partnership Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads.md): Partnership Ads
+- [Partnership Ads Advertisable Content API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/content-discovery-api.md): Partnership Ads Advertisable Content API
+- [Partner Permissions](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/post-level-permissioning.md): Partner Permissions
+- [Account-Level Permissioning](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/account-level-permissioning.md): Account-Level Permissioning
+- [Facebook](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/fb-account-level-permissioning.md): Facebook
+- [Partnership Ads Creation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation.md): Partnership Ads Creation
+- [Instagram Partnership Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/boost-existing-post.md): Instagram Partnership Ads
+- [Instagram Partnership Ads with a New Ad Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/use-new-creative.md): Instagram Partnership Ads with a New Ad Creative
+- [Supported Partnership Ads Configurations](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations.md): Supported Partnership Ads Configurations
+- [Placement Asset Customization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/placement-asset-customization.md): Placement Asset Customization
+- [Advantage+ Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/advantage-creative.md): Advantage+ Creative
+- [Click To Message Destinations](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/click-to-message-destinations.md): Click To Message Destinations
+- [Advantage+ Catalog Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/advantage-catalog-ads.md): Advantage+ Catalog Ads
+- [Testimonial Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/testimonial-ads.md): Testimonial Ads
+- [Lead Generation Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/supported-configurations/lead-ads.md): Lead Generation Ads
+- [Facebook Partnership Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/boost-existing-fb-post.md): Facebook Partnership Ads
+- [Facebook Partnership Ads with a New Ad Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ads-creation/new-fb-creative.md): Facebook Partnership Ads with a New Ad Creative
+- [Partnership Ad Codes](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/partnership-ads/ad-codes.md): Partnership Ad Codes
+- [Branded Content](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/branded-content.md): Branded Content
+- [Manage Branded Content Permissions](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/branded-content-permissions.md): Manage Branded Content Permissions
+- [Event and Local Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/event-ads.md): Event and Local Ads
+- [Advantage+ Campaigns](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-campaigns.md): Advantage+ Campaigns
+- [Advantage+ Shopping Campaign Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-shopping-campaigns.md): Advantage+ Shopping Campaign Guides
+- [Cross-Channel Conversion Optimization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-shopping-campaigns/cross-channel-conversion.md): Cross-Channel Conversion Optimization
+- [Audience Type URL Parameters](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-shopping-campaigns/audience-type-url-parameters.md): Audience Type URL Parameters
+- [Shops Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/shops-ads.md): Shops Ads
+- [Asset Feed Spec Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/asset-feed-spec.md): Asset Feed Spec Guides
+- [Asset Feed Options](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/asset-feed-spec/options.md): Asset Feed Options
+- [Dynamic Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/asset-feed-spec/dynamic-creative.md): Dynamic Creative
+- [Customization Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/asset-feed-spec/asset-customization-rules.md): Customization Rules
+- [Placement Asset Customization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/dynamic-creative/placement-asset-customization.md): Placement Asset Customization
+- [Multi-Language Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/multi-language-ads.md): Multi-Language Ads
+- [Insights](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/asset-feed-spec/insights.md): Insights
+- [Advantage+ Catalog Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads.md): Advantage+ Catalog Ads Guides
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/get-started.md): Get Started
+- [Advantage+ Catalog Ads Mobile](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/mobile-apps.md): Advantage+ Catalog Ads Mobile
+- [Advantage+ App Campaigns](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/advantage-app-campaigns.md): Advantage+ App Campaigns
+- [Allow Product Video Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/allow-product-video.md): Allow Product Video Guides
+- [FAQ](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/allow-product-video/faq.md): FAQ
+- [Multi-Aspect Ratio Images](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/multi-ratio-images.md): Multi-Aspect Ratio Images
+- [Advantage+ Creative for Catalog](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-creative-for-catalog.md): Advantage+ Creative for Catalog
+- [Real Estate Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/real-estate-ads.md): Real Estate Ads Guides
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/real-estate-ads/get-started.md): Get Started
+- [Audiences &amp;amp; Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/real-estate-ads/guides.md): Audiences &amp;amp; Management
+- [Build Audience](https://developers.facebook.com/documentation/ads-commerce/marketing-api/real-estate-ads/audience.md): Build Audience
+- [Ads Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/real-estate-ads/ads-management.md): Ads Management
+- [Travel Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/travel-ads.md): Travel Ads Guides
+- [Travel Ads - Audience Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/travel-ads/audience-management.md): Travel Ads - Audience Management
+- [Hotel Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/hotel-ads.md): Hotel Ads Guides
+- [Hotel Ads - Catalog &amp;amp; Feed](https://developers.facebook.com/documentation/ads-commerce/marketing-api/hotel-ads/catalog.md): Hotel Ads - Catalog &amp;amp; Feed
+- [Hotel Ads - Events](https://developers.facebook.com/documentation/ads-commerce/marketing-api/hotel-ads/events.md): Hotel Ads - Events
+- [Hotel Ads - Template Tags](https://developers.facebook.com/documentation/ads-commerce/marketing-api/hotel-ads/template-tags.md): Hotel Ads - Template Tags
+- [Hotel Ads - Date-Specific Prices](https://developers.facebook.com/documentation/ads-commerce/marketing-api/hotel-ads/dynamic-pricing.md): Hotel Ads - Date-Specific Prices
+- [Flight Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/flight-ads.md): Flight Ads Guides
+- [Flight Ads Catalog &amp;amp; Feed](https://developers.facebook.com/documentation/ads-commerce/marketing-api/flight-ads/catalog.md): Flight Ads Catalog &amp;amp; Feed
+- [Flight Events](https://developers.facebook.com/documentation/ads-commerce/marketing-api/flight-ads/events.md): Flight Events
+- [Flight Ads - Template Tags](https://developers.facebook.com/documentation/ads-commerce/marketing-api/flight-ads/template-tags.md): Flight Ads - Template Tags
+- [Destination Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/destination-ads.md): Destination Ads Guides
+- [Destination Catalog](https://developers.facebook.com/documentation/ads-commerce/marketing-api/destination-ads/catalog.md): Destination Catalog
+- [Destination Events](https://developers.facebook.com/documentation/ads-commerce/marketing-api/destination-ads/events.md): Destination Events
+- [Destination Ads - Template Tags](https://developers.facebook.com/documentation/ads-commerce/marketing-api/destination-ads/template-tags.md): Destination Ads - Template Tags
+- [Automotive Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads.md): Automotive Ads Guides
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/overview.md): Overview
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/get-started.md): Get Started
+- [Automotive Ads Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides.md): Automotive Ads Management
+- [Automotive Inventory Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/aia.md): Automotive Inventory Ads
+- [Automotive Model Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/aoa.md): Automotive Model Ads
+- [Beta Automotive Model Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/automotive-model-ads.md): Beta Automotive Model Ads
+- [Catalog](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/catalog.md): Catalog
+- [Events](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/events.md): Events
+- [Audience Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/audience-mgmt.md): Audience Management
+- [Ads Management](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/guides/ads-mgmt.md): Ads Management
+- [Reference](https://developers.facebook.com/documentation/ads-commerce/marketing-api/auto-ads/reference.md): Reference
+- [Advantage+ Catalog Ads with an On-Facebook Destination](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/on-facebook-destination.md): Advantage+ Catalog Ads with an On-Facebook Destination
+- [FAQ](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/faq.md): FAQ
+- [Advantage+ Creative Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/advantage-creative.md): Advantage+ Creative Guides
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/advantage-creative/get-started.md): Get Started
+- [Add Site Links](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/advantage-creative/add-site-links.md): Add Site Links
+- [Product Extensions for Advantage+ Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/product-extensions.md): Product Extensions for Advantage+ Creative
+- [Standard Enhancements for Advantage+ Creative](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/standard-enhancements.md): Standard Enhancements for Advantage+ Creative
+- [Advantage+ Creative Preview API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advantage-catalog-ads/creative-preview.md): Advantage+ Creative Preview API
+- [Omnichannel Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/omnichannel-ads.md): Omnichannel Ads
+- [Generative AI Features](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/generative-ai-features.md): Generative AI Features
+- [Collaborative Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads.md): Collaborative Ads Guides
+- [Managed Partner Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads.md): Managed Partner Ads Guides
+- [Integration](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/integration.md): Integration
+- [Get Started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide.md): Get Started
+- [Prerequisites &amp;amp; System Users](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/prerequisites.md): Prerequisites &amp;amp; System Users
+- [Create Admin System User](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/prerequisites/create-system-user.md): Create Admin System User
+- [Assign Permissions to System User](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/prerequisites/assign-permissions-to-system-user.md): Assign Permissions to System User
+- [Generate Access Token for System User](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/prerequisites/generate-access-token-system-user.md): Generate Access Token for System User
+- [Seller Management Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/seller.md): Seller Management Guides
+- [Check Seller Eligibility](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/seller/eligibility.md): Check Seller Eligibility
+- [Onboard a Seller](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/seller/onboarding.md): Onboard a Seller
+- [Delete a Seller](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/seller/deletion.md): Delete a Seller
+- [Partner Ads Management Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/mpa-ads.md): Partner Ads Management Guides
+- [Async API User Guide](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/async-api-user-guide.md): Async API User Guide
+- [Error Handling Guide](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/api-guide/error-handling-guide.md): Error Handling Guide
+- [Reference](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/reference.md): Reference
+- [FAQ](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/managed-partner-ads/faq.md): FAQ
+- [Partner Premium Options](https://developers.facebook.com/documentation/ads-commerce/marketing-api/collaborative-ads/partner-premium-options.md): Partner Premium Options
+- [Product Set Optimization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/product-set-optimization/product-set-optimization-overview.md): Product Set Optimization
+- [Promoted Products Optimization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/product-set-optimization/promoted-products-optimization.md): Promoted Products Optimization
+- [Budget Splits](https://developers.facebook.com/documentation/ads-commerce/marketing-api/product-set-optimization/budget-splits.md): Budget Splits
+- [Multi-advertiser Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/multi-advertiser-ads.md): Multi-advertiser Ads
+- [Reels Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/reels-ads.md): Reels Ads
+- [Call Ads Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/call-ads.md): Call Ads Guides
+- [Callback Feeature](https://developers.facebook.com/documentation/ads-commerce/marketing-api/call-ads/callback-feature.md): Callback Feeature
+- [Flexible Ad Format](https://developers.facebook.com/documentation/ads-commerce/marketing-api/flexible-ad-format.md): Flexible Ad Format
+- [Format Automation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/creative/format-automation.md): Format Automation
+- [Bidding Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding.md): Bidding Guides
+- [Budget &amp;amp; Strategy](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview.md): Budget &amp;amp; Strategy
+- [Budgets](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview/budgets.md): Budgets
+- [Bid Strategies](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview/bid-strategy.md): Bid Strategies
+- [Billing Events](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview/billing-events.md): Billing Events
+- [Pacing and Scheduling](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview/pacing-and-scheduling.md): Pacing and Scheduling
+- [Bidding &amp;amp; Optimization](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/guides.md): Bidding &amp;amp; Optimization
+- [Advantage Campaign Budget](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/guides/advantage-campaign-budget.md): Advantage Campaign Budget
+- [Ad Set Budget Sharing](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/guides/adset-budget-sharing.md): Ad Set Budget Sharing
+- [Optimized Cost Per Mille Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/guides/optimized-cost-per-mille.md): Optimized Cost Per Mille Ads
+- [Cost Per Action Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/guides/cost-per-action-ads.md): Cost Per Action Ads
+- [Reservation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/reservation.md): Reservation
+- [Bid Multipliers](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding-and-optimization/bid-multiplier.md): Bid Multipliers
+- [Cross-Channel Conversion Optimization](https://developers.facebook.com/documentation/ads-commerce/ccco.md): Cross-Channel Conversion Optimization
+- [Value Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/value-rules.md): Value Rules
+- [Ad Rules Engine Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules.md): Ad Rules Engine Guides
+- [Ad Rules Specs](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/ad-rules-specs.md): Ad Rules Specs
+- [Evaluation Spec](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/overview/evaluation-spec.md): Evaluation Spec
+- [Execution Spec](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/overview/execution-spec.md): Execution Spec
+- [Change Spec](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/overview/change-spec.md): Change Spec
+- [Trigger Based Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/trigger-based-rules.md): Trigger Based Rules
+- [Schedule Based Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/scheduled-based-rules.md): Schedule Based Rules
+- [Advanced Scheduling](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/advanced-scheduling.md): Advanced Scheduling
+- [Evaluation Spec Filters](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/evaluation-spec-filters.md): Evaluation Spec Filters
+- [Rebalance Budget](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/rebalance-budget.md): Rebalance Budget
+- [ROAS Ad Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/roas-ad-rules.md): ROAS Ad Rules
+- [API Calls](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-rules/guides/api-calls.md): API Calls
+- [Audience Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences.md): Audience Guides
+- [Overview](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/overview.md): Overview
+- [Customer File Custom Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/custom-audiences.md): Customer File Custom Audiences
+- [Audience Rules](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/audience-rules.md): Audience Rules
+- [Lookalike Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/lookalike-audiences.md): Lookalike Audiences
+- [Value-Based Lookalikes](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/value-based-lookalike-audiences.md): Value-Based Lookalikes
+- [Engagement Custom Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/engagement-custom-audiences.md): Engagement Custom Audiences
+- [Mobile App Custom Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/mobile-app-custom-audiences.md): Mobile App Custom Audiences
+- [Website Custom Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/website-custom-audiences.md): Website Custom Audiences
+- [Offline Custom Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/offline-custom-audiences.md): Offline Custom Audiences
+- [Dynamic Audiences](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/dynamic-product-audiences.md): Dynamic Audiences
+- [Audience Network Ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audience-network.md): Audience Network Ads
+- [Reach Estimate API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/guides/reach-estimate.md): Reach Estimate API
+- [Special Ad Category](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/special-ad-category.md): Special Ad Category
+- [Targeting Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference.md): Targeting Guides
+- [Basic Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/basic-targeting.md): Basic Targeting
+- [Advanced Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/advanced-targeting.md): Advanced Targeting
+- [Placement Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/placement-targeting.md): Placement Targeting
+- [Targeting Search](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-search.md): Targeting Search
+- [Detailed Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/detailed-targeting.md): Detailed Targeting
+- [Targeting Description](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-description.md): Targeting Description
+- [Advantage Targeting Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/advantage-targeting.md): Advantage Targeting Guides
+- [Advantage+ Audience](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-expansion/advantage-audience.md): Advantage+ Audience
+- [Advantage Detailed Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-expansion/advantage-detailed-targeting.md): Advantage Detailed Targeting
+- [Advantage Lookalike](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-expansion/advantage-lookalike.md): Advantage Lookalike
+- [Advantage Custom Audience](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-expansion/advantage-custom-audience.md): Advantage Custom Audience
+- [Flexible Targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/flexible-targeting.md): Flexible Targeting
+- [Deprecated Targeting Terms](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/deprecated-targeting-terms.md): Deprecated Targeting Terms
+- [Targeting Restrictions](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/targeting-restrictions.md): Targeting Restrictions
+- [Estimated Daily Results](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/estimated-daily-results.md): Estimated Daily Results
+- [Custom Audience Terms Of Service](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/custom-audience-terms-of-service.md): Custom Audience Terms Of Service
+- [Insights API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights.md): Insights API
+- [Breakdowns](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/breakdowns.md): Breakdowns
+- [Limits &amp;amp; Best Practices](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/best-practices.md): Limits &amp;amp; Best Practices
+- [Tracking and Conversion Specs](https://developers.facebook.com/documentation/ads-commerce/marketing-api/tracking-specs.md): Tracking and Conversion Specs
+- [Marketing Mix Modeling](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/marketing-mix-modeling.md): Marketing Mix Modeling
+- [Product Insights](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/products.md): Product Insights
+- [Mobile App Measurement API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/mobile-measurement.md): Mobile App Measurement API
+- [Conversion Lift Measurement](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/lift-studies.md): Conversion Lift Measurement
+- [Split Testing](https://developers.facebook.com/documentation/ads-commerce/marketing-api/guides/split-testing.md): Split Testing
+- [Ad Volume](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights-api/ads-volume.md): Ad Volume
+- [App Events API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/app-event-api.md): App Events API
+- [Error Codes](https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/error-codes.md): Error Codes
+- [Ads Webhooks](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/ads-webhooks-overview.md): Ads Webhooks
+- [Get started](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/setup/get-started.md): Get started
+- [Effective status](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/effective-status.md): Effective status
+- [Subscriptions](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/subscriptions.md): Subscriptions
+- [Creative fatigue](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/creative-fatigue.md): Creative fatigue
+- [Ad recommendations](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/ad-recommendations.md): Ad recommendations
+- [In-process ad objects](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/in-process-ad-objects.md): In-process ad objects
+- [With-issues ad objects](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ads-webhooks/with-issues-ad-objects.md): With-issues ad objects
+- [Advertiser Networks](https://developers.facebook.com/documentation/ads-commerce/marketing-api/advertiser-networks.md): Advertiser Networks
+- [Brand Safety and Suitability Guides](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability.md): Brand Safety and Suitability Guides
+- [Integration Setup](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md): Integration Setup
+- [Publisher Block Lists API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/block-list.md): Publisher Block Lists API
+- [Content Block Lists API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/content-block-lists.md): Content Block Lists API
+- [Content Delivery Reports API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/content-delivery-report.md): Content Delivery Reports API
+- [Feed Verification API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/feed-verification.md): Feed Verification API
+- [Publisher Delivery Reports API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/publisher-delivery-report.md): Publisher Delivery Reports API
+- [Passback API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/passback-api.md): Passback API
+- [Partner-publisher Lists API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/publisher-list.md): Partner-publisher Lists API
+- [Best Practices &amp;amp; Recommendations](https://developers.facebook.com/documentation/ads-commerce/marketing-api/best-practices.md): Best Practices &amp;amp; Recommendations
+- [Performance Recommendations API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/performance-recommendations.md): Performance Recommendations API
+- [Performance Recommendations History API](https://developers.facebook.com/documentation/ads-commerce/marketing-api/overview/performance-recommendations-history-api.md): Performance Recommendations History API
+- [Omni Optimal Setup Guide](https://developers.facebook.com/documentation/ads-commerce/marketing-api/best-practices/omni-optimal-setup-guide.md): Omni Optimal Setup Guide
+- [Manage Your Ad Object&#039;s Status](https://developers.facebook.com/documentation/ads-commerce/marketing-api/best-practices/manage-your-ad-object-status.md): Manage Your Ad Object&#039;s Status
+- [Async and Batch Requests](https://developers.facebook.com/documentation/ads-commerce/marketing-api/asyncrequests.md): Async and Batch Requests
+- [Post-Processing for Ad Creation](https://developers.facebook.com/documentation/ads-commerce/marketing-api/using-the-api/post-processing.md): Post-Processing for Ad Creation
+- [Troubleshooting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/troubleshooting.md): Troubleshooting
+- [Error Codes](https://developers.facebook.com/documentation/ads-commerce/marketing-api/error-reference.md): Error Codes
+- [iOS 14 Error Codes](https://developers.facebook.com/documentation/ads-commerce/marketing-api/error-reference/ios-14-error-codes.md): iOS 14 Error Codes
+- [FAQ](https://developers.facebook.com/documentation/ads-commerce/marketing-api/using-the-api/faq.md): FAQ
+- [Version Changelogs](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog.md): Version Changelogs
+- [Versions](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/versions.md): Versions
+- [v25.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version25.0.md): v25.0
+- [v24.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version24.0.md): v24.0
+- [v23.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version23.0.md): v23.0
+- [v22.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version22.0.md): v22.0
+- [v21.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version21.0.md): v21.0
+- [v20.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version20.0.md): v20.0
+- [v19.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version19.0.md): v19.0
+- [v18.0](https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog/version18.0.md): v18.0
+- [Out-of-Cycle Change Index](https://developers.facebook.com/documentation/ads-commerce/marketing-api/out-of-cycle-changes.md): Out-of-Cycle Change Index
+- [2023](https://developers.facebook.com/documentation/ads-commerce/marketing-api/out-of-cycle-changes/occ-2023.md): 2023
+- [2024](https://developers.facebook.com/documentation/ads-commerce/marketing-api/out-of-cycle-changes/occ-2024.md): 2024
+- [2025](https://developers.facebook.com/documentation/ads-commerce/marketing-api/out-of-cycle-changes/occ-2025.md): 2025
+- [2026](https://developers.facebook.com/documentation/ads-commerce/marketing-api/out-of-cycle-changes/occ-2026.md): 2026
+
+### Overview
+
+- [Overview](https://developers.facebook.com/documentation/ads-commerce.md): Overview

@@ -22,11 +22,15 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "nursery": {
+        "noFloatingPromises": "error"
+      }
     },
     "domains": {
       "next": "recommended",
-      "react": "recommended"
+      "react": "recommended",
+      "types": "recommended"
     }
   },
   "assist": {
