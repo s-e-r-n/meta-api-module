@@ -1,4 +1,5 @@
 import * as z from "zod/mini";
+import type { user_data_input } from "./user_data";
 
 export const standard_event_names = [
   "AddPaymentInfo",
@@ -26,7 +27,7 @@ export type standard_event_name = (typeof standard_event_names)[number];
 
 export type field_requirements = {
   readonly custom_data?: readonly string[];
-  readonly user_data?: readonly string[];
+  readonly user_data?: readonly (keyof user_data_input)[];
   readonly attribution_data?: true;
   readonly event_source_url?: true;
 };
@@ -84,8 +85,7 @@ export type meta_capi_policy<p> = {
   readonly every_event?: event_rules;
   readonly events?: {
     readonly [name in keyof events_of<p>]: name extends
-      | standard_event_name
-      | custom_events_of<p>[number]
+      standard_event_name | custom_events_of<p>[number]
       ? event_rules
       : never;
   };

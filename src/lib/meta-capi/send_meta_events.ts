@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import * as z from "zod/mini";
 import { engine_config } from "./config";
 import { wire_custom_data } from "./custom_data";
@@ -86,6 +87,7 @@ const wire_event_of = (
   );
   return {
     ...event,
+    event_id: event.event_id ?? randomUUID(),
     event_time: event.event_time ?? now_s,
     action_source: event.action_source ?? "website",
     user_data: hashed.user_data,

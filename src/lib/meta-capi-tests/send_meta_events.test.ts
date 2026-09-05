@@ -72,6 +72,7 @@ describe("send_meta_events", () => {
       data: [
         {
           event_name: "Purchase",
+          event_id: expect.stringMatching(/^[0-9a-f-]{36}$/),
           event_time: now,
           action_source: "website",
           event_source_url: "https://shop.example/thank-you?order=1",
@@ -84,6 +85,14 @@ describe("send_meta_events", () => {
       ],
       test_event_code: undefined,
     });
+  });
+
+  it("mints an event_id when the caller gives none, once, so a retry repeats the same id", async () => {
+    await send_meta_events([purchase]);
+    const first = post.mock.calls[0]?.[1].data[0]?.event_id;
+    expect(first).toMatch(/^[0-9a-f-]{36}$/);
+    await send_meta_events([purchase]);
+    expect(post.mock.calls[1]?.[1].data[0]?.event_id).not.toBe(first);
   });
 
   it("keeps the event_time and event_id a caller provides", async () => {
