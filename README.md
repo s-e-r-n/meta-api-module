@@ -11,12 +11,6 @@ What it does:
 - The server posts it to the Conversions API.
 - The access token never leaves the server.
 
-Who this manual is for:
-
-- The agent who changes the site.
-- Requests arrive in plain language.
-- The table in section 3 says which edit each request is.
-
 ## 1. Install
 
 **Install the module and its configuration in the Next.js app.**
@@ -74,25 +68,7 @@ Sections a rule can name:
 - `user_data` (a list of keys)
 - `attribution_data: true`
 
-## 3. Recipes
-
-**Look up a plain-language request and find the matching edit.**
-
-| The request, in plain language | The edit |
-| --- | --- |
-| "On this product page, send a ViewContent" | In the page component: `<MetaEvent event_name="ViewContent" custom_data={{ content_ids: [id], content_type: "product" }} />` |
-| "Every page sends a PageView" | `<MetaEvent event_name="PageView" />` in each page component, never in the layout |
-| "On this form, the email becomes required" | `policy.ts`: `Lead: { requires: { user_data: ["em"] } }`. Then pass `user_data={{ em: email }}` where the form fires its Lead; `npm run typecheck` lists every call that still lacks it |
-| "We add a newsletter checkbox, I want a CompleteRegistration tagged newsletter" | In the submit handler: `void track_meta_event({ event_name: "CompleteRegistration", custom_data: { content_name: "newsletter" } })`. `content_name` is Meta's key for naming a variant of a standard event; it is usable in custom conversions and audiences |
-| "A purchase" | `Purchase` needs `custom_data.value` and `custom_data.currency`; without them the code does not compile |
-| "Every event must carry a value, even 0" | `policy.ts`: `"*": { requires: { custom_data: ["value", "currency"] } }` |
-| "A custom event named ShareDiscount" | `policy.ts`: `ShareDiscount: {}`, then use it like a standard name |
-| "Keep the visitor id in the CRM with each form" | In the form's server action: `const external_id = await visitor_external_id()` from `@/lib/meta-capi/server`, then store it in the CRM contact under a custom field named `external_id` |
-| "A conversion that happens later, from the CRM: qualified lead, sale" | `send_meta_events([...])` with `user_data: { em: contact.email, external_id: contact.external_id }`, the id read back from the CRM field |
-| "Track something that happens on the server, a paid webhook for instance" | `send_meta_events([...])` from `@/lib/meta-capi/server`, see section 6 |
-| "Check what Meta received" | Section 10 |
-
-## 4. Tag a page or a component that is shown
+## 3. Tag a page or a component that is shown
 
 **Tag a page or a component that is shown on screen.**
 
@@ -121,7 +97,7 @@ Rules of the tag:
 - Put it in the page or component that shows the thing it describes. In a layout it would fire once per visit, not once per page.
 - It works inside Client Components too.
 
-## 5. Tag a gesture
+## 4. Tag a gesture
 
 **Tag a gesture from a Client Component.**
 
@@ -147,7 +123,7 @@ export const AddToCartButton = ({ sku, price }: { sku: string; price: number }) 
 );
 ```
 
-## 6. Send from the server
+## 5. Send from the server
 
 **Send an event from the server: a webhook, a route handler, or a server action.**
 
@@ -194,7 +170,7 @@ For JSON that comes from outside the code:
 - `send_inbound_meta_events(payload)` takes an unknown body shaped `{ "events": [ ... ] }` and returns the same `result`.
 - The reference route `src/app/api/meta-events/route.ts` uses it: `POST /api/meta-events` with `Authorization: Bearer $META_CAPI_INBOUND_SECRET`.
 
-## 7. What an event may carry
+## 6. What an event may carry
 
 **Know what fields an event may carry.**
 
@@ -257,7 +233,7 @@ From the server only:
 - `event_source_url`
 - `referrer_url`
 
-## 8. Identity
+## 7. Identity
 
 **Give identity in `user_data`; the server normalizes and hashes it.**
 
@@ -289,12 +265,17 @@ From the browser, the server adds on its own:
 - `fbc` rebuilt from a `fbclid` in the URL, then stored as the `_fbc` cookie for ninety days when the click id is new
 - `_fbp` created in Meta's format and stored for ninety days when the browser has none
 - `external_id`: a visitor id the engine mints on the first send (a UUID), stored for ninety days as the `external_id` cookie, and sent on every event next to any `external_id` the site declares. Never regenerated while the cookie lives; a cleared cookie or another device starts a new one, and the email is what joins them
+
+To carry that id into the CRM and back:
+
+- In a form's server action, `await visitor_external_id()` from `@/lib/meta-capi/server` returns the same id; store it in the CRM contact under a custom field named `external_id`.
+- For a conversion that happens later (qualified lead, sale), call `send_meta_events` with `user_data: { em: contact.email, external_id: contact.external_id }`, the id read back from the CRM.
 - `event_source_url` with its full query string
 - `referrer_url`
 - `event_time`
 - a UUID `event_id` when the declaration carries none
 
-## 9. Consent
+## 8. Consent
 
 **Gate the engine behind consent, the same way the pixel is gated.**
 
@@ -302,7 +283,7 @@ From the browser, the server adds on its own:
 - It writes three first-party cookies, `_fbc`, `_fbp` and `external_id`, only inside a send, so never before the consent manager let the tag or the call run.
 - Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
-## 10. Check that it works
+## 9. Check that it works
 
 **Confirm that a tagged event reaches Meta.**
 
@@ -320,7 +301,7 @@ Check:
 
 3. Remove the test code before going to production.
 
-## 11. Commands
+## 10. Commands
 
 **Run the project's commands.**
 
