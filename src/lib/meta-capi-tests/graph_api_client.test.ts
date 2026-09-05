@@ -56,6 +56,7 @@ const rate_limited_body = {
 };
 
 const settled = async <t>(promise: Promise<t>) => {
+  void promise.catch(() => undefined);
   await vi.runAllTimersAsync();
   return promise;
 };
