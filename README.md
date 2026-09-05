@@ -38,6 +38,7 @@ npm i zod server-only
 | `META_CAPI_GRAPH_VERSION` | no | Graph API version, default `v26.0` |
 | `META_CAPI_TEST_EVENT_CODE` | no | Routes every event to the Test Events tab while set. Remove it in production |
 | `META_CAPI_SITE_ORIGIN` | no | `https://www.example.ch`. When set, browser events from another origin are refused |
+| `META_CAPI_COOKIE_DOMAIN` | no | `.example.ch`. Scopes the `_fbc` and `_fbp` cookies to a whole domain; host-only when unset |
 | `META_CAPI_TIMEOUT_MS` | no | Timeout of one call to Meta, default `1500` |
 | `META_CAPI_INBOUND_SECRET` | no | Bearer secret of the reference route `POST /api/meta-events` |
 
@@ -277,7 +278,8 @@ From the browser, the server adds on its own:
 - `client_ip_address`
 - `client_user_agent`
 - `fbp` and `fbc` from the `_fbp` and `_fbc` cookies
-- `fbc` rebuilt from a `fbclid` in the URL
+- `fbc` rebuilt from a `fbclid` in the URL, then stored as the `_fbc` cookie for ninety days when the click id is new
+- `_fbp` created in Meta's format and stored for ninety days when the browser has none
 - `event_source_url` with its full query string
 - `referrer_url`
 - `event_time`
@@ -287,7 +289,8 @@ From the browser, the server adds on its own:
 
 **Gate the engine behind consent, the same way the pixel is gated.**
 
-- The engine holds no consent state and writes no cookie.
+- The engine holds no consent state.
+- It writes two first-party cookies, `_fbc` and `_fbp`, only inside a send, so never before the consent manager let the tag or the call run.
 - Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
 ## 10. Check that it works

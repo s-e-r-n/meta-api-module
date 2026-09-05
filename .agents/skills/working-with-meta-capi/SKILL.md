@@ -46,6 +46,7 @@ Unit tests sit in the sibling folder `src/lib/meta-capi-tests/`, one file per mo
 - Under Cache Components a route left by navigation is hidden, not unmounted; its effects are cleaned up and recreated on return. The tag fires again when the user comes back, which is a new view.
 - A search-param-only navigation does not remount a page's Client Components. The tag keys its effect on path, search params and declaration, so `?page=2` fires again and a rerender with the same props does not.
 - `useSearchParams` needs a Suspense boundary or the build fails. The tag ships its own boundary; the rest of the page prerenders as static.
+- Setting a cookie inside a Server Action makes Next re-render the current page and ship it in the action response, even when the action is called as a plain function from an effect. Observed on 2026-09-05: 5 926 bytes with the page inside against 164 bytes without. The engine sets `_fbc` and `_fbp` only when they are new, so this happens once per visitor and once per new click id; the tag's key does not change during that re-render, so it does not fire again.
 - A Server Action is a public POST endpoint. The action reparses its input with the same schema the client used, stamps `event_time`, forces `action_source: "website"`, and reads IP, user agent, `_fbp` and `_fbc` from the request, so a browser cannot spoof them.
 
 ## The shape, as Graph accepts it
@@ -64,7 +65,7 @@ Full key tables and hashing rules: `references/payload-shape.md`.
 
 Hash on the server only, SHA-256 of the normalized value, lowercase hex: `em`, `ph`, `fn`, `ln`, `ge`, `db`, `ct`, `st`, `zp`, `country`, `external_id`. Never hash `client_ip_address`, `client_user_agent`, `fbc`, `fbp`, `subscription_id`, `fb_login_id`, `lead_id`. A 64-hex value is passed through, as Meta's own SDK does. Give the engine raw values; give phone numbers with their country code; give birth dates as `YYYY-MM-DD`.
 
-`fbc` is `fb.1.<unix ms>.<fbclid>`, case preserved, built from the `fbclid` query parameter when the `_fbc` cookie is absent or holds another click id. The engine writes no cookie: consent is the application's, and the pixel owns `_fbp` and `_fbc`.
+`fbc` is `fb.1.<unix ms>.<fbclid>`, case preserved, built from the `fbclid` query parameter when the `_fbc` cookie is absent or holds another click id; the action then stores it as `_fbc` for ninety days. `fbp` is `fb.1.<unix ms>.<ten digits>`; the action creates and stores `_fbp` when the browser has none. Both cookies are first-party, `SameSite=Lax`, `Secure` on https, readable by scripts so a pixel added later reuses them, scoped by `META_CAPI_COOKIE_DOMAIN` when set. They are written only inside a send, which the application only triggers after consent.
 
 There is no consent field in the Conversions API. Meta's rule is "use the same logic as for the pixel": gate the rendering of the tag and the call to `track_meta_event`, nothing else.
 

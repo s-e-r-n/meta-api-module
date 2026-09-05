@@ -146,3 +146,8 @@ export const fbc_from_click_id = (fbclid: string, now_ms: number) =>
   `fb.1.${now_ms}.${fbclid}`;
 
 export const click_id_in_fbc = (fbc: string | undefined) => fbc?.split(".")[3];
+
+export const fbp_from_random = (random: number, now_ms: number) =>
+  `fb.1.${now_ms}.${random}`;
+
+export const identity_cookie_max_age_s = 90 * 86_400;

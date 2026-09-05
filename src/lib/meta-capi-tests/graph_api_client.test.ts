@@ -12,6 +12,7 @@ const config: ReturnType<typeof engine_config> = {
   timeout_ms: 1500,
   test_event_code: undefined,
   site_origin: undefined,
+  cookie_domain: undefined,
 };
 
 const request = {

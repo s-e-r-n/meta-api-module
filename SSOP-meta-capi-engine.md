@@ -125,3 +125,12 @@ Ownership added:
 | Which fields Meta requires or recommends per event | `event_catalog.ts` | same | the engine's maintainer, from Meta's documentation |
 
 Tests move to `src/lib/meta-capi-tests/`, one file per module, importing `../meta-capi/<module>`.
+
+## Amendment 2026-09-05, identity cookies
+
+| Fact | Owner | Readers | Writer |
+| --- | --- | --- | --- |
+| The `_fbc` and `_fbp` cookies of a visitor | the cookie jar of the browser | `request_context` on every send | `submit_browser_meta_event`, only when `request_context` reports a new click id or a missing `_fbp`, ninety days, `SameSite=Lax`, `Secure` on https, readable by scripts, domain from `META_CAPI_COOKIE_DOMAIN` |
+
+- `request_context` returns `cookies_to_set` next to the identity; `user_data.ts` owns the `fbp` format and the ninety-day lifetime; `config.ts` gains `cookie_domain`.
+- Reversal of the "no cookie" decision of the first loop: the write happens inside a consented send, which the application alone triggers.

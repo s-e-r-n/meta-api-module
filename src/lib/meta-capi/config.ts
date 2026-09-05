@@ -14,6 +14,7 @@ const env_schema = z.object({
   ),
   META_CAPI_TEST_EVENT_CODE: z.optional(z.string()),
   META_CAPI_SITE_ORIGIN: z.optional(z.url()),
+  META_CAPI_COOKIE_DOMAIN: z.optional(z.string().check(z.minLength(1))),
   META_CAPI_TIMEOUT_MS: z.optional(
     z.string().check(z.regex(/^\d+$/, "must be a number of milliseconds")),
   ),
@@ -26,6 +27,7 @@ export type engine_config = {
   timeout_ms: number;
   test_event_code: string | undefined;
   site_origin: string | undefined;
+  cookie_domain: string | undefined;
 };
 
 const default_graph_version = "v26.0";
@@ -64,5 +66,6 @@ export const engine_config = (
       data.META_CAPI_SITE_ORIGIN === undefined
         ? undefined
         : new URL(data.META_CAPI_SITE_ORIGIN).origin,
+    cookie_domain: data.META_CAPI_COOKIE_DOMAIN,
   };
 };

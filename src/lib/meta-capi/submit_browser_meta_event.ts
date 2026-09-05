@@ -19,6 +19,7 @@ import {
   type meta_send_ok,
   send_parsed_meta_events,
 } from "./send_meta_events";
+import { identity_cookie_max_age_s } from "./user_data";
 
 const browser_submission_schema = z.strictObject({
   event: browser_event_schema,
@@ -46,9 +47,10 @@ export const submit_browser_meta_event = async (submission: {
   }
   const config = engine_config();
   const { event, browser } = parsed.data;
+  const page_url = new URL(browser.event_source_url);
   if (
     config.site_origin !== undefined &&
-    new URL(browser.event_source_url).origin !== config.site_origin
+    page_url.origin !== config.site_origin
   ) {
     throw refused(
       "browser.event_source_url",
@@ -60,12 +62,22 @@ export const submit_browser_meta_event = async (submission: {
     cookies(),
   ]);
   const now_ms = Date.now();
-  const context = request_context({
+  const { cookies_to_set, ...identity } = request_context({
     headers: request_headers,
     cookie: (name) => cookie_store.get(name)?.value,
     event_source_url: browser.event_source_url,
     now_ms,
   });
+  for (const [name, value] of Object.entries(cookies_to_set)) {
+    cookie_store.set(name, value, {
+      path: "/",
+      maxAge: identity_cookie_max_age_s,
+      sameSite: "lax",
+      secure: page_url.protocol === "https:",
+      httpOnly: false,
+      domain: config.cookie_domain,
+    });
+  }
   const server_event: meta_event = {
     ...event,
     event_id: event.event_id ?? browser.event_id,
@@ -73,7 +85,7 @@ export const submit_browser_meta_event = async (submission: {
     action_source: "website",
     event_source_url: browser.event_source_url,
     referrer_url: browser.referrer_url,
-    user_data: { ...event.user_data, ...context },
+    user_data: { ...event.user_data, ...identity },
   };
   const result = await send_parsed_meta_events([server_event]);
   if (!result.ok) throw new meta_capi_rejected_error(result);

@@ -1,31 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { request_context } from "../meta-capi/request_context";
-import { fbc_from_click_id } from "../meta-capi/user_data";
 
 const now_ms = 1_700_000_000_000;
+const fbp_pattern = /^fb\.1\.1700000000000\.\d{10}$/;
 
-const identity_for = (options: {
+const context_for = (options: {
   headers?: Record<string, string>;
-  cookies?: Record<string, string>;
+  cookies?: Partial<Record<"_fbc" | "_fbp", string>>;
   event_source_url?: string;
 }) =>
   request_context({
     headers: new Headers(options.headers ?? {}),
-    cookie: (name: string) => options.cookies?.[name],
+    cookie: (name) => options.cookies?.[name],
     event_source_url: options.event_source_url ?? "https://shop.example/",
     now_ms,
   });
 
-describe("fbc_from_click_id", () => {
-  it("builds the server-side format with subdomain index 1 and a millisecond timestamp", () => {
-    expect(fbc_from_click_id("AbC_dEf", 5)).toBe("fb.1.5.AbC_dEf");
-  });
-});
-
 describe("request_context", () => {
   it("prefers Vercel's forwarded header, then x-real-ip, then the first x-forwarded-for entry", () => {
     expect(
-      identity_for({
+      context_for({
         headers: {
           "x-vercel-forwarded-for": "1.1.1.1",
           "x-real-ip": "2.2.2.2",
@@ -34,7 +28,7 @@ describe("request_context", () => {
       }).client_ip_address,
     ).toBe("1.1.1.1");
     expect(
-      identity_for({
+      context_for({
         headers: {
           "x-real-ip": "2.2.2.2",
           "x-forwarded-for": "3.3.3.3, 4.4.4.4",
@@ -42,57 +36,77 @@ describe("request_context", () => {
       }).client_ip_address,
     ).toBe("2.2.2.2");
     expect(
-      identity_for({ headers: { "x-forwarded-for": " 3.3.3.3 , 4.4.4.4" } })
+      context_for({ headers: { "x-forwarded-for": " 3.3.3.3 , 4.4.4.4" } })
         .client_ip_address,
     ).toBe("3.3.3.3");
-    expect(identity_for({}).client_ip_address).toBeUndefined();
+    expect(context_for({}).client_ip_address).toBeUndefined();
   });
 
   it("reads the user agent", () => {
     expect(
-      identity_for({ headers: { "user-agent": "Mozilla/5.0 test" } })
+      context_for({ headers: { "user-agent": "Mozilla/5.0 test" } })
         .client_user_agent,
     ).toBe("Mozilla/5.0 test");
-    expect(identity_for({}).client_user_agent).toBeUndefined();
+    expect(context_for({}).client_user_agent).toBeUndefined();
   });
 
-  it("takes fbp from its cookie", () => {
-    expect(
-      identity_for({ cookies: { _fbp: "fb.1.1700000000000.123" } }).fbp,
-    ).toBe("fb.1.1700000000000.123");
-    expect(identity_for({}).fbp).toBeUndefined();
+  it("keeps an existing _fbp and sets nothing for it", () => {
+    const context = context_for({
+      cookies: { _fbp: "fb.1.1690000000000.1234567890" },
+    });
+    expect(context.fbp).toBe("fb.1.1690000000000.1234567890");
+    expect(context.cookies_to_set._fbp).toBeUndefined();
   });
 
-  it("keeps the _fbc cookie when the URL carries no click id", () => {
-    expect(
-      identity_for({ cookies: { _fbc: "fb.1.1690000000000.OldClick" } }).fbc,
-    ).toBe("fb.1.1690000000000.OldClick");
+  it("creates a _fbp in Meta's format when the browser has none, and asks to store it", () => {
+    const context = context_for({});
+    expect(context.fbp).toMatch(fbp_pattern);
+    expect(context.cookies_to_set._fbp).toBe(context.fbp);
+    expect(context_for({}).fbp).not.toBe(context.fbp);
   });
 
-  it("builds fbc from fbclid when there is no cookie, preserving case", () => {
-    expect(
-      identity_for({
-        event_source_url: "https://shop.example/?utm_source=x&fbclid=AbC_dEf",
-      }).fbc,
-    ).toBe("fb.1.1700000000000.AbC_dEf");
+  it("keeps the _fbc cookie when the URL carries no click id, and sets nothing for it", () => {
+    const context = context_for({
+      cookies: { _fbc: "fb.1.1690000000000.OldClick", _fbp: "fb.1.1.1" },
+    });
+    expect(context.fbc).toBe("fb.1.1690000000000.OldClick");
+    expect(context.cookies_to_set).toEqual({});
+  });
+
+  it("builds fbc from fbclid when there is no cookie, preserving case, and asks to store it", () => {
+    const context = context_for({
+      cookies: { _fbp: "fb.1.1.1" },
+      event_source_url: "https://shop.example/?utm_source=x&fbclid=AbC_dEf",
+    });
+    expect(context.fbc).toBe("fb.1.1700000000000.AbC_dEf");
+    expect(context.cookies_to_set).toEqual({
+      _fbc: "fb.1.1700000000000.AbC_dEf",
+    });
   });
 
   it("prefers a fresh click id in the URL over an older cookie, and keeps the cookie when they match", () => {
-    expect(
-      identity_for({
-        cookies: { _fbc: "fb.1.1690000000000.OldClick" },
-        event_source_url: "https://shop.example/?fbclid=NewClick",
-      }).fbc,
-    ).toBe("fb.1.1700000000000.NewClick");
-    expect(
-      identity_for({
-        cookies: { _fbc: "fb.1.1690000000000.SameClick" },
-        event_source_url: "https://shop.example/?fbclid=SameClick",
-      }).fbc,
-    ).toBe("fb.1.1690000000000.SameClick");
+    const fresh = context_for({
+      cookies: { _fbc: "fb.1.1690000000000.OldClick", _fbp: "fb.1.1.1" },
+      event_source_url: "https://shop.example/?fbclid=NewClick",
+    });
+    expect(fresh.fbc).toBe("fb.1.1700000000000.NewClick");
+    expect(fresh.cookies_to_set).toEqual({
+      _fbc: "fb.1.1700000000000.NewClick",
+    });
+    const same = context_for({
+      cookies: { _fbc: "fb.1.1690000000000.SameClick", _fbp: "fb.1.1.1" },
+      event_source_url: "https://shop.example/?fbclid=SameClick",
+    });
+    expect(same.fbc).toBe("fb.1.1690000000000.SameClick");
+    expect(same.cookies_to_set).toEqual({});
   });
 
   it("yields no fbc for a URL it cannot read", () => {
-    expect(identity_for({ event_source_url: "not a url" }).fbc).toBeUndefined();
+    expect(
+      context_for({
+        event_source_url: "not a url",
+        cookies: { _fbp: "fb.1.1.1" },
+      }).fbc,
+    ).toBeUndefined();
   });
 });

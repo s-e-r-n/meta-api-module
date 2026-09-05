@@ -15,6 +15,7 @@ describe("engine_config", () => {
       timeout_ms: 1500,
       test_event_code: undefined,
       site_origin: undefined,
+      cookie_domain: undefined,
     });
   });
 
@@ -50,6 +51,13 @@ describe("engine_config", () => {
     expect(() =>
       engine_config({ ...complete, META_CAPI_SITE_ORIGIN: "shop.example" }),
     ).toThrow(/META_CAPI_SITE_ORIGIN/);
+  });
+
+  it("takes an optional cookie domain", () => {
+    expect(
+      engine_config({ ...complete, META_CAPI_COOKIE_DOMAIN: ".example.ch" })
+        .cookie_domain,
+    ).toBe(".example.ch");
   });
 
   it("takes the test event code and a numeric timeout", () => {

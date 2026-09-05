@@ -83,6 +83,16 @@ Chromium loads `http://localhost:3000/?utm_source=playwright&fbclid=PlaywrightCl
 
 JSON body with `Authorization: Bearer` on `v26.0`, and `access_token` in the body on `v25.0`, both answered `HTTP 200` with `events_received: 1`. `PageView` accepted as an event name. `value` as a number and lowercase `currency` accepted.
 
+## E. Identity cookies in a real browser (2026-09-05, `tests/identity_cookies.spec.ts`)
+
+Chromium, fresh context, dev server, React Strict Mode on.
+
+- `GET /` with curl, no cookie in the request: the response carries no `Set-Cookie`. Nothing is written outside a send.
+- Load `/?utm_source=e2e&fbclid=E2EClick`: exactly one server action POST. Its response carries two headers, observed verbatim: `_fbc=fb.1.1788623130951.E2EClick; Path=/; Expires=Fri, 04 Dec 2026 15:45:30 GMT; Max-Age=7776000; SameSite=lax` and `_fbp=fb.1.<ms>.<ten digits>; Path=/; Expires=...; Max-Age=7776000; SameSite=lax`. Next adds `Expires` next to `Max-Age` and lowercases the `SameSite` value. No `Secure` on http, no `HttpOnly`.
+- The browser stores both with `httpOnly: false`, `secure: false`, `sameSite: Lax`, `path: /`, `domain: localhost`, expiry within two minutes of now plus ninety days.
+- Load `/` again: one server action POST, whose `Cookie` request header carries both values back, and whose response carries no `Set-Cookie`.
+- The action response with cookies set weighs 5 926 bytes and contains the re-rendered page; the one without weighs 164 bytes and contains no page. This confirms the documentation of `cookies()` and of Server Actions: a cookie mutation re-renders the current route in the same round trip, even for a plain function call from an effect. The tag fired once per load in both cases.
+
 ## Verdict
 
 No gap between the observed responses and the shape closed in phase 2. One documented requirement (`client_user_agent` on website events) is not enforced by Graph; recorded as a warning in the engine and in the decisions log. Phase 2 stays closed.
