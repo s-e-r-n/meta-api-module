@@ -93,6 +93,10 @@ Chromium, fresh context, dev server, React Strict Mode on.
 - Load `/` again: one server action POST, whose `Cookie` request header carries both values back, and whose response carries no `Set-Cookie`.
 - The action response with cookies set weighs 5 926 bytes and contains the re-rendered page; the one without weighs 164 bytes and contains no page. This confirms the documentation of `cookies()` and of Server Actions: a cookie mutation re-renders the current route in the same round trip, even for a plain function call from an effect. The tag fired once per load in both cases.
 
+## F. Two tags on one landing page, fresh cookie jar (2026-09-05, `tests/two_tags_one_fbp.spec.ts`)
+
+`/two-tags?fbclid=RaceClick` carries a `PageView` tag and a `ViewContent` tag, so two server actions start in the same tick on a browser with no cookie. Observed: the first send arrives with no `Cookie` header and its response sets `_fbc` and `_fbp`; the second send already carries `_fbc=fb.1.1788623371353.RaceClick; _fbp=fb.1.1788623371353.5957399388` in its request and its response sets nothing. One `_fbp` and one `_fbc` in the jar. Next's sequential dispatch of Server Actions per client, documented in `server-actions.md`, holds for plain function calls made from effects: the second request leaves after the first response is applied. No serialization is needed in the engine.
+
 ## Verdict
 
 No gap between the observed responses and the shape closed in phase 2. One documented requirement (`client_user_agent` on website events) is not enforced by Graph; recorded as a warning in the engine and in the decisions log. Phase 2 stays closed.
