@@ -215,7 +215,7 @@ describe("declaration types", () => {
     }>().not.toExtend<under_policy>();
   });
 
-  it("refuses a policy that names an event neither standard nor declared", () => {
+  it("refuses a policy that names an event neither standard nor declared, or a user_data key that does not exist", () => {
     type lead_only = { events: { Lead: { requires: { user_data: ["em"] } } } };
     type misspelt = { events: { Leed: { requires: { user_data: ["em"] } } } };
     type declared_custom = {
@@ -225,6 +225,9 @@ describe("declaration types", () => {
     type undeclared_custom = {
       events: { ShareDiscount: { requires: { custom_data: ["promotion"] } } };
     };
+    type misspelt_key = {
+      events: { Lead: { requires: { user_data: ["emai"] } } };
+    };
     expectTypeOf<lead_only>().toExtend<meta_capi_policy<lead_only>>();
     expectTypeOf<misspelt>().not.toExtend<meta_capi_policy<misspelt>>();
     expectTypeOf<declared_custom>().toExtend<
@@ -233,6 +236,7 @@ describe("declaration types", () => {
     expectTypeOf<undeclared_custom>().not.toExtend<
       meta_capi_policy<undeclared_custom>
     >();
+    expectTypeOf<misspelt_key>().not.toExtend<meta_capi_policy<misspelt_key>>();
   });
 
   it("never lets the browser carry the identifiers the server reads from the request", () => {

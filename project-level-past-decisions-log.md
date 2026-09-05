@@ -60,3 +60,6 @@ Problem and decision are one line each. An error code, a trace id or a ticket nu
 | 2026-09-05 | Currency and country enumerations needed a source, not memory | Generated `iso_codes.ts` from `currency-codes` 2.2.0 and `iso-3166-1` 2.1.1, the packages Meta's Business SDK validates against | research/06 §1 |
 | 2026-09-05 | Custom events were declared by any unknown key, so a typo created an event | `define_policy` with explicit `custom_events`; a key under `events` must be standard or declared | - |
 | 2026-09-05 | `currency` without `value` is harmless and AppendAttribution needs a currency without a value | Only `value` demands `currency`, not the reverse | research/01 §4 |
+| 2026-09-05 | A misspelt `user_data` key in a policy rule surfaced as an unsatisfiable `never` at the call site | `field_requirements.user_data` is typed `keyof user_data_input`, so the typo fails inside `policy.ts`; `user_data.ts` imports nothing from the catalog, no cycle | - |
+| 2026-09-05 | A server event without `event_id`, retried after a transient error Meta had already accepted, was counted twice | `wire_event_of` mints a UUID when `event_id` is absent, before the attempts, so every retry repeats the same id | - |
+| 2026-09-05 | A durable outbox for events lost after the last attempt | Not built; Gray decided to wait for an observed loss | - |

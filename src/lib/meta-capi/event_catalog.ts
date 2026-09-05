@@ -85,7 +85,8 @@ export type meta_capi_policy<p> = {
   readonly every_event?: event_rules;
   readonly events?: {
     readonly [name in keyof events_of<p>]: name extends
-      standard_event_name | custom_events_of<p>[number]
+      | standard_event_name
+      | custom_events_of<p>[number]
       ? event_rules
       : never;
   };

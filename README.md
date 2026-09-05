@@ -222,7 +222,7 @@ For JSON that comes from outside the code:
 
 Other event keys:
 
-- `event_id`
+- `event_id`, minted as a UUID when absent, so a retried send never counts twice
 - `opt_out`
 - `data_processing_options` (`[]` or `["LDU"]`, US only; `["LDU"]` demands `data_processing_options_country`)
 - `data_processing_options_country`
