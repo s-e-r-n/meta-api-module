@@ -76,11 +76,20 @@ const wire_event_of = (
   warnings.push(
     ...hashed.warnings.map((warning) => `data[${index}].${warning}`),
   );
+  const action_source = event.action_source ?? "website";
+  if (
+    action_source === "website" &&
+    hashed.user_data.client_user_agent === undefined
+  ) {
+    warnings.push(
+      `data[${index}].user_data.client_user_agent missing: Meta documents it as required for website events`,
+    );
+  }
   const currency = event.custom_data?.currency;
   return {
     ...event,
     event_time: event.event_time ?? now_s,
-    action_source: event.action_source ?? "website",
+    action_source,
     user_data: hashed.user_data,
     custom_data:
       event.custom_data === undefined

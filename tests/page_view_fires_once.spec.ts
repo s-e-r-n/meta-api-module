@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 
 const configured = (() => {
   try {
-    return /^META_CAPI_ACCESS_TOKEN=.+/m.test(readFileSync(".env.local", "utf8"));
+    return /^META_CAPI_ACCESS_TOKEN=.+/m.test(
+      readFileSync(".env.local", "utf8"),
+    );
   } catch {
     return false;
   }
@@ -12,17 +14,14 @@ const configured = (() => {
 test.describe("PageView tag on the server-rendered main page", () => {
   test.skip(!configured, "needs META_CAPI_ACCESS_TOKEN in .env.local");
 
-  test("fires exactly one server action per page load and Meta receives one event", async ({ page }) => {
-    const action_bodies: string[] = [];
+  test("fires exactly one server action per page load and Meta receives one event", async ({
+    page,
+  }) => {
+    const action_bodies: Promise<string>[] = [];
     page.on("response", (response) => {
       const request = response.request();
       if (request.method() === "POST" && request.headers()["next-action"]) {
-        action_bodies.push(
-          response
-            .text()
-            .then((body) => body)
-            .catch(() => ""),
-        );
+        action_bodies.push(response.text().catch(() => ""));
       }
     });
     await page.goto("/?utm_source=playwright&fbclid=PlaywrightClick");

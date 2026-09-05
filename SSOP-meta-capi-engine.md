@@ -83,3 +83,8 @@ Sort:
 | Meta's answer | not held; returned once as `meta_send_result` | callers of `send_meta_events` | none |
 
 ## Amendments
+
+- 2026-09-05 `send_meta_events` adds a warning when a website event carries no `client_user_agent`; Graph accepted such an event live (research/07 probe 6) while the docs mark it required, so it is a warning, not a refusal.
+- 2026-09-05 `MetaEvent` rebuilds the fired declaration from its fire key through `browser_event_schema` instead of holding the props in an effect event, so the effect depends on the key alone and fires exactly what the key names.
+- 2026-09-05 Vitest resolves `server-only` to an empty module through an `enforce: "pre"` plugin in `vitest.config.mts`; the real package throws outside React Server.
+- 2026-09-05 `tests/page_view_fires_once.spec.ts` drives the real dev server in Chromium and counts one server action per load; it skips itself when `.env.local` holds no token.

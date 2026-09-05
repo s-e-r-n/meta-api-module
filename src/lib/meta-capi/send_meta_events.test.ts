@@ -140,6 +140,16 @@ describe("send_meta_events", () => {
     });
   });
 
+  it("warns when a website event leaves without the user agent Meta documents as required", async () => {
+    const { client_user_agent: _dropped, ...user_data } =
+      purchase.user_data ?? {};
+    const result = await send_meta_events([{ ...purchase, user_data }]);
+    expect(result).toMatchObject({
+      ok: true,
+      warnings: [expect.stringContaining("client_user_agent")],
+    });
+  });
+
   it("points at the failing event in a batch", async () => {
     const result = await send_meta_events([
       purchase,
