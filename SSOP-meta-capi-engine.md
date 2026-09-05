@@ -134,3 +134,12 @@ Tests move to `src/lib/meta-capi-tests/`, one file per module, importing `../met
 
 - `request_context` returns `cookies_to_set` next to the identity; `user_data.ts` owns the `fbp` format and the ninety-day lifetime; `config.ts` gains `cookie_domain`.
 - Reversal of the "no cookie" decision of the first loop: the write happens inside a consented send, which the application alone triggers.
+
+## Amendment 2026-09-05, systematic external_id
+
+| Fact | Owner | Readers | Writer |
+| --- | --- | --- | --- |
+| The visitor's `external_id` | the `external_id` cookie, then the CRM field of the same name | `request_context` on every send, `visitor_external_id()` in the site's form actions, the site's server code for delayed conversions | `submit_browser_meta_event` or `visitor_external_id()`, only when the cookie is absent, a UUID, ninety days, `SameSite=Lax`, `Secure` on https, readable by scripts |
+
+- `request_context` returns `external_id` and asks to store it when new; the action sends `[...declared external ids, visitor id]` on every event.
+- `identity_cookie_options({ https, domain })` in `request_context.ts` is the single cookie policy for `_fbc`, `_fbp` and `external_id`.

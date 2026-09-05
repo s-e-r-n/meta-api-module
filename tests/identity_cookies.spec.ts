@@ -62,16 +62,23 @@ test.describe("identity cookies", () => {
     const fbp_header = first.set_cookies.find((value) =>
       value.startsWith("_fbp="),
     );
+    const external_id_header = first.set_cookies.find((value) =>
+      value.startsWith("external_id="),
+    );
     expect(fbc_header).toMatch(
       /^_fbc=fb\.1\.\d{13}\.E2EClick; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
     );
     expect(fbp_header).toMatch(
       /^_fbp=fb\.1\.\d{13}\.\d{10}; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
     );
+    expect(external_id_header).toMatch(
+      /^external_id=[0-9a-f-]{36}; Path=\/; Expires=[^;]+; Max-Age=7776000; SameSite=lax$/i,
+    );
 
     const stored = await context.cookies();
     const fbc = stored.find((cookie) => cookie.name === "_fbc");
     const fbp = stored.find((cookie) => cookie.name === "_fbp");
+    const external_id = stored.find((cookie) => cookie.name === "external_id");
     expect(fbc).toMatchObject({
       httpOnly: false,
       secure: false,
@@ -80,6 +87,13 @@ test.describe("identity cookies", () => {
       domain: "localhost",
     });
     expect(fbp).toMatchObject({
+      httpOnly: false,
+      secure: false,
+      sameSite: "Lax",
+      path: "/",
+      domain: "localhost",
+    });
+    expect(external_id).toMatchObject({
       httpOnly: false,
       secure: false,
       sameSite: "Lax",
@@ -101,6 +115,9 @@ test.describe("identity cookies", () => {
     const second = await calls[1];
     expect(second.request_cookie).toContain(`_fbc=${fbc?.value}`);
     expect(second.request_cookie).toContain(`_fbp=${fbp?.value}`);
+    expect(second.request_cookie).toContain(
+      `external_id=${external_id?.value}`,
+    );
     expect(second.set_cookies).toEqual([]);
 
     console.log(

@@ -87,6 +87,8 @@ Sections a rule can name:
 | "A purchase" | `Purchase` needs `custom_data.value` and `custom_data.currency`; without them the code does not compile |
 | "Every event must carry a value, even 0" | `policy.ts`: `"*": { requires: { custom_data: ["value", "currency"] } }` |
 | "A custom event named ShareDiscount" | `policy.ts`: `ShareDiscount: {}`, then use it like a standard name |
+| "Keep the visitor id in the CRM with each form" | In the form's server action: `const external_id = await visitor_external_id()` from `@/lib/meta-capi/server`, then store it in the CRM contact under a custom field named `external_id` |
+| "A conversion that happens later, from the CRM: qualified lead, sale" | `send_meta_events([...])` with `user_data: { em: contact.email, external_id: contact.external_id }`, the id read back from the CRM field |
 | "Track something that happens on the server, a paid webhook for instance" | `send_meta_events([...])` from `@/lib/meta-capi/server`, see section 6 |
 | "Check what Meta received" | Section 10 |
 
@@ -161,7 +163,13 @@ const result = await send_meta_events([
     event_id: order.id,
     event_time: Math.floor(order.paid_at.getTime() / 1000),
     event_source_url: "https://www.example.ch/checkout/thank-you",
-    user_data: { em: order.email, ph: order.phone, client_ip_address: order.ip, client_user_agent: order.user_agent },
+    user_data: {
+      em: order.email,
+      ph: order.phone,
+      external_id: order.external_id,
+      client_ip_address: order.ip,
+      client_user_agent: order.user_agent,
+    },
     custom_data: { value: order.total, currency: "CHF", order_id: order.id, content_ids: order.skus },
   },
 ]);
@@ -267,7 +275,7 @@ From the server only:
 | `ct`, `st` | city, state | `Zürich`, `ZH` |
 | `zp` | postal code | `8000` |
 | `country` | ISO 3166-1 alpha-2 | `CH` |
-| `external_id` | your own user id | `user-42` |
+| `external_id` | your own user id, sent next to the visitor id the engine adds | `user-42` |
 | `subscription_id`, `fb_login_id`, `lead_id` | as Meta defines them, sent in clear | |
 
 - Each of `em` to `external_id` also takes a list.
@@ -280,6 +288,7 @@ From the browser, the server adds on its own:
 - `fbp` and `fbc` from the `_fbp` and `_fbc` cookies
 - `fbc` rebuilt from a `fbclid` in the URL, then stored as the `_fbc` cookie for ninety days when the click id is new
 - `_fbp` created in Meta's format and stored for ninety days when the browser has none
+- `external_id`: a visitor id the engine mints on the first send (a UUID), stored for ninety days as the `external_id` cookie, and sent on every event next to any `external_id` the site declares. Never regenerated while the cookie lives; a cleared cookie or another device starts a new one, and the email is what joins them
 - `event_source_url` with its full query string
 - `referrer_url`
 - `event_time`
@@ -290,7 +299,7 @@ From the browser, the server adds on its own:
 **Gate the engine behind consent, the same way the pixel is gated.**
 
 - The engine holds no consent state.
-- It writes two first-party cookies, `_fbc` and `_fbp`, only inside a send, so never before the consent manager let the tag or the call run.
+- It writes three first-party cookies, `_fbc`, `_fbp` and `external_id`, only inside a send, so never before the consent manager let the tag or the call run.
 - Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
 ## 10. Check that it works

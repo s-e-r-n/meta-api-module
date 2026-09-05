@@ -1,18 +1,20 @@
 import "server-only";
-import { randomInt } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import {
   click_id_in_fbc,
   fbc_from_click_id,
   fbp_from_random,
+  identity_cookie_max_age_s,
 } from "./user_data";
 
-export type identity_cookie = "_fbc" | "_fbp";
+export type identity_cookie = "_fbc" | "_fbp" | "external_id";
 
 export type request_context = {
   client_ip_address?: string;
   client_user_agent?: string;
-  fbp?: string;
+  fbp: string;
   fbc?: string;
+  external_id: string;
   cookies_to_set: Partial<Record<identity_cookie, string>>;
 };
 
@@ -24,6 +26,23 @@ type request_view = {
   event_source_url: string;
   now_ms: number;
 };
+
+export const identity_cookie_options = ({
+  https,
+  domain,
+}: {
+  https: boolean;
+  domain: string | undefined;
+}) => ({
+  path: "/",
+  maxAge: identity_cookie_max_age_s,
+  sameSite: "lax" as const,
+  secure: https,
+  httpOnly: false,
+  domain,
+});
+
+export const minted_external_id = () => randomUUID();
 
 const present = (value: string | null | undefined) => {
   const trimmed = value?.trim();
@@ -66,6 +85,11 @@ const fbp_for = (cookie_fbp: string | undefined, now_ms: number) =>
       }
     : { fbp: cookie_fbp, fresh: false };
 
+const external_id_for = (cookie_external_id: string | undefined) =>
+  cookie_external_id === undefined
+    ? { external_id: minted_external_id(), fresh: true }
+    : { external_id: cookie_external_id, fresh: false };
+
 export const request_context = ({
   headers,
   cookie,
@@ -74,14 +98,17 @@ export const request_context = ({
 }: request_view): request_context => {
   const fbc = fbc_for(present(cookie("_fbc")), event_source_url, now_ms);
   const fbp = fbp_for(present(cookie("_fbp")), now_ms);
+  const external_id = external_id_for(present(cookie("external_id")));
   return {
     client_ip_address: client_ip(headers),
     client_user_agent: present(headers.get("user-agent")),
     fbp: fbp.fbp,
     fbc: fbc.fbc,
+    external_id: external_id.external_id,
     cookies_to_set: {
       ...(fbc.fresh && fbc.fbc !== undefined ? { _fbc: fbc.fbc } : {}),
       ...(fbp.fresh ? { _fbp: fbp.fbp } : {}),
+      ...(external_id.fresh ? { external_id: external_id.external_id } : {}),
     },
   };
 };

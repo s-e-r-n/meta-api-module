@@ -63,7 +63,7 @@ beforeEach(() => {
   });
   request_with({
     headers: { "x-forwarded-for": "203.0.113.7", "user-agent": "Mozilla/5.0" },
-    cookies: { _fbp: "fb.1.1.123" },
+    cookies: { _fbp: "fb.1.1.123", external_id: "visitor-1" },
   });
 });
 
@@ -73,6 +73,31 @@ afterEach(() => {
 });
 
 describe("submit_browser_meta_event", () => {
+  it("sends the visitor's external_id next to the one the site declares", async () => {
+    await submit_browser_meta_event({
+      ...submission,
+      event: {
+        ...submission.event,
+        user_data: { em: "a@b.c", external_id: "crm-1" },
+      },
+    });
+    expect(send.mock.calls[0]?.[0][0]?.user_data?.external_id).toEqual([
+      "crm-1",
+      "visitor-1",
+    ]);
+  });
+
+  it("mints and stores external_id when the browser has none, and sends it", async () => {
+    request_with({ headers: {}, cookies: { _fbp: "fb.1.1.123" } });
+    await submit_browser_meta_event(submission);
+    const [, external_id] =
+      set_cookie.mock.calls.find((call) => call[0] === "external_id") ?? [];
+    expect(external_id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(send.mock.calls[0]?.[0][0]?.user_data?.external_id).toEqual([
+      external_id,
+    ]);
+  });
+
   it("stores a fresh click id as _fbc for ninety days, readable by scripts, and leaves an existing _fbp alone", async () => {
     await submit_browser_meta_event(submission);
     expect(set_cookie).toHaveBeenCalledTimes(1);
@@ -99,9 +124,10 @@ describe("submit_browser_meta_event", () => {
         event_source_url: "http://localhost:3000/",
       },
     });
-    const names = set_cookie.mock.calls.map((call) => call[0]);
-    expect(names).toEqual(["_fbp"]);
-    const [, fbp, options] = set_cookie.mock.calls[0] ?? [];
+    const names = set_cookie.mock.calls.map((call) => call[0]).sort();
+    expect(names).toEqual(["_fbp", "external_id"]);
+    const [, fbp, options] =
+      set_cookie.mock.calls.find((call) => call[0] === "_fbp") ?? [];
     expect(fbp).toMatch(/^fb\.1\.\d+\.\d{10}$/);
     expect(options).toMatchObject({ secure: false, domain: undefined });
     expect(send.mock.calls[0]?.[0][0]?.user_data?.fbp).toBe(fbp);
@@ -118,7 +144,11 @@ describe("submit_browser_meta_event", () => {
   it("sets nothing when the browser already carries both cookies and the URL brings no new click", async () => {
     request_with({
       headers: {},
-      cookies: { _fbp: "fb.1.1.123", _fbc: "fb.1.1.Click1" },
+      cookies: {
+        _fbp: "fb.1.1.123",
+        _fbc: "fb.1.1.Click1",
+        external_id: "visitor-1",
+      },
     });
     await submit_browser_meta_event(submission);
     expect(set_cookie).not.toHaveBeenCalled();
@@ -146,6 +176,8 @@ describe("submit_browser_meta_event", () => {
           client_user_agent: "Mozilla/5.0",
           fbp: "fb.1.1.123",
           fbc: `fb.1.${now * 1000}.Click1`,
+
+          external_id: ["visitor-1"],
         },
         custom_data: { content_ids: ["42"], value: 5, currency: "CHF" },
       },

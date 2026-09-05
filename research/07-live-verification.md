@@ -97,6 +97,10 @@ Chromium, fresh context, dev server, React Strict Mode on.
 
 `/two-tags?fbclid=RaceClick` carries a `PageView` tag and a `ViewContent` tag, so two server actions start in the same tick on a browser with no cookie. Observed: the first send arrives with no `Cookie` header and its response sets `_fbc` and `_fbp`; the second send already carries `_fbc=fb.1.1788623371353.RaceClick; _fbp=fb.1.1788623371353.5957399388` in its request and its response sets nothing. One `_fbp` and one `_fbc` in the jar. Next's sequential dispatch of Server Actions per client, documented in `server-actions.md`, holds for plain function calls made from effects: the second request leaves after the first response is applied. No serialization is needed in the engine.
 
+## G. Systematic external_id (2026-09-05, `tests/identity_cookies.spec.ts` and `tests/two_tags_one_fbp.spec.ts`)
+
+Same runs as E and F, extended: the first send's response also carries `external_id=<uuid v4>; Path=/; Expires=...; Max-Age=7776000; SameSite=lax`, the browser stores it with the same attributes as `_fbp`, the next load sends it back and nothing re-sets it, and two simultaneous tags on a fresh browser end with exactly one `external_id`.
+
 ## Verdict
 
 No gap between the observed responses and the shape closed in phase 2. One documented requirement (`client_user_agent` on website events) is not enforced by Graph; recorded as a warning in the engine and in the decisions log. Phase 2 stays closed.

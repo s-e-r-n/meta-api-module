@@ -67,6 +67,8 @@ Hash on the server only, SHA-256 of the normalized value, lowercase hex: `em`, `
 
 `fbc` is `fb.1.<unix ms>.<fbclid>`, case preserved, built from the `fbclid` query parameter when the `_fbc` cookie is absent or holds another click id; the action then stores it as `_fbc` for ninety days. `fbp` is `fb.1.<unix ms>.<ten digits>`; the action creates and stores `_fbp` when the browser has none. Both cookies are first-party, `SameSite=Lax`, `Secure` on https, readable by scripts so a pixel added later reuses them, scoped by `META_CAPI_COOKIE_DOMAIN` when set. They are written only inside a send, which the application only triggers after consent.
 
+`external_id` is systematic: the action mints a UUID on the first send, stores it as the `external_id` cookie with the same policy, and sends it on every event next to any `external_id` the site declares, email present or not, so Meta learns the link between the two. `visitor_external_id()` from `@/lib/meta-capi/server` gives a form's server action the same id, to be stored in the CRM under a custom field `external_id` and read back for delayed conversions. Never rebuild it from a fingerprint or an IP: a lost cookie starts a new id and the email joins the two. The same raw value must reach a future pixel's advanced matching, so hashes match across channels.
+
 There is no consent field in the Conversions API. Meta's rule is "use the same logic as for the pixel": gate the rendering of the tag and the call to `track_meta_event`, nothing else.
 
 ## Verifying and debugging

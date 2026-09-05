@@ -6,7 +6,7 @@ const fbp_pattern = /^fb\.1\.1700000000000\.\d{10}$/;
 
 const context_for = (options: {
   headers?: Record<string, string>;
-  cookies?: Partial<Record<"_fbc" | "_fbp", string>>;
+  cookies?: Partial<Record<"_fbc" | "_fbp" | "external_id", string>>;
   event_source_url?: string;
 }) =>
   request_context({
@@ -67,7 +67,11 @@ describe("request_context", () => {
 
   it("keeps the _fbc cookie when the URL carries no click id, and sets nothing for it", () => {
     const context = context_for({
-      cookies: { _fbc: "fb.1.1690000000000.OldClick", _fbp: "fb.1.1.1" },
+      cookies: {
+        _fbc: "fb.1.1690000000000.OldClick",
+        _fbp: "fb.1.1.1",
+        external_id: "visitor-1",
+      },
     });
     expect(context.fbc).toBe("fb.1.1690000000000.OldClick");
     expect(context.cookies_to_set).toEqual({});
@@ -75,7 +79,7 @@ describe("request_context", () => {
 
   it("builds fbc from fbclid when there is no cookie, preserving case, and asks to store it", () => {
     const context = context_for({
-      cookies: { _fbp: "fb.1.1.1" },
+      cookies: { _fbp: "fb.1.1.1", external_id: "visitor-1" },
       event_source_url: "https://shop.example/?utm_source=x&fbclid=AbC_dEf",
     });
     expect(context.fbc).toBe("fb.1.1700000000000.AbC_dEf");
@@ -86,7 +90,11 @@ describe("request_context", () => {
 
   it("prefers a fresh click id in the URL over an older cookie, and keeps the cookie when they match", () => {
     const fresh = context_for({
-      cookies: { _fbc: "fb.1.1690000000000.OldClick", _fbp: "fb.1.1.1" },
+      cookies: {
+        _fbc: "fb.1.1690000000000.OldClick",
+        _fbp: "fb.1.1.1",
+        external_id: "visitor-1",
+      },
       event_source_url: "https://shop.example/?fbclid=NewClick",
     });
     expect(fresh.fbc).toBe("fb.1.1700000000000.NewClick");
@@ -94,7 +102,11 @@ describe("request_context", () => {
       _fbc: "fb.1.1700000000000.NewClick",
     });
     const same = context_for({
-      cookies: { _fbc: "fb.1.1690000000000.SameClick", _fbp: "fb.1.1.1" },
+      cookies: {
+        _fbc: "fb.1.1690000000000.SameClick",
+        _fbp: "fb.1.1.1",
+        external_id: "visitor-1",
+      },
       event_source_url: "https://shop.example/?fbclid=SameClick",
     });
     expect(same.fbc).toBe("fb.1.1690000000000.SameClick");
@@ -108,5 +120,24 @@ describe("request_context", () => {
         cookies: { _fbp: "fb.1.1.1" },
       }).fbc,
     ).toBeUndefined();
+  });
+
+  it("keeps the visitor's external_id and sets nothing for it", () => {
+    const context = context_for({
+      cookies: { _fbp: "fb.1.1.1", external_id: "visitor-1" },
+    });
+    expect(context.external_id).toBe("visitor-1");
+    expect(context.cookies_to_set.external_id).toBeUndefined();
+  });
+
+  it("mints a UUID as external_id on a browser without one, and asks to store it", () => {
+    const context = context_for({ cookies: { _fbp: "fb.1.1.1" } });
+    expect(context.external_id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(context.cookies_to_set).toEqual({
+      external_id: context.external_id,
+    });
+    expect(context_for({ cookies: { _fbp: "fb.1.1.1" } }).external_id).not.toBe(
+      context.external_id,
+    );
   });
 });

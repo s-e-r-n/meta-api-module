@@ -56,8 +56,10 @@ test.describe("two tags on one landing page", () => {
     const stored = await context.cookies();
     expect(stored.filter((c) => c.name === "_fbp")).toHaveLength(1);
     expect(stored.filter((c) => c.name === "_fbc")).toHaveLength(1);
+    expect(stored.filter((c) => c.name === "external_id")).toHaveLength(1);
     expect(fbp_headers).toHaveLength(1);
     expect(fbc_headers).toHaveLength(1);
     expect(calls[1]?.cookie_in).toContain("_fbp=");
+    expect(calls[1]?.cookie_in).toContain("external_id=");
   });
 });

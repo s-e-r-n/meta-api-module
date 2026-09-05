@@ -31,3 +31,4 @@ export {
   type send_options,
 } from "./send_meta_events";
 export type { user_data_input } from "./user_data";
+export { visitor_external_id } from "./visitor_external_id";
