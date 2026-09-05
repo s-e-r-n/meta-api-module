@@ -1,10 +1,25 @@
 # Meta Conversions API engine for Next.js
 
-One module, `src/lib/meta-capi/`, that lets any component of this site carry a Meta event. The browser declares the event, the server completes it (IP, user agent, `fbp`, `fbc`, time), normalizes and hashes the identity, and posts it to the Conversions API. The access token never leaves the server.
+One module: `src/lib/meta-capi/`.
 
-This manual is written for the agent who changes the site. Requests arrive in plain language; the table in section 3 says which edit each one is.
+What it does:
+
+- Lets any component of this site carry a Meta event.
+- The browser declares the event.
+- The server completes it: IP, user agent, `fbp`, `fbc`, time.
+- The server normalizes and hashes the identity.
+- The server posts it to the Conversions API.
+- The access token never leaves the server.
+
+Who this manual is for:
+
+- The agent who changes the site.
+- Requests arrive in plain language.
+- The table in section 3 says which edit each request is.
 
 ## 1. Install
+
+**Install the module and its configuration in the Next.js app.**
 
 1. Copy `src/lib/meta-capi/` into the Next.js 16 app (App Router, React 19).
 2. Add the two packages it needs:
@@ -13,7 +28,8 @@ This manual is written for the agent who changes the site. Requests arrive in pl
 npm i zod server-only
 ```
 
-3. Put the configuration in `.env.local` locally and in the host's environment variables in production:
+3. Put the configuration in `.env.local` locally.
+4. Put the same configuration in the host's environment variables in production.
 
 | Variable | Required | What it is |
 | --- | --- | --- |
@@ -25,11 +41,15 @@ npm i zod server-only
 | `META_CAPI_TIMEOUT_MS` | no | Timeout of one call to Meta, default `1500` |
 | `META_CAPI_INBOUND_SECRET` | no | Bearer secret of the reference route `POST /api/meta-events` |
 
-`.env*` stays in `.gitignore`.
+- `.env*` stays in `.gitignore`.
 
 ## 2. The one file that belongs to this site: `policy.ts`
 
-Everything Meta demands is already inside the engine. Everything this site demands on top goes in `src/lib/meta-capi/policy.ts`, and nowhere else. The file is a table keyed by event name, or `"*"` for every event.
+**Add this site's own rules on top of the engine's defaults, in one file: `src/lib/meta-capi/policy.ts`.**
+
+- Everything Meta demands is already inside the engine.
+- Everything this site demands on top goes in `src/lib/meta-capi/policy.ts`, and nowhere else.
+- The file is a table keyed by event name, or `"*"` for every event.
 
 ```ts
 import type { event_rule_table } from "./event_catalog";
@@ -47,9 +67,15 @@ What a line does:
 - `recommends` lets the event through and adds a warning naming the missing key in the send result.
 - A key that is not one of Meta's standard names declares a custom event. `ShareDiscount: {}` is enough; from then on `event_name="ShareDiscount"` autocompletes and an undeclared name does not compile.
 
-Sections a rule can name: `custom_data` (a list of keys), `user_data` (a list of keys), `attribution_data: true`.
+Sections a rule can name:
+
+- `custom_data` (a list of keys)
+- `user_data` (a list of keys)
+- `attribution_data: true`
 
 ## 3. Recipes
+
+**Look up a plain-language request and find the matching edit.**
 
 | The request, in plain language | The edit |
 | --- | --- |
@@ -65,7 +91,10 @@ Sections a rule can name: `custom_data` (a list of keys), `user_data` (a list of
 
 ## 4. Tag a page or a component that is shown
 
-Import `MetaEvent` in a Server Component. The page stays a Server Component; the tag is the only client leaf.
+**Tag a page or a component that is shown on screen.**
+
+1. Import `MetaEvent` in a Server Component.
+2. Keep the page a Server Component; the tag is the only client leaf.
 
 ```tsx
 import { MetaEvent } from "@/lib/meta-capi";
@@ -91,7 +120,10 @@ Rules of the tag:
 
 ## 5. Tag a gesture
 
-From a Client Component, call `track_meta_event` in the handler. It returns a promise; `void` it when nothing waits for the answer.
+**Tag a gesture from a Client Component.**
+
+1. Call `track_meta_event` in the handler, from a Client Component.
+2. `void` the call when nothing waits for the answer, since it returns a promise.
 
 ```tsx
 "use client";
@@ -114,7 +146,10 @@ export const AddToCartButton = ({ sku, price }: { sku: string; price: number }) 
 
 ## 6. Send from the server
 
-For a webhook, a route handler, or your own server action, import from the server entry. Give the event what the browser would have given.
+**Send an event from the server: a webhook, a route handler, or a server action.**
+
+1. Import `send_meta_events` from `@/lib/meta-capi/server`.
+2. Give the event what the browser would have given.
 
 ```ts
 import { send_meta_events } from "@/lib/meta-capi/server";
@@ -131,9 +166,10 @@ const result = await send_meta_events([
 ]);
 ```
 
-`order.paid_at` must be a real `Date`, built from a timestamp that carries its offset. A date parsed from a string without one is read in the server's time zone.
+- `order.paid_at` must be a real `Date`, built from a timestamp that carries its offset.
+- A date parsed from a string without one is read in the server's time zone.
 
-`result` is one of:
+Check: inspect the returned `result`.
 
 | `result` | Meaning |
 | --- | --- |
@@ -141,17 +177,42 @@ const result = await send_meta_events([
 | `{ ok: false, reason: "invalid_event", issues }` | Refused before sending. `issues[]` carry the event index, the path and the message |
 | `{ ok: false, reason: "graph_rejected", status, error }` | Meta refused. `error.code`, `error.error_subcode`, `error.message`, `error.fbtrace_id` |
 
-It throws `meta_capi_config_error` when the environment is incomplete and `meta_capi_transport_error` when Meta is unreachable after one retry.
+- Throws `meta_capi_config_error` when the environment is incomplete.
+- Throws `meta_capi_transport_error` when Meta is unreachable after one retry.
 
-For JSON that comes from outside the code, `send_inbound_meta_events(payload)` takes an unknown body shaped `{ "events": [ ... ] }` and returns the same `result`. The reference route `src/app/api/meta-events/route.ts` uses it: `POST /api/meta-events` with `Authorization: Bearer $META_CAPI_INBOUND_SECRET`.
+For JSON that comes from outside the code:
+
+- `send_inbound_meta_events(payload)` takes an unknown body shaped `{ "events": [ ... ] }` and returns the same `result`.
+- The reference route `src/app/api/meta-events/route.ts` uses it: `POST /api/meta-events` with `Authorization: Bearer $META_CAPI_INBOUND_SECRET`.
 
 ## 7. What an event may carry
 
+**Know what fields an event may carry.**
+
 `event_name` is one of Meta's standard names, offered by autocompletion, or a custom name declared in `policy.ts`:
 
-`AddPaymentInfo` `AddToCart` `AddToWishlist` `CompleteRegistration` `Contact` `CustomizeProduct` `Donate` `FindLocation` `InitiateCheckout` `Lead` `Purchase` `Schedule` `Search` `StartTrial` `SubmitApplication` `Subscribe` `ViewContent` `PageView` `AppendAttribution`
+- `AddPaymentInfo`
+- `AddToCart`
+- `AddToWishlist`
+- `CompleteRegistration`
+- `Contact`
+- `CustomizeProduct`
+- `Donate`
+- `FindLocation`
+- `InitiateCheckout`
+- `Lead`
+- `Purchase`
+- `Schedule`
+- `Search`
+- `StartTrial`
+- `SubmitApplication`
+- `Subscribe`
+- `ViewContent`
+- `PageView`
+- `AppendAttribution`
 
-`Purchase` requires `custom_data.value` and `custom_data.currency`. `AppendAttribution` requires `attribution_data` and `custom_data.currency`.
+- `Purchase` requires `custom_data.value` and `custom_data.currency`.
+- `AppendAttribution` requires `attribution_data` and `custom_data.currency`.
 
 `custom_data`, all optional unless a rule says otherwise:
 
@@ -169,11 +230,31 @@ For JSON that comes from outside the code, `send_inbound_meta_events(payload)` t
 | `delivery_category` | `"in_store"`, `"curbside"` or `"home_delivery"` |
 | any other key without whitespace | string, number, boolean, or a list of strings or numbers |
 
-Other event keys: `event_id`, `opt_out`, `data_processing_options` (`[]` or `["LDU"]`, US only), `data_processing_options_country`, `data_processing_options_state`, `customer_segmentation`, `original_event_data`, `attribution_data`. From the server only: `event_time`, `action_source`, `event_source_url`, `referrer_url`.
+Other event keys:
+
+- `event_id`
+- `opt_out`
+- `data_processing_options` (`[]` or `["LDU"]`, US only)
+- `data_processing_options_country`
+- `data_processing_options_state`
+- `customer_segmentation`
+- `original_event_data`
+- `attribution_data`
+
+From the server only:
+
+- `event_time`
+- `action_source`
+- `event_source_url`
+- `referrer_url`
 
 ## 8. Identity
 
-Give raw values in `user_data`. The server normalizes and hashes them. A value already hashed with SHA-256 is sent as is.
+**Give identity in `user_data`; the server normalizes and hashes it.**
+
+- Give raw values in `user_data`.
+- The server normalizes and hashes them.
+- A value already hashed with SHA-256 is sent as is.
 
 | Key | Give | Example |
 | --- | --- | --- |
@@ -188,15 +269,30 @@ Give raw values in `user_data`. The server normalizes and hashes them. A value a
 | `external_id` | your own user id | `user-42` |
 | `subscription_id`, `fb_login_id`, `lead_id` | as Meta defines them, sent in clear | |
 
-Each of `em` to `external_id` also takes a list. A value the engine cannot use is dropped and named in `warnings`.
+- Each of `em` to `external_id` also takes a list.
+- A value the engine cannot use is dropped and named in `warnings`.
 
-From the browser, the server adds on its own: `client_ip_address`, `client_user_agent`, `fbp` and `fbc` from the `_fbp` and `_fbc` cookies, `fbc` rebuilt from a `fbclid` in the URL, `event_source_url` with its full query string, `referrer_url`, `event_time`, and a UUID `event_id` when the declaration carries none.
+From the browser, the server adds on its own:
+
+- `client_ip_address`
+- `client_user_agent`
+- `fbp` and `fbc` from the `_fbp` and `_fbc` cookies
+- `fbc` rebuilt from a `fbclid` in the URL
+- `event_source_url` with its full query string
+- `referrer_url`
+- `event_time`
+- a UUID `event_id` when the declaration carries none
 
 ## 9. Consent
 
-The engine holds no consent state and writes no cookie. Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
+**Gate the engine behind consent, the same way the pixel is gated.**
+
+- The engine holds no consent state and writes no cookie.
+- Render `MetaEvent` and call `track_meta_event` only once the consent manager allows Meta, the same way the pixel is gated.
 
 ## 10. Check that it works
+
+**Confirm that a tagged event reaches Meta.**
 
 1. Set `META_CAPI_TEST_EVENT_CODE` to the code shown in Events Manager, Test Events tab.
 2. Load a tagged page, or run:
@@ -205,10 +301,16 @@ The engine holds no consent state and writes no cookie. Render `MetaEvent` and c
 npm run e2e
 ```
 
-3. The event appears in the Test Events tab within seconds, and in the Overview within twenty minutes.
-4. Remove the test code before going to production.
+Check:
+
+- The event appears in the Test Events tab within seconds.
+- The event appears in the Overview within twenty minutes.
+
+3. Remove the test code before going to production.
 
 ## 11. Commands
+
+**Run the project's commands.**
 
 | Command | What it does |
 | --- | --- |
